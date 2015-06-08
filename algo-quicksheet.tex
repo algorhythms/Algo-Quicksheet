@@ -1,0 +1,106 @@
+%%%%%%%%%%%%%%%%%%%%%%%% editor.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% sample root file for the contributions of a "contributed volume"
+%
+% Use this file as a template for your own input.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Springer %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% RECOMMENDED %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[graybox, envcountchap, twocolumn]{styles/svmult}
+
+% general metadata:
+\author{github.com/idf}
+\title{Algorithm Quicksheet}
+\subtitle{Classical equations, diagrams and tricks in algorithm}
+
+% choose options for [] as required from the list
+% in the Reference Guide
+
+\usepackage{amssymb,amsmath,bm}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+\usepackage{textcomp}
+\newcommand\abs[1]{\left\lvert#1\right\rvert}
+\usepackage{longtable}
+\usepackage{algorithm2e}
+\usepackage{tocbibind}
+\usepackage[toc]{multitoc}
+\renewcommand{\bibname}{References}
+\usepackage{mathptmx}        % selects Times Roman as basic font
+\usepackage{helvet}          % selects Helvetica as sans-serif font
+\usepackage{courier}         % selects Courier as typewriter font
+%\usepackage{type1cm}        % activate if the above 3 fonts are 
+                             % not available on your system
+
+\usepackage{makeidx}         % allows index generation
+\usepackage{graphicx}        % standard LaTeX graphics tool
+                             % when including figure files
+\usepackage[justification=centering]{caption}
+\usepackage{subfig}
+\usepackage{multicol}        % used for the two-column index
+\usepackage{multirow}
+\usepackage[bottom]{footmisc}% places footnotes at page bottom
+\usepackage[bookmarksnumbered=true,
+            bookmarksopen=true,
+            colorlinks=true,
+            linkcolor=blue,
+            anchorcolor=blue,
+            citecolor=blue
+           ]{hyperref}
+
+\graphicspath{{figures/}}
+
+% see the list of further useful packages in the Reference Guide
+
+\makeindex             % used for the subject index
+                       % please use the style svind.ist with
+                       % your makeindex program
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\frontmatter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{titlepage}
+%\include{dedic}
+%\include{foreword}
+\include{preface}
+%\include{acknow}
+
+\tableofcontents
+\include{cblist}
+%\include{acronym}
+\include{notation}
+
+
+\mainmatter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\include{part}
+% data structure 
+\include{chapterBasicDataStructures}
+\include{chapterLinkedList}
+\include{chapterHeap}
+\include{chapterTree}
+\include{chapterTrie}
+
+% algorithm 
+\include{chapterSort}
+\include{chapterSearch}
+\include{chapteMath}
+\include{chapterGreedy}
+\include{chapterString}
+\include{chapterGraph}
+\include{chapterInterval}
+\include{chapterDynamicProgramming}
+%
+
+\backmatter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\include{glossary}
+\printindex
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+
