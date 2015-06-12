@@ -1,10 +1,57 @@
 \chapter{Graph}
 
 
-\section{Introduction}
-Queue, Stack
+\section{TOPOLOGICAL SORTING}
+For a graph $G=\{V, E\}$, $ A \rightarrow B $, then $A$ is before $B$ in the ordered list. 
+\subsection{Algorithm}
+General algorithm and notice.\\
+ 
+dfs:
+\begin{enumerate}
+\item \textbf{Dfs neighbors first}. If the neighbors of current node is  $\neg$visited, then dfs the neighbors
+\item \textbf{Dfs current node}. After visiting all the neighbors, then visit the current node and push it to the result queue.
+\item \textbf{Reverse}. Reverse the result queue. 
+\end{enumerate}
 
+Notice:
+\begin{enumerate}
+\item Need to reverse the result queue, since the neighbors (successors) are visited first. 
+\item Need to detect cycle; thus the dfs need to construct result queue and detect cycle simultaneously, by using two sets: $visited$ and $marked$. 
+\end{enumerate}
 
-\subsection{Summarizing properties}
+\subsection{Code}
+\begin{lstlisting}[language=python]
+def topological_sort(self, V):
+    visited = set()
+    marked = set()
+    ret = []
 
+    for k in V.keys():
+        if k not in visited:
+            if not self.dfs(V, k, visited, marked, ret):
+                return []
+
+    ret.reverse()
+    return ret
+
+def dfs(self, V, k, visited, marked, ret):
+    if k in marked:
+        return False
+
+    marked.add(k)
+    for neighbor in V[k]:
+        if neighbor not in visited:
+            if not self.dfs(V, neighbor, visited, marked, ret):
+                return False
+
+    marked.remove(k)
+    visited.add(k)
+    ret.append(k)
+    return True
+\end{lstlisting}
+
+\subsection{Applications}
+\begin{enumerate}
+\item Course scheduling problem with pre-requisite. 
+\end{enumerate}
 
