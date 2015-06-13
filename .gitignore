@@ -263,3 +263,4 @@ bower_components/
 *.aux
 *.toc
 *.out
+*.bb
