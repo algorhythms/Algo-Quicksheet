@@ -1,10 +1,82 @@
 \chapter{String}
 
 
-\section{Introduction}
-Queue, Stack
+\section{KMP}
+Find string $W$ in string $S$ within complexity of $O(|W|+|S|)$.
+\subsection{Prefix suffix table}
+Partial match table (also known as "failure function"). After a failure matching, you know that the matched suffix before the failure point is already matched; therefore when you shift the $W$, you only need to shift the prefix onto the position of the previous suffix. The prefix and suffix must be proper prefix and suffix.\\
+
+In table-building algorithm. $T[i]$ stores the NEXT prefix index $cnd$.\\
+
+Notice:
+\begin{enumerate}
+\item dummy at $T[0]=-1$.
+\item three parts
+\begin{enumerate}
+\item matched
+\item fall back
+\item restart 
+\end{enumerate}
+\end{enumerate}
+
+Code:
+\begin{lstlisting}[language=python]
+# construct T
+T = [0 for _ in xrange(ln+1)]
+T[0] = -1
+T[1] = 0
+pos = 2
+cnd = 0  
+while pos <= ln:
+    if needle[pos-1]==needle[cnd]:  # matched
+        T[pos] = cnd+1
+        cnd += 1
+        pos += 1
+    elif T[cnd]!=-1:  # fallback 
+        cnd = T[cnd]
+    else:  # restart 
+        T[pos] = 0
+        cnd = 0
+        pos += 1
+
+\end{lstlisting}
 
 
-\subsection{Summarizing properties}
+\subsection{Searching algorithm}
+Notice:
+\begin{enumerate}
+\item index $i$ and $s$.
+\item $T[i+1-1]$ for corresponding previous index in $T$ for current scanning index $i$. 
+\item three parts:
+\begin{enumerate}
+\item matched
+\item fall back
+\item restart 
+\end{enumerate}
+\end{enumerate}
+Code: 
+\begin{lstlisting}[language=python]
+# search
+i = 0  # index for W 
+s = 0  # start 
+while s+i < lh:
+    if needle[i] == haystack[s+i]:
+        i += 1
+        if i == ln:
+            return haystack[s:]
+    else:
+        if T[i] != -1:
+            s = s+i-T[i]
+            i = T[i]
+        else:
+            s += 1
+            i = 0
 
+return None
+\end{lstlisting}
+\subsection{Applications}
+\begin{enumerate}
+\item Find needle in haystack. 
+\item Shortest palindrome 
+\end{enumerate}
 
