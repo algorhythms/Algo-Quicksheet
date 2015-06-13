@@ -1,12 +1,15 @@
 \chapter{Dynamic Programming}
+
+
+
 \section{Introduction}
-TODO
-\section{Common practice}
+The formula is unimportant. What is important is the definition of dp array and transition function derivation.
+\subsection{Common practice}
 \begin{enumerate}
 \item Use $n+1$ dp arrays to reserve space for dummies. 
 \item Iteration range is $[1, n+1)$.
 \end{enumerate}
-\section{Space optimization}
+\subsection{Space optimization}
 To avoid MLE, we need to carry out space optimization. Let $o$ be other subscripts, $f$ be the transition function. 
 
 Firstly,
@@ -33,6 +36,39 @@ Notice,
 \begin{enumerate}
 \item Must iterate $o$ \textbf{backward} to un-updated value. 
 \end{enumerate}
+
+
+
+\section{Sequence}
+Longest common subsequence. Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. We have 2 situations: $a[i]==b[j]$ or not.
+\begin{eqnarray*}
+F_{i. j} = \left\{ \begin{array}{rl}
+  F_{i-1, j-1}+1, &\mbox{ if $a[i]==b[j]$} \\
+  \max(F_{i-1, j}, F_{i,j-1}),&\mbox{ otherwise}
+       \end{array} \right.
+\end{eqnarray*}
+\\
+Longest common substring. Let $F_{i, j}$ be the LCS at string $a[:i]$ and
+$b[:j]$. We have 2 situations: $a[i]==b[j]$ or not.
+\begin{eqnarray*}
+F_{i. j} = \left\{ \begin{array}{rl}
+  F_{i-1, j-1}+1, &\mbox{ if $a[i]==b[j]$} \\
+  0, &\mbox{ otherwise}
+       \end{array} \right.
+\end{eqnarray*}
+
+Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, the $gmax=max\big(\{{F_{i,j}\}\big)$.
+
+\section{Backpack}
+Given $n$ items with weight $w_i$ and value $v_i$, an integer $C$ denotes the size of a backpack. What is the max value you can fill this backpack?
+
+Let $F_{i, c}$ be the max size we can carry for index $0..i$ with capacity $c$. We have 2 choices: take the $i$-th item or not.
+\begin{eqnarray*}
+F_{i, c}= \max\big(&&F_{i-1, c}, \\
+&&F_{i-1, c-w_i}+v_i\big)
+\end{eqnarray*}
+
+
 \section{Local and global extremes}
 \subsection{Long and short stocks}
 The following formula derives from the question: Best Time to Buy and Sell Stock IV. 
@@ -71,3 +107,25 @@ at day $i$ with UP\ TO $j$ transactions. Then,
 && global_{i,j} = \max\Big(local_{i, j}, global_{i-1,j}\Big)
 \end{eqnarray}
 and $global[-1]$ is the global max. 
+
+\section{Game theory - multi players}
+Assumption: the opponent take the optimal strategy for herself. 
+
+\subsection{Coin game}
+\runinhead{Same side} There are $n$ coins with different value in a line. Two players take turns to take 1 or 2 coins from left side. The player who take the coins with the most value wins.
+
+let $F_i^p$ represents maximum values he can get for index $i..last$, for the person p. There are 2 choices: take the $i$-th coin or take the $i$-th and $(i+1)$-th coin.
+\begin{eqnarray*}
+F_i^p = \max\big(&A_i&+S[i+1:]-F_{i+1}^{p'},  \\
+&A_i&+A_{i+1}+S[i+2:]-F_{i+2}^{p'}\big)
+\end{eqnarray*}
+The above equation can be further optimized by merging the sum $S$.
+
+\runinhead{Dual sides}There are n coins in a line. Two players take turns to take a coin from one of the ends of the line until there are no more coins left. The player with the larger amount of money wins.
+
+let $F_{i, j}^p$ represents maximum values he can get for index $i..j$, for
+the person p. There are 2 choices: take the $i$-th coin or take the $j$-th coin.
+\begin{eqnarray*}
+F_{i,j}^p = \max\big(&A_i&+S[i+1:j]-F_{i+1,j}^{p'},  \\
+&A_j&+S[i:j-1]-F_{i,j-1}^{p'}\big)
+\end{eqnarray*}
