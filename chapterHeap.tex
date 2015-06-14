@@ -4,7 +4,31 @@
 \section{Introduction}
 Queue, Stack
 
+\section{Python}
+Python only has built in min-heap. To use max-heap, you can: 
+\begin{enumerate}
+\item Revert the number: 1 becomes -1.
+\item Wrap the data into another class and override \_\_cmp\_\_ or \_\_lt\_\_
+\end{enumerate}
 
+The following code presents the wrapping method:
+\begin{lstlisting}[language=python]
+class Value(object):
+    def __init__(self, val):
+        self.val = val
+        self.deleted = False  # lazy delete 
+
+    def __cmp__(self, other):
+        # Reverse order by height to get max-heap
+        assert isinstance(other, Value)
+        return other.val - self.val
+\end{lstlisting}
+
+Normally the deletion by value in Python is $O(n)$, to achieve $O(\lg n)$ we can use lazy deletion. Before take the top of the heap, we do the following:
+\begin{lstlisting}[language=python]
+while heap and heap[0].deleted:
+    heapq.heappop(heap)
+\end{lstlisting}
 \subsection{Summarizing properties}
 
 
