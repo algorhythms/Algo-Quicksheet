@@ -1,0 +1,28 @@
+\chapter{Array}
+\section{CIRCULAR ARRAY}
+Common patterns for solving problems with circular arrays.
+
+Normally, we should solve the linear problem and circular problem differently.
+
+\subsection{Circular max sum}
+Linear problem can be solved linear with simple algorithm, but the circular sum should use dp. 
+\begin{enumerate}
+\item Construct left max sum for max sum over the $[0..i]$ (\textbf{forward} starting from the left side); construct right max sum for max sum over the indexes $[i..n-1]$ (\textbf{backward} starting from the right side). Notice that the max sum index ends AT or BEFORE i. 
+\item The $maxSum = maxSum[i..n-1]+maxSum[0..i]$
+\end{enumerate}
+
+\subsection{Non-adjacent cell}
+To solve circular non-adjacent array problem in linear way, we should consider 2 cases:
+\begin{enumerate}
+\item Not consider the $A[1]$
+\item Not consider the $A[-1]$ 
+\end{enumerate}
+
+\subsection{Binary search}
+Searching for an element in a circular sorted array. Half of the array is sorted while the other half is not.
+\begin{enumerate}
+\item If $A[0] < A[mid]$, then all values in the first half of the array are sorted.
+\item If $A[mid] < A[-1]$, then all values in the second half of the array are sorted.
+\item Then decide whether to got the \textbf{sorted half} or the \textbf{unsorted half}.
+\end{enumerate}
+

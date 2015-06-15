@@ -4,11 +4,11 @@
 \section{Introduction}
 Queue, Stack
 
-\section{Python}
+\section{Python heapq}
 Python only has built in min-heap. To use max-heap, you can: 
 \begin{enumerate}
 \item Revert the number: 1 becomes -1.
-\item Wrap the data into another class and override \_\_cmp\_\_ or \_\_lt\_\_
+\item Wrap the data into another class and override \textbf{comparators}: \_\_cmp\_\_ or \_\_lt\_\_
 \end{enumerate}
 
 The following code presents the wrapping method:
@@ -24,7 +24,7 @@ class Value(object):
         return other.val - self.val
 \end{lstlisting}
 
-Normally the deletion by value in Python is $O(n)$, to achieve $O(\lg n)$ we can use lazy deletion. Before take the top of the heap, we do the following:
+Normally the deletion by value in Python is $O(n)$, to achieve $O(\lg n)$ we can use \textbf{lazy deletion}. Before take the top of the heap, we do the following:
 \begin{lstlisting}[language=python]
 while heap and heap[0].deleted:
     heapq.heappop(heap)
