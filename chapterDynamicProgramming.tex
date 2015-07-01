@@ -3,11 +3,20 @@
 
 
 \section{Introduction}
-The formula is unimportant. What is important is the definition of dp array and transition function derivation.
+The core philosophy of dp:
+\begin{enumerate}
+\item The definition of \textbf{states} 
+\item The definition of the \textbf{transition functions} among states 
+\end{enumerate} 
+
+The so called concept dp as memoization of recursion does not grasp the core philosophy of dp. 
+
+The formula in the following section are unimportant. What is important is the definition of dp array and transition function derivation.
 \subsection{Common practice}
 \begin{enumerate}
 \item Use $n+1$ dp arrays to reserve space for dummies. 
 \item Iteration range is $[1, n+1)$.
+\item $n+k$ for k dummies  
 \end{enumerate}
 \subsection{Space optimization}
 To avoid MLE, we need to carry out space optimization. Let $o$ be other subscripts, $f$ be the transition function. 
@@ -40,7 +49,7 @@ Notice,
 
 
 \section{Sequence}
-Longest common subsequence. Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. We have 2 situations: $a[i]==b[j]$ or not.
+Longest common subsequence. Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
   F_{i-1, j-1}+1, &\mbox{ if $a[i]==b[j]$} \\
@@ -49,7 +58,7 @@ F_{i. j} = \left\{ \begin{array}{rl}
 \end{eqnarray*}
 \\
 Longest common substring. Let $F_{i, j}$ be the LCS at string $a[:i]$ and
-$b[:j]$. We have 2 situations: $a[i]==b[j]$ or not.
+$b[:j]$. We have two situations: $a[i]==b[j]$ or not.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
   F_{i-1, j-1}+1, &\mbox{ if $a[i]==b[j]$} \\
