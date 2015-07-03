@@ -25,4 +25,48 @@ Searching for an element in a circular sorted array. Half of the array is sorted
 \item If $A[mid] < A[-1]$, then all values in the second half of the array are sorted.
 \item Then decide whether to got the \textbf{sorted half} or the \textbf{unsorted half}.
 \end{enumerate}
+\section{VOTING ALGORITHM}
+\subsection{Majority Number}
+\subsubsection{$\frac{1}{2}$ of the Size}
+Given an array of integers, the majority number is the number that occurs more than half of the size of the array. 
+
+Algorithm: Majority Vote Algorithm. Maintain a counter to count how many times the majority number appear more than any other elements before index $i$ and after re-initialization. Re-initialization happens when the counter drops to 0. 
+
+Proof: assuming there is a majority number $x$, if at the index $i$, the current count is $j$ and the current counter does not capture the majority number, there are less than $\frac{i-j}{2}$ $x$, thus there are more than $\frac{n-i+j}{2}$ $x$ after the index $i$. The $j$ $x$ beats against the counter and $\frac{n-i-j}{2}$ $x$ will make it counted by counter. 
+
+If the counter captures the majority number, two cases will happen. The one is that the counter continue to capture the majority number till the end; then the counter will captures the correct majority number. The other case is that the majority number counter is beaten by other numbers, which will in turn fall back to the case that the counter does not capture the majority number.
+ 
+This algorithm needs to re-check the current number being counted is indeed the majority number.    
+
+\subsubsection{$\frac{1}{3}$ of the Size}
+Given an array of integers, the majority number is the number that occurs more than $\frac{1}{3}$ of the size of the array. This question can be generalized to be solved by $\frac{1}{k}$ case. 
+
+\subsubsection{$\frac{1}{k}$ of the Size}
+Given an array of integers and a number k, the majority number is the number that occurs more than $\frac{1}{k}$ of the size of
+the array.
+\begin{lstlisting}[language=python]
+class Solution:
+    def majorityNumber(self, nums, k):
+        """
+        Since majority elements appears more than ceil(n/k) times, there are at most 2 majority number
+        """
+        cnt = defaultdict(int)
+        for num in nums:
+            if num in cnt:
+                cnt[num] += 1
+            else:
+                if len(cnt) < k-1:
+                    cnt[num] += 1
+                else:
+                    for key in cnt.keys():
+                        cnt[key] -= 1
+                        if cnt[key] == 0:
+                            del cnt[key]
+
+        for key in cnt.keys():
+            if len(filter(lambda x: x == key, nums)) > len(nums)/k:
+                return key
+
+        raise Exception
+\end{lstlisting}
 
