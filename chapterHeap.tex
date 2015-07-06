@@ -12,7 +12,7 @@ Python only has built in min-heap. To use max-heap, you can:
 \end{enumerate}
 
 The following code presents the wrapping method:
-\begin{lstlisting}[language=python]
+\begin{python}
 class Value(object):
     def __init__(self, val):
         self.val = val
@@ -22,13 +22,13 @@ class Value(object):
         # Reverse order by height to get max-heap
         assert isinstance(other, Value)
         return other.val - self.val
-\end{lstlisting}
+\end{python}
 
 Normally the deletion by value in Python is $O(n)$, to achieve $O(\lg n)$ we can use \textbf{lazy deletion}. Before take the top of the heap, we do the following:
-\begin{lstlisting}[language=python]
+\begin{python}
 while heap and heap[0].deleted:
     heapq.heappop(heap)
-\end{lstlisting}
+\end{python}
 \subsection{Summarizing properties}
 
 

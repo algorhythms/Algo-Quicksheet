@@ -14,10 +14,10 @@
 Notice:
 \begin{enumerate}
 \item Children are stored in HashMap rather than ArrayList. 
-\item self.word to stores the word and indicates whethere a word ends at the current node. 
+\item self.word to stores the word and indicates whether a word ends at the current node. 
 \end{enumerate}
 Code: 
-\begin{lstlisting}[language=python]
+\begin{python}
 class TrieNode(object):
     def __init__(self, char):
         self.char = char
@@ -37,7 +37,7 @@ class Trie(object):
                 cur.children[c] = TrieNode(c)
             cur = cur.children[c]
         cur.word = word
-\end{lstlisting}
+\end{python}
 
 \subsection{Advanced}
 Notice:
@@ -47,7 +47,7 @@ Notice:
 \item When insert new word, do not override the existing TrieNode. A flag to indicate whether there is a word ending here.
 \end{enumerate}
 Code:
-\begin{lstlisting}[language=python]
+\begin{python}
 class TrieNode:
     def __init__(self):
         self.ended = False
@@ -89,7 +89,7 @@ class Trie:
                 return False
 
         return True
-\end{lstlisting}
+\end{python}
 \subsection{Application}
 \begin{enumerate}
 \item Word search in matrix.

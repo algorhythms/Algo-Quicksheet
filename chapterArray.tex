@@ -44,11 +44,12 @@ Given an array of integers, the majority number is the number that occurs more t
 \subsubsection{$\frac{1}{k}$ of the Size}
 Given an array of integers and a number k, the majority number is the number that occurs more than $\frac{1}{k}$ of the size of
 the array.
-\begin{lstlisting}[language=python]
+\begin{python}
 class Solution:
     def majorityNumber(self, nums, k):
         """
-        Since majority elements appears more than ceil(n/k) times, there are at most 2 majority number
+        Since majority elements appears more than ceil(n/k) times, 
+        there are at most 2 majority number
         """
         cnt = defaultdict(int)
         for num in nums:
@@ -68,5 +69,5 @@ class Solution:
                 return key
 
         raise Exception
-\end{lstlisting}
+\end{python}
 

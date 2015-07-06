@@ -20,7 +20,7 @@ Notice:
 \end{enumerate}
 
 Code:
-\begin{lstlisting}[language=python]
+\begin{python}
 # construct T
 T = [0 for _ in xrange(ln+1)]
 T[0] = -1
@@ -32,14 +32,14 @@ while pos <= ln:
         T[pos] = cnd+1
         cnd += 1
         pos += 1
-    elif T[cnd]!=-1:  # fallback 
+    elif T[cnd]!=-1:  # fall back 
         cnd = T[cnd]
     else:  # restart 
         T[pos] = 0
         cnd = 0
         pos += 1
 
-\end{lstlisting}
+\end{python}
 
 
 \subsection{Searching algorithm}
@@ -55,7 +55,7 @@ Notice:
 \end{enumerate}
 \end{enumerate}
 Code: 
-\begin{lstlisting}[language=python]
+\begin{python}
 # search
 i = 0  # index for W 
 s = 0  # start 
@@ -73,7 +73,7 @@ while s+i < lh:
             i = 0
 
 return None
-\end{lstlisting}
+\end{python}
 \subsection{Applications}
 \begin{enumerate}
 \item Find needle in haystack. 

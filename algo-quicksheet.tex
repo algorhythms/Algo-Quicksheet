@@ -26,7 +26,59 @@
 \usepackage{algorithm2e}
 \usepackage{tocbibind}
 \usepackage[toc]{multitoc}
+\usepackage[utf8]{inputenc}
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T3}{txtt}{bx}{n}{8} % for bold
+\DeclareFixedFont{\ttm}{T3}{txtt}{m}{n}{8}  % for normal
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
 \usepackage{listings}
+
+% Python style for highlighting
+\newcommand\pythonstyle{
+  \lstset{
+    language=Python,
+    basicstyle=\ttm,
+    otherkeywords={assert, del},  % Add keywords here
+    keywordstyle=\ttb\color{deepblue},
+    columns=flexible,
+    keepspaces=true,
+    commentstyle=\ttm,
+    emph={__init__},  % Custom highlighting
+    emphstyle=\ttb\color{deepred},  % Custom highlighting style
+    stringstyle=\color{deepgreen},
+    % frame=tb,  % Any extra options here
+    showstringspaces=false            
+  }
+}
+
+
+% Python environment
+\lstnewenvironment{python}[1][]{
+  \pythonstyle
+  \lstset{#1}
+}{}
+
+% Python for external files
+\newcommand\pythonexternal[2][]{
+  {
+    \pythonstyle
+    \lstinputlisting[#1]{#2}
+  }
+}
+
+% Python for inline
+\newcommand\pythoninline[1]{
+  {
+    \pythonstyle\lstinline!#1!
+  }
+}
 \lstset{columns=fullflexible, commentstyle=\rm, basicstyle=\footnotesize} % remove columns=fullflexible for monospace
 
 \renewcommand{\bibname}{References}
@@ -34,7 +86,7 @@
 \usepackage{helvet}          % selects Helvetica as sans-serif font
 \usepackage{courier}         % selects Courier as typewriter font
 %\usepackage{type1cm}        % activate if the above 3 fonts are 
-                             % not available on your system
+                             % not available on  your system
 
 \usepackage{makeidx}         % allows index generation
 \usepackage{graphicx}        % standard LaTeX graphics tool
