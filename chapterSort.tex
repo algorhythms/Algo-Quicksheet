@@ -2,9 +2,22 @@
 
 
 \section{Introduction}
-Queue, Stack
+List of general algorithms:
+\begin{enumerate}
+\item Selection sort: invariant
+\begin{enumerate}
+\item Elements to the left of $i$ (including $i$) are fixed and in ascending order (fixed and sorted).
+\item No element to the right of $i$ is smaller than any entry to the left of $i$ ($A[i]  \leq\min(A[i+1:n])$.
+\end{enumerate}
+\item Insertion sort: invariant
+\begin{enumerate}
+\item Elements to the left of $i$ (including $i$) are in ascending order (sorted).
+\item Elements to the right of $i$ have not yet been seen.
+\end{enumerate}
+\item Shell sort: h-sort using insertion sort.
+\end{enumerate}
 
 
-\subsection{Summarizing properties}
-
+\section{Context}
+Partially-sorted array: use insertion sort to achieve $O(N)$.
 
