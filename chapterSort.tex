@@ -15,17 +15,19 @@ List of general algorithms:
 \item Elements to the right of $i$ have not yet been seen.
 \end{enumerate}
 \item Shell sort: h-sort using insertion sort.
+\item Quick sort: invariant
+\begin{enumerate}
+\item $|A_p|..\leq..|..unseen..|..\geq..|$ maintain the 3 subarrays.
+\end{enumerate}
 \end{enumerate}
 
 \section{ALGORITHMS}
-\subsection{quick sort}
+\subsection{Quick Sort}
+\subsubsection{Normal pivoting}
 The key part of quick sort is pivoting:
 \begin{python}
 def pivot(self, A, i, j):
     """
-    Fix the pivot as the 1st element
-    In the end, move the pivot to the end of closed set 
-    but still inside the closed set, in order to bisect
     pivoting algorithm:
     p | closed set | open set |
     | closed set p | open set |
@@ -43,11 +45,14 @@ def pivot(self, A, i, j):
 
 Notice that this implementation goes $O(N^2)$ for arrays with all duplicates.
 
-\textbf{Problem with duplicated keys}: it is important to stop scan at duplicated
+\textbf{Problem with duplicate keys}: it is important to stop scan at duplicate
 keys (counter-intuitive); otherwise quick sort will goes $O(N^2)$ for the
-array with all duplicated items, because the algorithm will put all items
+array with all duplicate items, because the algorithm will put all items
 equal to the $A[p]$ on \textbf{a single side}. 
 
+Example: quadratic time to sort random arrays of 0s and 1s.
+
+\subsubsection{Stop-at-equal pivoting}
 Alternative pivoting implementation with optimization for duplicated keys:
 \begin{python}
 def pivot_optimized(self, A, lo, hi):
@@ -78,18 +83,31 @@ def pivot_optimized(self, A, lo, hi):
     return j
 
 \end{python}
-Applications:
-\begin{enumerate}
-\item Quick sort.
-\item Partial quick sort (selection). 
-\end{enumerate}
-\section{CONTEXT}
-$O(N\lg N)$ is the lower bound of comparison-based sorting; but for other contexts, we may not need $O(N \lg N)$:
-\begin{enumerate}
-\item Partially-ordered arrays: insertion sort to achieve $O(N)$.
-\item Duplicate keys
-\item Digital properties of keys: radix sort to achieve $O(N)$.
-\end{enumerate}
+\subsubsection{3-way pivoting}
+3-way pivoting: pivot the array into 3 subarrays: 
+
+$|..\leq..|..=..|..unseen..|..\geq..|$ 
+\begin{python}
+def pivot_3way(self, A, lo, hi):
+    lt = lo-1  # pointing to end of array LT
+    gt = hi  # pointing to the end of array GT (reversed)
+
+    v = A[lo]
+    i = lo  # scanning pointer
+    while i < gt:
+        if A[i] < v:
+            lt += 1
+            A[lt], A[i] = A[i], A[lt]
+            i += 1
+        elif A[i] > v:
+            gt -= 1
+            A[gt], A[i] = A[i], A[gt]
+        else:
+            i += 1
+
+    return lt+1, gt
+\end{python}
+
 \section{STABILITY}
 Definition: a stable sort preserves the \textbf{relative order of items with equal keys} (scenario: sorted by time then sorted by location). 
 
@@ -115,3 +133,40 @@ Algorithms:
 \label{fig:trie} 
 \end{figure}
 
+\section{APPLICATIONS}
+\begin{enumerate}
+\item Sort
+\item Partial quick sort (selection), k-th largest elements 
+\item Binary search
+\item Find duplicates 
+\item Graham scan
+\item Data compression
+\end{enumerate}
+
+\section{CONSIDERATIONS}
+\begin{enumerate}
+\item Stable?
+\item Distinct keys?
+\item Need guaranteed performance?
+\item Linked list or arrays?
+\item Usually randomly ordered array?
+\item Parallel?
+\item Deterministic?
+\item Multiple key types?
+\end{enumerate}
+
+$O(N\lg N)$ is the lower bound of comparison-based sorting; but for other
+contexts, we may not need $O(N \lg N)$:
+\begin{enumerate}
+\item Partially-ordered arrays: insertion sort to achieve $O(N)$.
+\item Duplicate keys
+\item Digital properties of keys: radix sort to achieve $O(N)$.
+\end{enumerate}
+
+\section{SUMMARY}
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=1.10]{sort_summary}}
+\caption{Sort summar}
+\label{fig:trie} 
+\end{figure}
