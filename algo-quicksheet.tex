@@ -26,12 +26,16 @@
 \usepackage{algorithm2e}
 \usepackage{tocbibind}
 \usepackage[toc]{multitoc}
+\usepackage{code_style/python}
+\usepackage{listings}
+\lstset{columns=fullflexible, commentstyle=\rm, basicstyle=\footnotesize} % remove columns=fullflexible for monospace
+
 \renewcommand{\bibname}{References}
 \usepackage{mathptmx}        % selects Times Roman as basic font
 \usepackage{helvet}          % selects Helvetica as sans-serif font
 \usepackage{courier}         % selects Courier as typewriter font
 %\usepackage{type1cm}        % activate if the above 3 fonts are 
-                             % not available on your system
+                             % not available on  your system
 
 \usepackage{makeidx}         % allows index generation
 \usepackage{graphicx}        % standard LaTeX graphics tool
@@ -87,7 +91,9 @@
 % algorithm 
 \include{chapterSort}
 \include{chapterSearch}
-\include{chapteMath}
+\include{chapterArray}
+\include{chapterMath}
+\include{chapterBitManipulation}
 \include{chapterGreedy}
 \include{chapterString}
 \include{chapterGraph}
