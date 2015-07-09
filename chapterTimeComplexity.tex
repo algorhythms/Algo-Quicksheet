@@ -1,4 +1,45 @@
 \chapter{Time Complexity}
 
 \section{Introduction}
-Introduction
+Basic recurrence equation solving techniques:
+\begin{enumerate}
+\item Guessing and validation
+\item Telescoping
+\item Recursion tree
+\item Master Theorem
+\end{enumerate}
+
+\section{Master Theorem}
+Recurrence relations:
+$$T(n) = a \; T\!\left(\frac{n}{b}\right) + f(n)\mbox{, where }a \geq 1 \mbox{, } b > 1$$
+
+Notice that $b>1$ rather than $b\geq1$.
+
+\subsection*{Case 1}
+If:
+$$f(n) = o(n^{\log_b a})$$
+Then:
+$$T(n) = \Theta(n^{\log_b a})$$
+
+Notice that it is $o$ rather than $O$. 
+\subsection*{Case 2}
+If:
+$$f(n) = \Theta(n^{\log_b a} \log^{k} n)$$
+
+for some constant $k \geq 0$\\\\
+Then:
+$$
+T(n) = \Theta(n^{\log_b a} \log^{k+1} n)
+$$
+
+\subsection*{Case 3}
+If:
+$$f(n) = \omega(n^{\log_b a})$$
+And with regularity condition:
+$$f(\frac{n}{b}) \le k f(n)$$
+
+for some constant $k < 1$ and sufficiently large $n$\\\\
+Then:
+$$T\left(n \right) = \Theta\left(f(n) \right)$$
+
+Notice that it is $\omega$ rather than $\Omega$. 

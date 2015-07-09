@@ -1,4 +1,60 @@
 \chapter{Memory Complexity}
 
 \section{Introduction}
-Introduction
+The memory usage is based on Java.
+
+\begin{longtable}{ll}
+\hline\noalign{\smallskip}
+\textbf{Type} & \textbf{Bytes} \\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+
+boolean & 1 \\
+byte & 1 \\
+char & 2 \\
+int & 4 \\
+float & 4 \\
+long & 8 \\
+double & 8\\
+
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\caption {for primitive types}
+\end{longtable}
+
+\begin{longtable}{ll}
+\hline\noalign{\smallskip}
+\textbf{Type} & \textbf{Bytes} \\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+
+char[] & 2N+24 \\
+int[] & 4N+24 \\
+double[] & 8N+24 \\
+
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\caption {for one-dimensional arrays}
+\end{longtable}
+
+\begin{longtable}{ll}
+\hline\noalign{\smallskip}
+\textbf{Type} & \textbf{Bytes} \\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+
+char[][] & 2MN \\
+int[][] & 4MN \\
+double[][] & 8MN \\
+
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\caption {for two-dimensional arrays}
+\end{longtable}
+
+\begin{longtable}{ll}
+\hline\noalign{\smallskip}
+\textbf{Type} & \textbf{Bytes} \\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+
+Object overhead & 16 \\
+Reference & 8 \\
+Padding & 8x \\
+
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\caption {for objects}
+\end{longtable}
