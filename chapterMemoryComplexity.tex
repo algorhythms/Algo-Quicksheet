@@ -1,9 +1,11 @@
 \chapter{Memory Complexity}
 
 \section{Introduction}
-The memory usage is based on Java.
 
-\begin{longtable}{ll}
+\subsection{Tables}
+The memory usage is based on Java.\\
+
+\begin{tabular}{ll}
 \hline\noalign{\smallskip}
 \textbf{Type} & \textbf{Bytes} \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
@@ -18,9 +20,9 @@ double & 8\\
 
 \noalign{\smallskip}\hline\noalign{\smallskip}
 \caption {for primitive types}
-\end{longtable}
+\end{tabular}
 
-\begin{longtable}{ll}
+\begin{tabular}{ll}
 \hline\noalign{\smallskip}
 \textbf{Type} & \textbf{Bytes} \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
@@ -30,10 +32,10 @@ int[] & 4N+24 \\
 double[] & 8N+24 \\
 
 \noalign{\smallskip}\hline\noalign{\smallskip}
-\caption {for one-dimensional arrays}
-\end{longtable}
+\caption{for one-dimensional arrays}
+\end{tabular}
 
-\begin{longtable}{ll}
+\begin{tabular}{ll}
 \hline\noalign{\smallskip}
 \textbf{Type} & \textbf{Bytes} \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
@@ -43,10 +45,10 @@ int[][] & 4MN \\
 double[][] & 8MN \\
 
 \noalign{\smallskip}\hline\noalign{\smallskip}
-\caption {for two-dimensional arrays}
-\end{longtable}
+\caption{for two-dimensional arrays}
+\end{tabular}
 
-\begin{longtable}{ll}
+\begin{tabular}{ll}
 \hline\noalign{\smallskip}
 \textbf{Type} & \textbf{Bytes} \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
@@ -56,5 +58,17 @@ Reference & 8 \\
 Padding & 8x \\
 
 \noalign{\smallskip}\hline\noalign{\smallskip}
-\caption {for objects}
-\end{longtable}
+\caption{for objects}
+\end{tabular}
+
+\subsection{Example}
+The generics is passed as Boolean:
+\begin{java}
+public class Box<T> {   // 16 (object overhead)
+    private in N;       // 4 (int)
+    private T[] items;  // 8 (reference to array)
+                        // 8N+24 (array of Boolean references)
+                        // 24N (Boolean objects)
+                        // 4 (padding to round up to a multiple)
+}
+\end{java} 

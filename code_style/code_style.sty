@@ -51,3 +51,42 @@
     \pythonstyle\lstinline!#1!
   }
 }
+
+\newcommand\javastyle{
+  \lstset{
+    language=Java,
+    basicstyle=\ttb,
+    otherkeywords={},  % Add keywords here
+    keywordstyle=\ttm\color{deepblue},
+    columns=flexible,
+    literate={-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1,
+    keepspaces=true,
+    commentstyle=\ttm,
+    emph={},  % Custom highlighting
+    emphstyle=\ttm\color{deepred},  % Custom highlighting style
+    stringstyle=\color{deepgreen},
+    % frame=tb,  % Any extra options here
+    showstringspaces=false            
+  }
+}
+
+% Java environment
+\lstnewenvironment{java}[1][]{
+  \javastyle
+  \lstset{#1}
+}{}
+
+% Java for external files
+\newcommand\javaexternal[2][]{
+  {
+    \javastyle
+    \lstinputlisting[#1]{#2}
+  }
+}
+
+% Java for inline
+\newcommand\javainline[1]{
+  {
+    \javastyle\lstinline!#1!
+  }
+}
