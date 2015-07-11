@@ -2,7 +2,22 @@
 
 
 \section{Introduction}
-Queue, Stack
+Heap-ordered. Binary heap is one of the implementations of Priority Queue (ADT). 
+
+Basic options:
+\begin{enumerate}
+\item sink()/ sift\_down() - recursive
+\item swim()/ sift\_up() - recursive
+\item build()/ heapify() - bottom-up sink()
+\end{enumerate}
+\section{Implementation}
+The self-implemented binary heap's index usually starts at 1 rather than 0. 
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=.80]{heap_repr}}
+\caption{Heap representation}
+\label{fig:heap} 
+\end{figure}
 
 \section{Python heapq}
 Python only has built in min-heap. To use max-heap, you can: 
@@ -29,6 +44,13 @@ Normally the deletion by value in Python is $O(n)$, to achieve $O(\lg n)$ we can
 while heap and heap[0].deleted:
     heapq.heappop(heap)
 \end{python}
-\subsection{Summarizing properties}
+\subsection{Complexity}
+Building a heap is O(N) rather than $O(N \lg N)$.
 
-
+Proof:
+\begin{eqnarray*}
+&& \because \sum_{i=0}^{+\infty} {ix^i} =\frac{x}{(1-x)^2} \\
+&& \therefore \sum_{h=0}^{\lfloor\lg n\rfloor}{\Big\lceil\frac{n}{2^{h+1}}\Big\rceil O(h)} = O\Bigg(n\sum_{h=0}^{\lfloor\lg n\rfloor}{\frac{h}{2^h}}\Bigg) \\
+&& \therefore \sum_{h=0}^{\lfloor\lg n\rfloor}{\Big\lceil\frac{n}{2^{h+1}}\Big\rceil
+O(h)} = O(n)
+\end{eqnarray*}
