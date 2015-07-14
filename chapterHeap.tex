@@ -4,14 +4,40 @@
 \section{Introduction}
 Heap-ordered. Binary heap is one of the implementations of Priority Queue (ADT). 
 
-Basic options:
+\section{Operations}
+Basic operations:
 \begin{enumerate}
 \item sink()/ sift\_down() - recursive
 \item swim()/ sift\_up() - recursive
 \item build()/ heapify() - bottom-up sink()
 \end{enumerate}
+\subsection{Sink}
+\subsection{Swim}
+\subsection{Heapify}
+Worst case: Heapifying \textbf{a sorted array} is the worst case for heap construction, because the root of each subheap considered sinks all the way to the bottom. The worst case complexity $\sim 2N$.
+
+Building a heap is O(N) rather than $O(N \lg N)$.
+
+Proof:
+\begin{eqnarray*}
+&& \because \sum_{i=0}^{+\infty} {ix^i} =\frac{x}{(1-x)^2} \\
+&& \therefore \sum_{h=0}^{\lfloor\lg n\rfloor}{\Big\lceil\frac{n}{2^{h+1}}\Big\rceil
+O(h)} = O\Bigg(n\sum_{h=0}^{\lfloor\lg n\rfloor}{\frac{h}{2^h}}\Bigg) \\
+&& \therefore \sum_{h=0}^{\lfloor\lg n\rfloor}{\Big\lceil\frac{n}{2^{h+1}}\Big\rceil
+O(h)} = O(n)
+\end{eqnarray*}
+
 \section{Implementation}
 The self-implemented binary heap's index usually starts at 1 rather than 0. 
+
+The array representation of heap is in \textbf{level-order}.
+
+A 3-heap is an array representation (using 1-based indexing) of a complete 3-way tree. The children of $a[k]$ are $a[3k-1]$, $a[3k]$, and $a[3k+1]$.
+
+The main reason that we can use an array to represent the heap-ordered tree in a binary heap is because the tree is \textbf{complete}.
+
+Suppose that we represent a BST containing N keys using an array, with $a[0]$ empty, the root at $a[1]$. The two children of $a[k]$ will be at $a[2k]$ and $a[2k+1]$. Then, the length of the array might need to be as large as $2^N$.
+
 \begin{figure}[hbtp]
 \centering
 \subfloat{\includegraphics[scale=.80]{heap_repr}}
@@ -44,13 +70,3 @@ Normally the deletion by value in Python is $O(n)$, to achieve $O(\lg n)$ we can
 while heap and heap[0].deleted:
     heapq.heappop(heap)
 \end{python}
-\subsection{Complexity}
-Building a heap is O(N) rather than $O(N \lg N)$.
-
-Proof:
-\begin{eqnarray*}
-&& \because \sum_{i=0}^{+\infty} {ix^i} =\frac{x}{(1-x)^2} \\
-&& \therefore \sum_{h=0}^{\lfloor\lg n\rfloor}{\Big\lceil\frac{n}{2^{h+1}}\Big\rceil O(h)} = O\Bigg(n\sum_{h=0}^{\lfloor\lg n\rfloor}{\frac{h}{2^h}}\Bigg) \\
-&& \therefore \sum_{h=0}^{\lfloor\lg n\rfloor}{\Big\lceil\frac{n}{2^{h+1}}\Big\rceil
-O(h)} = O(n)
-\end{eqnarray*}
