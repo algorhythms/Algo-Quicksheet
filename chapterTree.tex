@@ -1,9 +1,7 @@
 \chapter{Tree}
 
-
 \section{Binary Tree}
-\subsection{Introduction}
-\subsection{Basic operations}
+\subsection{Introductions}
 \runinhead{Get parent ref.} You can implicitly get a parent reference by return the current recursion function to its parent to maintain the link. Sample code:
 \begin{java}
 Node deleteMin(Node x) {
@@ -14,46 +12,13 @@ Node deleteMin(Node x) {
 }
 \end{java}
 
-\subsection{BST}
+\section{Binary Search Treee (BST)}
 \runinhead{Array and BST.}Given either the \textbf{preorder} or \textbf{postorder} (but not inorder) traversal of a BST containing N distinct keys, it is possible to reconstruct the shape of the BST. 
+\subsection{Operations}
+TODO
 
-\section{Balanced BST}
-\subsection{2-3 Search Tree}
-\subsubsection{Insertion}
-Insertion into a 3-node at bottom:
-\begin{enumerate}
-\item Add new key to the 3-node to create a temporary 4-node.
-\item Move middle key of the 4-node into the parent (including root's parent).
-\item Split the modified 4-node.
-\item Repeat recursively up the trees as necessary.
-\end{enumerate}
-\begin{figure}[hbtp]
-\centering
-\subfloat{\includegraphics[scale=1.]{23insert1}}
-\caption{Insertion 1}
-\label{fig:LABEL}
-\end{figure}
-
-\begin{figure}[hbtp]
-\centering
-\subfloat{\includegraphics[scale=1.]{23insert2}}
-\caption{insert2}
-\label{fig:LABEL}
-\end{figure}
-
-\subsubsection{Splitting}
-Summary of splitting the tree. 
-\begin{figure}[hbtp]
-\centering
-\subfloat{\includegraphics[scale=.60]{23splitting}}
-\caption{Splitting temporary 4-ndoe summary}
-\label{fig:splitting}
-\end{figure}
-
-\subsubsection{Properties}
-When inserting a new key into a 2-3 tree, under which one of the following scenarios must the height of the 2-3 tree increase by one? When every node on the search path from the root is a 3-node
-
-\subsection{Red-Black Tree}
+\subsection{Range search}
+TODO
 
 \section{Segment Tree}
 \subsection{Introduction}
@@ -167,12 +132,3 @@ class SegmentTree(object):
         if root.right: val = f(val, root.right.m)
         root.m = val
 \end{python}
-\section{Balanced Tree}
-
-\subsection{AVL Tree}
-
-\subsection{Red-Black Tree}
-
-\subsection{Summarizing properties}
-
-
