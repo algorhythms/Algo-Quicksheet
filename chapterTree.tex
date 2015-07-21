@@ -12,12 +12,21 @@ Node deleteMin(Node x) {
 }
 \end{java}
 
-\section{Binary Search Treee (BST)}
+\section{Binary Search Tree (BST)}
 \runinhead{Array and BST.}Given either the \textbf{preorder} or \textbf{postorder} (but not inorder) traversal of a BST containing N distinct keys, it is possible to reconstruct the shape of the BST. 
 \subsection{Operations}
-TODO
+\runinhead{Rank.}
 
 \subsection{Range search}
+\runinhead{1-d range count}
+\begin{java}
+int size(Key lo, Key hi) {
+    if (contains(hi)) return rank(hi)-rank(lo)+1;
+    else              return rank(hi)-rank(lo);
+}
+\end{java}
+\runinhead{1-d range search}
+\section{Interval Search Tree}
 TODO
 
 \section{Segment Tree}
