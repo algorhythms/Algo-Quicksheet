@@ -1,0 +1,14 @@
+\ProvidesPackage{commons}[2015/07/22 v1.0 common commands macros]
+\usepackage{ifthen}
+
+\newcommand\runinhead[1]{
+  \textbf{#1}
+}
+
+\newcommand\rih[1]{
+  \runinhead{#1}
+}
+
+\newcommand\display[2]{
+  \ifthenelse{\equal{#1}{true}}{#2}{}
+}
