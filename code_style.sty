@@ -1,0 +1,92 @@
+\ProvidesPackage{code_style}[2015/07/07 v1.0 code style macros]
+\usepackage[utf8]{inputenc}
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{8} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{8}  % for normal
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+\usepackage{listings}
+% Python style for highlighting
+\newcommand\pythonstyle{
+  \lstset{
+    language=Python,
+    basicstyle=\ttb,
+    otherkeywords={assert, del, self, yield},  % Add keywords here
+    keywordstyle=\ttm\color{deepblue},
+    columns=flexible,
+    literate={-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1,
+    keepspaces=true,
+    commentstyle=\ttm,
+    emph={__init__},  % Custom highlighting
+    emphstyle=\ttm\color{deepred},  % Custom highlighting style
+    stringstyle=\color{deepgreen},
+    % frame=tb,  % Any extra options here
+    showstringspaces=false            
+  }
+}
+
+% Python environment
+\lstnewenvironment{python}[1][]{
+  \pythonstyle
+  \lstset{#1}
+}{}
+
+% Python for external files
+\newcommand\pythonexternal[2][]{
+  {
+    \pythonstyle
+    \lstinputlisting[#1]{#2}
+  }
+}
+
+% Python for inline
+\newcommand\pythoninline[1]{
+  {
+    \pythonstyle\lstinline!#1!
+  }
+}
+
+\newcommand\javastyle{
+  \lstset{
+    language=Java,
+    basicstyle=\ttb,
+    otherkeywords={},  % Add keywords here
+    keywordstyle=\ttm\color{deepblue},
+    columns=flexible,
+    literate={-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1,
+    keepspaces=true,
+    commentstyle=\ttm,
+    emph={},  % Custom highlighting
+    emphstyle=\ttm\color{deepred},  % Custom highlighting style
+    stringstyle=\color{deepgreen},
+    % frame=tb,  % Any extra options here
+    showstringspaces=false            
+  }
+}
+
+% Java environment
+\lstnewenvironment{java}[1][]{
+  \javastyle
+  \lstset{#1}
+}{}
+
+% Java for external files
+\newcommand\javaexternal[2][]{
+  {
+    \javastyle
+    \lstinputlisting[#1]{#2}
+  }
+}
+
+% Java for inline
+\newcommand\javainline[1]{
+  {
+    \javastyle\lstinline!#1!
+  }
+}
