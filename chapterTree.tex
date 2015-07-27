@@ -2,7 +2,7 @@
 
 \section{Binary Tree}
 \subsection{Introductions}
-\runinhead{Get parent ref.} You can implicitly get a parent reference by return the current recursion function to its parent to maintain the link. Sample code:
+\runinhead{Get parent ref.} To get a parent reference (implicitly), return the current recursion function to its parent to maintain the path. Sample code:
 \begin{java}
 Node deleteMin(Node x) {
     if (x.left == null) return x.right;
@@ -11,7 +11,22 @@ Node deleteMin(Node x) {
     return x;
 }
 \end{java}
+\runinhead{Search.} To search a node in binary tree (not necessarily BST), use dfs:
+\begin{python}
+def dfs(self, root, t, path, found):
+    if not root or found[0]:  # post-call check
+        return
 
+    path.append(root)
+    if root == t:
+        found[0] = True
+
+    self.dfs(root.left, t, path, found)
+    self.dfs(root.right, t, path, found)
+    if not found[0]:
+        path.pop()  # 1 pop() corresponds to 1 append()
+\end{python}
+The `found` is a wrapper for boolean to keep it referenced by all calling stack. 
 \section{Binary Search Tree (BST)}
 \runinhead{Array and BST.}Given either the \textbf{preorder} or \textbf{postorder} (but not inorder) traversal of a BST containing N distinct keys, it is possible to reconstruct the shape of the BST. 
 \subsection{Operations}

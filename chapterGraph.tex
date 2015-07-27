@@ -15,11 +15,15 @@ dfs:
 
 Notice:
 \begin{enumerate}
-\item Need to reverse the result queue, since the neighbors (successors) are visited first. 
-\item Need to detect cycle; thus the dfs need to construct result queue and detect cycle simultaneously, by using two sets: $visited$ and $marked$. 
+\item Need to \textbf{reverse} the result queue, since the neighbors (successors) are visited first. 
+\item Need to \textbf{detect cycle}; thus the dfs need to construct result queue and detect cycle simultaneously, by using two sets: $visited$ and $marked$. 
 \end{enumerate}
-
-\subsection{Code}
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=.60]{uf}}
+\caption{Weighted quick-union traces}
+\label{fig:union_find}
+\end{figure}
 \begin{python}
 def topological_sort(self, V):
     visited = set()
@@ -29,7 +33,7 @@ def topological_sort(self, V):
     for k in V.keys():
         if k not in visited:
             if not self.dfs(V, k, visited, marked, ret):
-                return []
+                return []  # contains cycle 
 
     ret.reverse()
     return ret
@@ -54,4 +58,50 @@ def dfs(self, V, k, visited, marked, ret):
 \begin{enumerate}
 \item Course scheduling problem with pre-requisite. 
 \end{enumerate}
+
+\section{Union Find}
+\subsection{Algorithm}
+Weighted union find with path compression: 
+\begin{enumerate}
+\item An array to store each item's predecessor \textbf{pi}. 
+\item Merge the tree according to the \textbf{size} to maintain balance. 
+\end{enumerate}
+\begin{python}
+class UnionFind(object):
+    """
+    Weighted Union Find with path compression
+    """
+    def __init__(self):
+        self.pi = {}  # item -> Node
+        self.sz = {}
+
+    def add(self, item):
+        if item not in self.pi:
+            self.pi[item] = item
+            self.sz[item] = 1
+
+    def union(self, a, b):
+        self.add(a)
+        self.add(b)
+
+        pi1 = self._pi(a)
+        pi2 = self._pi(b)
+
+        if self.sz[pi1] > self.sz[pi2]:
+            pi1, pi2 = pi2, pi1
+
+        self.pi[pi1] = pi2
+        self.sz[pi2] += self.sz[pi1]
+
+    def _pi(self, item):
+        pi = self.pi[item]
+        if item != pi:
+            self.pi[item] = self._pi(pi)
+
+        return self.pi[item]
+
+    def compress(self):
+        for item in self.pi.keys():
+            self.pi[item] = self._pi(item)
+\end{python}
 
