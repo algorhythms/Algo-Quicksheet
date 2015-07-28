@@ -159,7 +159,7 @@
    \let\@evenfoot=\@oddfoot}}
 %
 % start new chapter on any page
-\newif\if@openright \@openrighttrue
+\newif\if@openright \@openrightfalse  % if want to open only on right pages, change to \@openrighttrue 
 \DeclareOption{openany}{\@openrightfalse}
 %
 % no size changing allowed

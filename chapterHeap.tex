@@ -1,10 +1,11 @@
 \chapter{Heap}
 
-
 \section{Introduction}
 Heap-ordered. Binary heap is one of the implementations of Priority Queue (ADT). 
 
 \section{Operations}
+Assume the root is at $a[1]$ rather than $a[0]$.
+\\
 Basic operations:
 \begin{enumerate}
 \item sink()/ sift\_down() - recursive
@@ -12,7 +13,26 @@ Basic operations:
 \item build()/ heapify() - bottom-up sink()
 \end{enumerate}
 \subsection{Sink}
+\begin{python}
+def sink(self, idx):
+    while 2*idx <= self.N:
+        c = 2*idx
+        if c+1 <= self.N and self.less(c, c+1):
+            c += 1
+        if not self.less(idx, c):
+            return 
+
+        self.swap(idx, c)
+        idx = c
+\end{python}
 \subsection{Swim}
+\begin{python}
+def swim(self, idx):
+    while idx > 1 and self.less(idx/2, idx):
+        pi = idx/2
+        self.swap(pi, idx)
+        idx = pi
+\end{python}
 \subsection{Heapify}
 Worst case: Heapifying \textbf{a sorted array} is the worst case for heap construction, because the root of each subheap considered sinks all the way to the bottom. The worst case complexity $\sim 2N$.
 
@@ -40,12 +60,12 @@ Suppose that we represent a BST containing N keys using an array, with $a[0]$ em
 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.80]{heap_repr}}
+\subfloat{\includegraphics[scale=.90]{heapRepr}}
 \caption{Heap representation}
 \label{fig:heap} 
 \end{figure}
 
-\section{Python heapq}
+\section{Python Heapq}
 Python only has built in min-heap. To use max-heap, you can: 
 \begin{enumerate}
 \item Revert the number: 1 becomes -1.

@@ -49,24 +49,38 @@ Notice,
 
 
 \section{Sequence}
-Longest common subsequence. Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
+\rih{Longest common subsequence.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
-  F_{i-1, j-1}+1, &\mbox{ if $a[i]==b[j]$} \\
-  \max(F_{i-1, j}, F_{i,j-1}),&\mbox{ otherwise}
+  F_{i-1, j-1}+1 &\mbox{// if $a[i]==b[j]$} \\
+  \max\Big(F_{i-1, j},&\mbox{// otherwise} \\
+  F_{i,j-1}\Big)
        \end{array} \right.
 \end{eqnarray*}
 \\
-Longest common substring. Let $F_{i, j}$ be the LCS at string $a[:i]$ and
+\rih{Longest common substring.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and
 $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
-  F_{i-1, j-1}+1, &\mbox{ if $a[i]==b[j]$} \\
-  0, &\mbox{ otherwise}
+  F_{i-1, j-1}+1 &\mbox{// if $a[i]==b[j]$} \\
+  0 &\mbox{// otherwise}
        \end{array} \right.
 \end{eqnarray*}
 
 Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, the $gmax=max\big(\{{F_{i,j}\}\big)$.
+\\
+\rih{Edit distance} Find the minimum number of steps required to convert words $A$ to $B$ using inserting, deleting, replacing. 
+
+Let $F_{i, j}$ be the minimum number
+of steps required to convert $A[:i]$ to $B[:j]$.
+\begin{eqnarray*}
+F_{i. j} = \left\{ \begin{array}{rl}
+  F_{i-1, j-1} &\mbox{// if $a[i]==b[j]$} \\
+  \min\Big(F_{i, j-1}+1, &\mbox{//otherwise, insert}\\
+  F_{i-1, j}+1, &\mbox{// delete}\\
+  F_{i_1, j_1}+1\Big) &\mbox{// replace}\\
+       \end{array} \right.
+\end{eqnarray*}
 
 \section{Backpack}
 Given $n$ items with weight $w_i$ and value $v_i$, an integer $C$ denotes the size of a backpack. What is the max value you can fill this backpack?
@@ -76,7 +90,7 @@ Let $F_{i, c}$ be the max size we can carry for index $0..i$ with capacity $c$. 
 F_{i, c}= \max\big(&&F_{i-1, c}, \\
 &&F_{i-1, c-w_i}+v_i\big)
 \end{eqnarray*}
-
+TODO advanced backpack problem. 
 
 \section{Local and global extremes}
 \subsection{Long and short stocks}

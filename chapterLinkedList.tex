@@ -1,6 +1,27 @@
 \chapter{Linked List}
 
 
-\section{Introduction}
-Introduction 
+\section{Operations}
+\subsection{Fundamentals}
+Get the $pre$ reference:
+\begin{python}
+dummy = Node(0)
+dummy.next = head
+pre = dummy
+cur = pre.next
+\end{python}
 
+\subsection{Basic Operations}
+\begin{enumerate}
+\item Get the length
+\item Get the $i$-th object
+\item Delete a node 
+\item Reverse
+\end{enumerate}
+
+\subsection{Combined Operations}
+\begin{enumerate}
+\item Determine whether two lists intersects
+\item Determine whether the list is palindrome
+\item Determine whether the list is acyclic 
+\end{enumerate}
