@@ -13,18 +13,25 @@ The so called concept dp as memoization of recursion does not grasp the core phi
 
 The formula in the following section are unimportant. What is important is the definition of dp array and transition function derivation.
 \subsection{Common practice}
+\rih{Dummy.} Use dummies to avoid using if-else conditional branch.
 \begin{enumerate}
 \item Use $n+1$ dp arrays to reserve space for dummies. 
 \item Iteration range is $[1, n+1)$.
 \item $n+k$ for k dummies  
 \end{enumerate}
-\subsection{Space optimization}
-To avoid MLE, we need to carry out space optimization. Let $o$ be other subscripts, $f$ be the transition function. 
+\rih{State definition.} Two general sets of state definitions:
+\begin{enumerate}
+\item End AT index $i$
+\item End BEFORE index $i$
+\end{enumerate}}
+
+\rih{Space optimization.} To avoid MLE, we need to carry out space optimization. Let $o$ be other subscripts, $f$ be the transition function. 
 
 Firstly,
 $$
 F_{i, o} = f\big(F_{i-1, o'}\big)
 $$
+
 should be reduced to 
 $$
 F_{o} = f\big(F_{o'}\big)
@@ -34,6 +41,7 @@ Secondly,
 $$
 F_{i, o} = f\big(F_{i-1, o'}, F_{i-2. o'}\big)
 $$
+
 should be reduced to 
 $$
 F_{i, o} = f\big(F_{(i-1)\%2, o'}, F_{(i-2)\%2. o'}\big)
@@ -41,7 +49,7 @@ $$
 
 More generally, we can be $(i-b)\%a$ to reduce the space down to $a$.
 
-Notice,
+Notice:
 \begin{enumerate}
 \item Must iterate $o$ \textbf{backward} to un-updated value. 
 \end{enumerate}
@@ -82,6 +90,20 @@ F_{i. j} = \left\{ \begin{array}{rl}
        \end{array} \right.
 \end{eqnarray*}
 
+\rih{Maximal square.} Find the largest rectangle in the matrix:
+\begin{lstlisting}
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 1 1
+1 0 0 1 0
+\end{lstlisting}
+Let $F_{i, j}$ represents the max square's length ended at $mat_{i, j}$ (lower right corner).
+\begin{eqnarray*}
+F_{i. j} = \left\{ \begin{array}{rl}
+  \min\big(F_{i-1, j-1}, F_{i-1, j}, F_{i, j-1}\big)+1 &\mbox{// if $mat_{i, j}==1$} \\
+  0 &\mbox{// otherwise}
+       \end{array} \right.
+\end{eqnarray*}
 \section{Backpack}
 Given $n$ items with weight $w_i$ and value $v_i$, an integer $C$ denotes the size of a backpack. What is the max value you can fill this backpack?
 
