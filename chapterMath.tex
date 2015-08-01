@@ -1,14 +1,14 @@
 \chapter{Math}
 
 \section{Functions}
-Equals; requirements for equals
+\rih{Equals.} Requirements for equals
 \begin{enumerate}
 \item Reflexive
 \item Symmetric
 \item Transitive
 \item Non-null
 \end{enumerate}
-Compare; requirements for compares (total order):
+\rih{Compare.} Requirements for compares (total order):
 \begin{enumerate}
 \item Antisymmetry
 \item Transitivity
@@ -31,9 +31,15 @@ When the algorithm terminates, the numbers remaining not marked in the list are 
 \subsubsection{Refinements}
 The main idea here is that every value for $p$ is prime, because we have already marked all the multiples of the numbers less than $p$. Note that some of the numbers being marked may have already been marked earlier (e.g., 15 will be marked both for 3 and 5).
 
-As a refinement, it is sufficient to mark the numbers in step 3 starting from $p^2$, as all the smaller multiples of $p$ will have already been marked at that point. This means that the algorithm is allowed to terminate in step 4 when $p^2$ is greater than n.
+As a refinement, it is sufficient to mark the numbers in step 3 starting from $p^2$, because all the smaller multiples of $p$ will have already been marked at that point by the previous smaller prime factor other than $p$. From $p^2$, $p$ becomes the smaller prime factor of a composite number. This means that the algorithm is allowed to terminate in step 4 when $p^2$ is greater than n.
 
 Another refinement is to initially list odd numbers only, (3, 5, ..., n), and count in increments of 2p in step 3, thus marking only odd multiples of $p$. This actually appears in the original algorithm. This can be generalized with wheel factorization, forming the initial list only from numbers coprime with the first few primes and not just from odds (i.e., numbers coprime with 2), and counting in the correspondingly adjusted increments so that only such multiples of $p$ are generated that are coprime with those small primes, in the first place.
+
+To summarized, the refinements include:
+\begin{enumerate}
+\item Starting from $p^2$.
+\item Preprocessing even numbers and then only process odd numbers; thus the increment becomes $2p$.
+\end{enumerate}}
 
 \subsubsection{code}
 \begin{python}

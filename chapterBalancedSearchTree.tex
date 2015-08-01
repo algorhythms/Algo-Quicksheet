@@ -69,14 +69,17 @@ The hight of the RB-tree is at most $2\lg N$ where alternating red and black lin
 \runinhead{Insertion.} When doing insertion, from the child's perspective, need to have the information of current leaning direction and parent's color. Or from the parent's perspective - need to have the information of children's and grandchildren's color and directions.
 
 For every new insertion, the node is always attached with red links. 
+
+The following code is the simplest version of RB-tree insertion: 
+
 \begin{java}
 Node put(Node h, Key key, Value val) {
-    if (h == null)  // Do standard insert, with red link to parent.
+    if (h == null)  // std insert, with red link to parent.
        return new Node(key, val, 1, RED);
     int cmp = key.compareTo(h.key);
     if      (cmp < 0) h.left  = put(h.left,  key, val);
     else if (cmp > 0) h.right = put(h.right, key, val);
-    else h.val = val;
+    else h.val = val; // pass
     if (isRed(h.right) && !isRed(h.left))    h = rotateLeft(h);
     if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
     if (isRed(h.left) && isRed(h.right))     flipColors(h);
@@ -85,9 +88,16 @@ Node put(Node h, Key key, Value val) {
 }
 \end{java}
 
+Rotate left, rotate right, then flip colors.
+
 \runinhead{Deletion.} Deletion is more complicated. 
 
 \section{B-Tree}
-
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=.50]{b-tree}}
+\caption{B-Tree}
+\label{fig:b-tree}
+\end{figure}
 
 \section{AVL Tree}

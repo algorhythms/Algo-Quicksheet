@@ -4,10 +4,22 @@
 \section{KMP}
 Find string $W$ in string $S$ within complexity of $O(|W|+|S|)$.
 \subsection{Prefix suffix table}
-Partial match table (also known as "failure function"). After a failure matching, you know that the matched suffix before the failure point is already matched; therefore when you shift the $W$, you only need to shift the prefix onto the position of the previous suffix. The prefix and suffix must be proper prefix and suffix.\\
+Partial match table (also known as "failure function"). After a failure matching, you know that the matched suffix before the failure point is already matched; therefore when you shift the $W$, you only need to shift the prefix onto the position of the previous suffix. The prefix and suffix must be proper prefix and suffix.
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=1.30]{kmp_presuffix}}
+\caption{KMP example}
+\label{fig:kmp_presuffix}
+\end{figure}
 
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=1.30]{kmp_table}}
+\caption{Prefix-suffix table}
+\label{fig:kmp_table}
+\end{figure}
 In table-building algorithm. $T[i]$ stores the NEXT prefix index $cnd$.\\
-
+\\
 Notice:
 \begin{enumerate}
 \item dummy at $T[0]=-1$.
@@ -18,7 +30,6 @@ Notice:
 \item restart 
 \end{enumerate}
 \end{enumerate}
-
 Code:
 \begin{python}
 # construct T
@@ -57,19 +68,19 @@ Notice:
 Code: 
 \begin{python}
 # search
-i = 0  # index for W 
-s = 0  # start 
-while s+i < lh:
-    if needle[i] == haystack[s+i]:
+i = 0  # index for needle 
+j = 0  # index for haystack
+while j+i < len(haystack):
+    if needle[i] == haystack[j+i]:  # matched 
         i += 1
-        if i == ln:
-            return haystack[s:]
+        if i == len(needle):
+            return haystack[j:]
     else:
-        if T[i] != -1:
-            s = s+i-T[i]
+        if T[i] != -1:  # fall back
+            j = j+i-T[i]
             i = T[i]
-        else:
-            s += 1
+        else:  # restart
+            j += 1
             i = 0
 
 return None

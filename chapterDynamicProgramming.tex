@@ -107,7 +107,7 @@ F_{i. j} = \left\{ \begin{array}{rl}
 \section{Backpack}
 Given $n$ items with weight $w_i$ and value $v_i$, an integer $C$ denotes the size of a backpack. What is the max value you can fill this backpack?
 
-Let $F_{i, c}$ be the max size we can carry for index $0..i$ with capacity $c$. We have 2 choices: take the $i$-th item or not.
+Let $F_{i, c}$ be the max value we can carry for index $0..i$ with capacity $c$. We have 2 choices: take the $i$-th item or not.
 \begin{eqnarray*}
 F_{i, c}= \max\big(&&F_{i-1, c}, \\
 &&F_{i-1, c-w_i}+v_i\big)
