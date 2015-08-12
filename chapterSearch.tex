@@ -11,3 +11,25 @@ Variants:
 \item get the idx equal or just lower 
 \item get the idx equal or just higher 
 \end{enumerate}}
+
+\section{Looping Root}
+Iterate the list and make the current element as the root, evaluate the left part and the right part and combine the results (i.e. looping + divide \& conquer). 
+
+\rih{Different ways to add parentheses.} Iterate the operators, divide and conquer left parts and right parts and then combine result:
+\begin{python}
+def dfs_eval(self, nums, ops):
+    ret = []
+    if not ops:
+        assert len(nums) == 1
+        return nums
+
+    for i, op in enumerate(ops):
+        left_vals = self.dfs_eval(nums[:i+1], ops[:i])
+        right_vals = self.dfs_eval(nums[i+1:], ops[i+1:])
+        for l in left_vals:
+            for r in right_vals:
+                ret.append(self._eval(l, r, op))
+
+    return ret
+\end{python}
+

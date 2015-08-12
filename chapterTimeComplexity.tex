@@ -1,6 +1,23 @@
 \chapter{Time Complexity}
 
-\section{Introduction}
+\section{Basic Counts}
+\rih{Double for loop} 
+$$
+\sum_{i=1}^N{\sum_{j=i}^N{1}} = {N \choose 2} \sim \frac{1}{2} N^2
+$$
+$$
+\sum_{i=1}^N{\sum_{j=i}^N{1}} \sim \int_{x=1}^N \int_{y=x}^N  \mathrm{d}y\, \mathrm{d}x
+$$
+\rih{Triple for loop}
+$$
+\sum_{i=1}^N{\sum_{j=i}^N{\sum_{k=1}^N{1}}} = {N \choose 3} \sim \frac{1}{6} N^3
+$$
+$$
+\sum_{i=1}^N{\sum_{j=i}^N{\sum_{k=1}^N{1}}} \sim \int_{x=1}^N \int_{y=x}^N \int_{z=y}^N \mathrm{d}z\,
+\mathrm{d}y\, \mathrm{d}x
+$$
+
+\section{Solve Recurrence Equations}
 Basic recurrence equation solving techniques:
 \begin{enumerate}
 \item Guessing and validation
@@ -9,20 +26,20 @@ Basic recurrence equation solving techniques:
 \item Master Theorem
 \end{enumerate}
 
-\section{Master Theorem}
+\subsection{Master Theorem}
 Recurrence relations:
 $$T(n) = a \; T\!\left(\frac{n}{b}\right) + f(n)\mbox{, where }a \geq 1 \mbox{, } b > 1$$
 
 Notice that $b>1$ rather than $b\geq1$.
 
-\subsection*{Case 1}
+\subsubsection*{Case 1}
 If:
 $$f(n) = o(n^{\log_b a})$$
 Then:
 $$T(n) = \Theta(n^{\log_b a})$$
 
 Notice that in the condition it is $o$ rather than $O$. 
-\subsection*{Case 2}
+\subsubsection*{Case 2}
 If:
 $$f(n) = \Theta(n^{\log_b a} \log^{k} n)$$
 
@@ -32,7 +49,7 @@ $$
 T(n) = \Theta(n^{\log_b a} \log^{k+1} n)
 $$
 
-\subsection*{Case 3}
+\subsubsection*{Case 3}
 If:
 $$f(n) = \omega(n^{\log_b a})$$
 And with regularity condition:

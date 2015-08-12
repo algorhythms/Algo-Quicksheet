@@ -2,7 +2,30 @@
 
 
 \section{Introduction}
-Queue, Stack
+Abstract Data Types (ADT):
+\begin{enumerate}
+\item Queue
+\item Stack
+\end{enumerate}
+Implementation (for both queue and stack):
+\begin{enumerate}
+\item Linked List
+\item Resizing Array:
+\begin{enumerate}
+\item Doubling: when full (100\%).
+\item Halfing: when one-quarter full (100\%). 
+\end{enumerate}}
+\end{enumerate}}
+Python Library:
+\begin{enumerate}
+\item \pythoninline{collections.deque} \footnote{The naming in collections is awkward: \href{http://stackoverflow.com/questions/18953681/naming-convention-in-collections-why-are-some-lowercase-and-others-capwords}{discussion}.}
+\item \pythoninline{list}
+\end{enumerate}} 
+Java Library:
+\begin{enumerate}
+\item \javainline{java.util.Stack<E>}
+\item \javainline{java.util.LinkedList<E>}
+\end{enumerate}}
 
 \section{Stack}
 \subsection{Stack and Recursion}
@@ -55,3 +78,11 @@ def largestRectangleArea(self, height):
 
     return gmax
 \end{python}
+
+\section{Polish Notation}
+Polish Notation is in-fix while Reverse Polish Notation is post-fix. 
+\subsection{Evaluate Post-fix Expressions}
+Straightforward: Use a stack to store the number. Iterate the input, push stack when hit numbers, pop stack when hit operators.
+\subsection{Convert In-fix to Post-fix}
+
+
