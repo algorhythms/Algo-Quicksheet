@@ -7,7 +7,7 @@ Normally, we should solve the linear problem and circular problem differently.
 \subsection{Circular max sum}
 Linear problem can be solved linear with simple algorithm, but the circular sum should use dp. 
 \begin{enumerate}
-\item Construct left max sum for max sum over the $[0..i]$ (\textbf{forward} starting from the left side); construct right max sum for max sum over the indexes $[i..n-1]$ (\textbf{backward} starting from the right side). Notice that the max sum index ends AT or BEFORE i. 
+\item Construct left max sum for max sum over the $[0..i]$ (\textbf{forward} starting from the left side). \\ Construct right max sum for max sum over the indexes $[i..n-1]$ (\textbf{backward} starting from the right side). Notice that the max sum index ends AT or BEFORE i. 
 \item The $maxSum = maxSum[i..n-1]+maxSum[0..i]$
 \end{enumerate}
 
