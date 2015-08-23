@@ -1,6 +1,62 @@
 \chapter{Graph}
 
+\section{Basic}
+\rih{Graph Representation.} V for a vertex set with a map, mapping from vertex to its neighbors.
+\begin{python}
+V = defaultdict(list)
+\end{python}
 
+\section{Detect Acyclic}
+\begin{enumerate}
+\item \pythoninline{marked} is reset after a dfs. 
+\item \pythoninline{visited} should be maintained only in the end of the dfs. 
+\item For directed graph:
+\begin{enumerate}
+\item Should dfs for all neighbors except for vertices in \pythoninline{visited}, to avoid revisiting. For example, avoid revisiting A, B when start from C in the graph $C \rightarrow A \rightarrow B$.
+\item Excluding predecessor \pythoninline{pi} is erroneous in the case of $A \leftrightarrow B$ 
+\end{enumerate}
+\item For undirected graph:
+\begin{enumerate}
+\item Should dfs for all neighbors except for the predecessor \pythoninline{pi}. 
+\item Excluding neighbors in \pythoninline{visited} is redundant. 
+\end{enumerate}
+\end{enumerate}}
+
+\subsection{Directed Graph}
+
+\begin{python}
+def dfs(self, V, k, visited, marked):
+    if k in marked:
+        return False
+
+    marked.add(k)
+    for neighbor in V[k]:
+        if neighbor not in visited:
+            if not self.dfs(V, neighbor, 
+               visited, marked):
+                return False
+
+    marked.remove(k)
+    visited.add(k)
+    return True
+\end{python}
+\subsection{Undirected Graph}
+\begin{python}
+def dfs(self, V, k, pi, visited, marked):
+    if k in marked:
+        return False
+
+    marked.add(k)
+    for neighbor in V[k]:
+        if neighbor != pi:
+            if not self.dfs(V, neighbor, k, 
+                visited, marked):
+                return False
+
+    marked.remove(k)
+    visited.add(k)
+    return True
+\end{python}
 \section{Topological Sorting}
 For a graph $G=\{V, E\}$, $ A \rightarrow B $, then $A$ is before $B$ in the ordered list. 
 \subsection{Algorithm}
