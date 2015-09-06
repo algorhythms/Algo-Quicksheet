@@ -10,7 +10,22 @@ Variants:
 \item bisect\_right
 \item get the idx equal or just lower 
 \item get the idx equal or just higher 
-\end{enumerate}}
+\end{enumerate}
+Binary search, get the idx equal or just lower, which is a very standard binary search:
+\begin{python}
+def bisect(self, A, t):
+    lo = 0
+    hi = len(A)
+    while lo < hi:
+        mid = (lo+hi)/2
+        if A[mid] == t:
+            return mid
+        elif A[mid] < t:
+            lo = mid+1
+        else:
+            hi = mid
+    return lo-1
+\end{python}
 
 \section{Looping Root}
 Iterate the list and make the current element as the root, evaluate the left part and the right part and combine the results (i.e. looping + divide \& conquer). 

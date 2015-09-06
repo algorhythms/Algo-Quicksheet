@@ -27,6 +27,24 @@ def dfs(self, root, t, path, found):
         path.pop()  # 1 pop() corresponds to 1 append()
 \end{python}
 The `found` is a wrapper for boolean to keep it referenced by all calling stack. 
+
+\rih{Lowest common ancestor.} In BST, the searching is straightforward. In normal binary tree, construct the path from root to $node_1$ and $node_2$ respectively, and \textbf{diff} the two paths.
+
+\rih{Find all paths.} Find all paths from root to leafs. For every currently visiting node, add itself to path; search left, search right and pop itself. Record current result when reaching the leaf.
+\begin{python}
+def dfs_path(self, cur, path, ret):
+    if not cur:
+        return
+
+    path.append(cur)
+    if not cur.left and not cur.right:
+        ret.append("->".join(map(lambda x: str(x.val), path)))
+
+    self.dfs_path(cur.left, path, ret)
+    self.dfs_path(cur.right, path, ret)
+    path.pop()
+\end{python}
+ 
 \section{Binary Search Tree (BST)}
 \runinhead{Array and BST.}Given either the \textbf{preorder} or \textbf{postorder} (but not inorder) traversal of a BST containing N distinct keys, it is possible to reconstruct the shape of the BST. 
 \subsection{Operations}

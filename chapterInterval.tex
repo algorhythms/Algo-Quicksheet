@@ -2,9 +2,13 @@
 
 
 \section{Introduction}
-Queue, Stack
+\rih{Two-way range.} The current scanning node as the pivot, need to scan its left neighbors and right neighbors. 
+$$
+|\leftarrow p \rightarrow |
+$$
 
-
-\subsection{Summarizing properties}
-
+If the relationship between the pivot and its neighbors is symmetric, since scanning range is $[i-k, i+k]$ and iterating from left to right, only consider $[i-k, i]$ to avoid duplication.
+$$
+|\leftarrow p
+$$
 
