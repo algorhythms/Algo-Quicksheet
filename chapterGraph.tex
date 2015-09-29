@@ -5,6 +5,45 @@
 \begin{python}
 V = defaultdict(list)
 \end{python}
+\section{BFS with Abstract Level}
+Start BFS with a set of vertices in abstract level, not necessarily neighboring vertices.
+
+Example:
+$-1$ obstacles, $0$ targets, calculate all other vertices's Manhattan distance to its nearest target:
+$$
+\begin{bmatrix}
+\infty & -1 & 0 & \infty \\
+\infty & \infty & \infty & -1 \\
+\infty & -1 & \infty & -1 \\
+0 & -1 & \infty & \infty \\
+\end{bmatrix} 
+$$
+
+is calculated as:
+$$
+\begin{bmatrix}
+3 & -1 & 0 & 1 \\
+2 & 2 & 1 & -1 \\
+1 & -1 & 2 & -1 \\
+0 & -1 & 3 & 4 \\
+\end{bmatrix}
+$$
+
+\subsection{Algorithm}
+\begin{python}
+def wallsAndGates(self, mat):
+    q = [(i, j) for i, row in enumerate(mat) 
+         for j, val in enumerate(row) if val == 0]
+    for i, j in q:  # iterator
+        for d in self.dirs:
+            i1, j1 = i+d[0], j+d[1]
+            if (0 <= i1 < m and  0 <= j1 < n and 
+                mat[i1][j1] > mat[i][j]+1):
+                mat[i1][j1] = mat[i][j]+1
+                q.append((i1, j1))
+\end{python}
+
+
 
 \section{Detect Acyclic}
 \begin{enumerate}
