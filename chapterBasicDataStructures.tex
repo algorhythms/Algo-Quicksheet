@@ -6,6 +6,7 @@ Abstract Data Types (ADT):
 \begin{enumerate}
 \item Queue
 \item Stack
+\item HashMap
 \end{enumerate}
 Implementation (for both queue and stack):
 \begin{enumerate}
@@ -20,11 +21,13 @@ Python Library:
 \begin{enumerate}
 \item \pythoninline{collections.deque} \footnote{The naming in collections is awkward: \href{http://stackoverflow.com/questions/18953681/naming-convention-in-collections-why-are-some-lowercase-and-others-capwords}{discussion}.}
 \item \pythoninline{list}
+\item \pythoninline{dict, OrderedDict, DefaultDict}
 \end{enumerate}} 
 Java Library:
 \begin{enumerate}
 \item \javainline{java.util.Stack<E>}
 \item \javainline{java.util.LinkedList<E>}
+\item \javainline{java.util.HashMap<K, V>; java.util.TreeMap<K, V>}
 \end{enumerate}}
 
 \section{Stack}
@@ -84,5 +87,26 @@ Polish Notation is in-fix while Reverse Polish Notation is post-fix.
 \subsection{Evaluate Post-fix Expressions}
 Straightforward: Use a stack to store the number. Iterate the input, push stack when hit numbers, pop stack when hit operators.
 \subsection{Convert In-fix to Post-fix}
+TODO
 
+\section{Map}
+\subsection{Math Relations}
+\textbf{OneToOneMap}. One map, dual entries. 
+\begin{python}
+class OneToOneMap(object):
+    def __init__(self):
+        self.m = {}  # keep a single map
 
+    def set(self, a, b):
+        self.m[a] = b
+        self.m[b] = a
+
+    def get(self, a):
+        return self.m.get(a)
+\end{python}
+\subsection{Operations}
+\textbf{Sorting by value}:
+\begin{python}
+from operators import itemgetter 
+sorted(hm.items(), key=itemgetter(1), reverse=True)
+\end{python}
