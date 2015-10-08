@@ -1,5 +1,31 @@
 \chapter{String}
 
+\section{Palindrome}
+\subsection{Palindrome anagram}
+\rih{Test palindrome anagram.} Char counter, number of odd count should $\leq 0$.
+\rih{Count palindrome anagram.} \ref{N_objects_K_types}.
+\rih{Construct palindrome anagram.} clues:
+\begin{enumerate}
+\item dfs
+\item jump parent char
+\end{enumerate}
+Code:
+\begin{python}
+def grow(self, s, count_map, pi, cur, ret):
+  if len(cur) == len(s):
+    ret.append(cur)
+    return
+
+  for k in count_map.keys():
+    if k != pi and count_map[k] > 0:
+      # jump the parent
+      for i in xrange(1, count_map[k]/2+1):
+        count_map[k] -= i*2
+        self.grow(s, count_map, k, k*i+cur+k*i, ret)
+        count_map[k] += i*2
+
+\end{python}
+
 
 \section{KMP}
 Find string $W$ in string $S$ within complexity of $O(|W|+|S|)$.

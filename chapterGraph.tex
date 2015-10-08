@@ -66,18 +66,18 @@ def wallsAndGates(self, mat):
 \subsection{Directed Graph}
 
 \begin{python}
-def dfs(self, V, k, visited, path_set):
-    if k in path_set:
+def dfs(self, V, k, visited, pathset):
+    if k in pathset:
         return False
 
     marked.add(k)
     for nbr in V[k]:
         if nbr not in visited:
-            if not self.dfs(V, nbr, visited, path_set):
+            if not self.dfs(V, nbr, visited, pathset):
                 return False
 
     marked.remove(k)
-    path_set.add(k)
+    pathset.add(k)
     return True
 \end{python}
 \subsection{Undirected Graph}
