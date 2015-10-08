@@ -5,7 +5,9 @@
 \begin{python}
 V = defaultdict(list)
 \end{python}
-\section{BFS with Abstract Level}
+
+\section{BFS}
+\subsection{BFS with Abstract Level}
 Start BFS with a set of vertices in abstract level, not necessarily neighboring vertices.
 
 Example:
@@ -29,18 +31,18 @@ $$
 \end{bmatrix}
 $$
 
-\subsection{Algorithm}
+\subsubsection*{Code}
 \begin{python}
 def wallsAndGates(self, mat):
     q = [(i, j) for i, row in enumerate(mat) 
          for j, val in enumerate(row) if val == 0]
     for i, j in q:  # iterator
         for d in self.dirs:
-            i1, j1 = i+d[0], j+d[1]
-            if (0 <= i1 < m and  0 <= j1 < n and 
-                mat[i1][j1] > mat[i][j]+1):
-                mat[i1][j1] = mat[i][j]+1
-                q.append((i1, j1))
+            I, J = i+d[0], j+d[1]
+            if (0 <= I < m and  0 <= J < n and 
+                mat[I][J] > mat[i][j]+1):
+                mat[I][J] = mat[i][j]+1
+                q.append((I, J))
 \end{python}
 
 
@@ -64,19 +66,18 @@ def wallsAndGates(self, mat):
 \subsection{Directed Graph}
 
 \begin{python}
-def dfs(self, V, k, visited, marked):
-    if k in marked:
+def dfs(self, V, k, visited, path_set):
+    if k in path_set:
         return False
 
     marked.add(k)
-    for neighbor in V[k]:
-        if neighbor not in visited:
-            if not self.dfs(V, neighbor, 
-               visited, marked):
+    for nbr in V[k]:
+        if nbr not in visited:
+            if not self.dfs(V, nbr, visited, path_set):
                 return False
 
     marked.remove(k)
-    visited.add(k)
+    path_set.add(k)
     return True
 \end{python}
 \subsection{Undirected Graph}

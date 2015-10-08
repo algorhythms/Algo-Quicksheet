@@ -48,8 +48,9 @@ the array.
 class Solution:
     def majorityNumber(self, nums, k):
         """
-        Since majority elements appears more than ceil(n/k) times, 
-        there are at most 2 majority number
+        Since majority elements appears more 
+        than ceil(n/k) times, there are at 
+        most 2 majority number
         """
         cnt = defaultdict(int)
         for num in nums:
@@ -65,7 +66,8 @@ class Solution:
                             del cnt[key]
 
         for key in cnt.keys():
-            if len(filter(lambda x: x == key, nums)) > len(nums)/k:
+            if (len(filter(lambda x: x == key, nums)) 
+                > len(nums)/k):
                 return key
 
         raise Exception

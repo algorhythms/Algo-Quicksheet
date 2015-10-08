@@ -27,7 +27,7 @@
     emphstyle=\ttm\color{deepred},  % Custom highlighting style
     stringstyle=\color{deepgreen},
     % frame=tb,  % Any extra options here
-    showstringspaces=false            
+    showstringspaces=false
 }}
 
 % Python environment
@@ -48,6 +48,10 @@
 %% avoid white space in \newcommand
 \newcommand\pythoninline[1]{\pythonstyle\lstinline!#1!}
 
+% alias
+\newcommand{\pyinline}{\pythoninline}
+\newcommand{\pyexternal}{\pythonexternal}
+
 \newcommand\javastyle{\lstset{
     language=Java,
     basicstyle=\ttb,
@@ -61,7 +65,7 @@
     emphstyle=\ttm\color{deepred},  % Custom highlighting style
     stringstyle=\color{deepgreen},
     % frame=tb,  % Any extra options here
-    showstringspaces=false            
+    showstringspaces=false
 }}
 
 % Java environment

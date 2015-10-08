@@ -1,0 +1,88 @@
+\chapter{Arithmetic}
+\section{DFS}
+\rih{Insert operators.} Given a string that contains only digits 0-9 and a target value, return all possibilities to add binary operators (not unary) +, -, or * between the digits so they evaluate to the target value.
+
+Example: 
+\begin{align*}
+"123", 6 \rightarrow ["1+2+3", "1*2*3"] \\ 
+"232", 8 \rightarrow ["2*3+2", "2+3*2"] \\
+\end{align*}
+Clues:
+\begin{enumerate}
+\item DFS
+\item Special handling for multiplication - caching 
+\item Detect invalid number with leading 0's
+\end{enumerate}}
+Code: 
+\begin{python}
+def addOperators(self, num, target):
+  ret = []
+  self.dfs(num, target, 0, "", 0, 0, ret)
+  return ret
+
+def dfs(self, num, target, pos, 
+        cur_str, cur_val, 
+        mul, ret
+    ):
+  if pos >= len(num):
+    if cur_val == target:
+      ret.append(cur_str)
+  else:
+    for i in xrange(pos, len(num)):
+      if i != pos and num[pos] == '0':
+        continue
+      nxt_val = int(num[pos:i+1])
+
+      if not cur_str:
+        self.dfs(num, target, i+1, 
+            "%d"%nxt_val, nxt_val,
+            nxt_val, ret)
+      else:
+        self.dfs(num, target, i+1, 
+            cur_str+"+%d"%nxt_val, cur_val+nxt_val, 
+            nxt_val, ret)
+        self.dfs(num, target, i+1, 
+            cur_str+"-%d"%nxt_val, cur_val-nxt_val, 
+            -nxt_val, ret)
+        self.dfs(num, target, i+1, 
+            cur_str+"*%d"%nxt_val, cur_val-mul+mul*nxt_val, 
+            mul*nxt_val, ret)
+\end{python}
+\rih{Insert parenthesis.} Given a string of numbers and operators, return all possible results from computing all the different possible ways to
+group numbers and operators. The valid operators are +, - and *.
+
+Examples:
+\begin{align*}
+(2*(3-(4*5))) &= -34 \\
+((2*3)-(4*5)) &= -14 \\
+((2*(3-4))*5) &= -10 \\
+(2*((3-4)*5)) &= -10 \\
+(((2*3)-4)*5) &= 10
+\end{align*}
+Clues: Iterate the operators, divide and conquer - left parts and right parts and then combine result. \\
+Code:
+\begin{python}
+def dfs_eval(self, nums, ops):
+    ret = []
+    if not ops:
+        assert len(nums) == 1
+        return nums
+
+    for i, op in enumerate(ops):
+        left_vals = self.dfs_eval(nums[:i+1], ops[:i])
+        right_vals = self.dfs_eval(nums[i+1:], ops[i+1:])
+        for l in left_vals:
+            for r in right_vals:
+                ret.append(self._eval(l, r, op))
+
+    return ret
+\end{python}
+
+\section{Polish Notation}
+Polish Notation is in-fix while Reverse Polish Notation is post-fix. 
+\subsection{Evaluate Post-fix Expressions}
+Straightforward: Use a stack to store the number. Iterate the input, push stack when
+hit numbers, pop stack when hit operators.
+\subsection{Convert In-fix to Post-fix}
+TODO
+
