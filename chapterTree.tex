@@ -59,6 +59,59 @@ int size(Key lo, Key hi) {
 }
 \end{java}
 \runinhead{1-d range search}
+TODO
+
+\runinhead{Closest value} Find the value in BST that is closet to the \pyinline{target}.
+
+Clues:
+\begin{enumerate}
+\item Find the value just $\leq$ the target.
+\item Find the value just $\geq$ the target.
+\end{enumerate}
+
+Code for finding either the lower value or higher value:
+\begin{python}
+def find(self, root, target, ret, lower=True):
+  if not root:
+    return
+
+  if root.val == target:
+    ret[0] = root.val
+    return
+
+  if root.val < target:
+    if lower:
+      ret[0] = max(ret[0], root.val)
+
+    self.find(root.right, target, ret, lower)
+  else:
+    if not lower:
+      ret[0] = min(ret[0], root.val)
+
+    self.find(root.left, target, ret, lower)
+\end{python}
+
+\runinhead{Closet values} Find $k$ values in BST that are closet to the \pyinline{target}.
+
+Clues:
+\begin{enumerate}
+\item Find the predecessors $\triangleq \{node | node.value \leq target\}$.
+\item Find the successors $\triangleq \{node | node.value \geq target\}$.
+\item Merge the predecessors and successors as in merge in MergeSort to get he $k$ values. 
+\end{enumerate}
+
+Code for finding the predecessors:
+\begin{python}
+def predecessors(self, root, target, stk):
+  if not root:
+    return
+
+  self.predecessors(root.left, target, stk)
+  if root.val <= target:
+    stk.append(root.val)
+    self.predecessors(root.right, target, stk)
+\end{python}
+
 \section{Interval Search Tree}
 TODO
 
