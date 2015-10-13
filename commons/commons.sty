@@ -1,24 +1,36 @@
 \ProvidesPackage{commons}[2015/07/22 v1.0 common commands macros]
 \usepackage{ifthen}
 \usepackage[colorlinks, urlcolor=blue]{hyperref}
+\usepackage{amssymb,amsmath,bm}
 
-\newcommand\runinhead[1]{
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep, topsep=0pt}
+\setlist[enumerate]{noitemsep, topsep=0pt}
+
+%- short cuts
+\newcommand{\ra}{\rightarrow}
+\newcommand{\Ra}{\Rightarrow}
+\newcommand{\R}{\mathbb{R}}
+
+% % after { to avoid extra space
+\newcommand\runinhead[1]{%
   \textbf{#1}
 }
 
-\newcommand\rih[1]{
+\newcommand\rih[1]{%
   \runinhead{#1}
 }
 
-\newcommand\emaillink[1]{
+\newcommand\emaillink[1]{%
   \href{mailto:#1}{\nolinkurl{#1}}
 }
 
-\newcommand\display[2]{
+\newcommand\display[2]{%
+
   \ifthenelse{\equal{#1}{true}}{#2}{}
 }
 
 % url directly starts with domain, without protocol
-\newcommand\urld[1]{
+\newcommand\urld[1]{%
   \href{http://#1}{\nolinkurl{#1}}
 }

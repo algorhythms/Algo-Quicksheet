@@ -1,0 +1,8 @@
+\ProvidesPackage{note_style}[2015/09/24 v1.0 common note style macros]
+\usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in]{geometry}
+\usepackage{color,soul}  % provides \hl{#1}
+\usepackage[usenames,dvipsnames]{xcolor}
+
+\newcommand\note[1]{%
+  \textcolor{Maroon}{#1}%
+}
