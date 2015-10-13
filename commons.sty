@@ -2,9 +2,11 @@
 \usepackage{ifthen}
 \usepackage[colorlinks, urlcolor=blue]{hyperref}
 \usepackage{amssymb,amsmath,bm}
+
 \usepackage{enumitem}
 \setlist[itemize]{noitemsep, topsep=0pt}
 \setlist[enumerate]{noitemsep, topsep=0pt}
+\renewcommand\labelitemi{{\boldmath$\cdot$}}
 
 %- short cuts
 \newcommand{\ra}{\rightarrow}
@@ -25,6 +27,7 @@
 }
 
 \newcommand\display[2]{%
+
   \ifthenelse{\equal{#1}{true}}{#2}{}
 }
 

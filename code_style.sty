@@ -1,6 +1,7 @@
 \ProvidesPackage{code_style}[2015/07/07 v1.0 code style macros]
 \usepackage[utf8]{inputenc}
 
+
 % Default fixed font does not support bold face
 \DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{8} % for bold
 \DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{8}  % for normal
@@ -10,26 +11,25 @@
 \definecolor{deepblue}{rgb}{0,0,0.5}
 \definecolor{deepred}{rgb}{0.6,0,0}
 \definecolor{deepgreen}{rgb}{0,0.5,0}
+\definecolor{lightgray}{rgb}{0.7,0.7,0.7}
 
 \usepackage{listings}
 % Python style for highlighting
-\newcommand\pythonstyle{
-  \lstset{
+\newcommand\pythonstyle{\lstset{
     language=Python,
     basicstyle=\ttb,
-    otherkeywords={assert, del, self, yield},  % Add keywords here
+    otherkeywords={assert, self, yield},  % Add keywords here
     keywordstyle=\ttm\color{deepblue},
     columns=flexible,
     literate={-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1,
     keepspaces=true,
-    commentstyle=\ttm,
+    commentstyle=\ttm\color{lightgray},
     emph={},  % Custom highlighting
     emphstyle=\ttm\color{deepred},  % Custom highlighting style
     stringstyle=\color{deepgreen},
     % frame=tb,  % Any extra options here
-    showstringspaces=false            
-  }
-}
+    showstringspaces=false
+}}
 
 % Python environment
 \lstnewenvironment{python}[1][]{
@@ -46,14 +46,14 @@
 }
 
 % Python for inline
-\newcommand\pythoninline[1]{
-  {
-    \pythonstyle\lstinline!#1!
-  }
-}
+%% avoid white space in \newcommand
+\newcommand\pythoninline[1]{\pythonstyle\lstinline!#1!}
 
-\newcommand\javastyle{
-  \lstset{
+% alias
+\newcommand{\pyinline}{\pythoninline}
+\newcommand{\pyexternal}{\pythonexternal}
+
+\newcommand\javastyle{\lstset{
     language=Java,
     basicstyle=\ttb,
     otherkeywords={},  % Add keywords here
@@ -66,9 +66,8 @@
     emphstyle=\ttm\color{deepred},  % Custom highlighting style
     stringstyle=\color{deepgreen},
     % frame=tb,  % Any extra options here
-    showstringspaces=false            
-  }
-}
+    showstringspaces=false
+}}
 
 % Java environment
 \lstnewenvironment{java}[1][]{
@@ -85,8 +84,5 @@
 }
 
 % Java for inline
-\newcommand\javainline[1]{
-  {
-    \javastyle\lstinline!#1!
-  }
-}
+%% avoid white space in \newcommand
+\newcommand\javainline[1]{\javastyle\lstinline!#1!}
