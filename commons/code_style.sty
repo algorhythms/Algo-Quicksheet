@@ -11,18 +11,19 @@
 \definecolor{deepblue}{rgb}{0,0,0.5}
 \definecolor{deepred}{rgb}{0.6,0,0}
 \definecolor{deepgreen}{rgb}{0,0.5,0}
+\definecolor{lightgray}{rgb}{0.7,0.7,0.7}
 
 \usepackage{listings}
 % Python style for highlighting
 \newcommand\pythonstyle{\lstset{
     language=Python,
     basicstyle=\ttb,
-    otherkeywords={assert, del, self, yield},  % Add keywords here
+    otherkeywords={assert, self, yield},  % Add keywords here
     keywordstyle=\ttm\color{deepblue},
     columns=flexible,
     literate={-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1,
     keepspaces=true,
-    commentstyle=\ttm,
+    commentstyle=\ttm\color{lightgray},
     emph={},  % Custom highlighting
     emphstyle=\ttm\color{deepred},  % Custom highlighting style
     stringstyle=\color{deepgreen},
