@@ -13,24 +13,19 @@
 \newcommand{\R}{\mathbb{R}}
 
 % % after { to avoid extra space
-\newcommand\runinhead[1]{%
-  \textbf{#1}
-}
-
 \newcommand\rih[1]{%
-  \runinhead{#1}
+  \textbf{#1}%
 }
 
 \newcommand\emaillink[1]{%
-  \href{mailto:#1}{\nolinkurl{#1}}
+  \href{mailto:#1}{\nolinkurl{#1}}%
 }
 
 \newcommand\display[2]{%
-
-  \ifthenelse{\equal{#1}{true}}{#2}{}
+  \ifthenelse{\equal{#1}{true}}{#2}{}%
 }
 
 % url directly starts with domain, without protocol
 \newcommand\urld[1]{%
-  \href{http://#1}{\nolinkurl{#1}}
+  \href{http://#1}{\nolinkurl{#1}}%
 }
