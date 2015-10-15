@@ -161,16 +161,14 @@ Improvements:
 \item Path Compression. 
 \end{enumerate}}
 \subsection{Algorithm}
-\rih{Core clues.} Weighted union-find with path compression: 
+Weighted union-find with path compression.\\
+\rih{Core clues.} 
 \begin{enumerate}
-\item An array to store each item's predecessor \textbf{pi}. 
-\item Merge the tree according to the \textbf{size} to maintain balance. 
+\item \textbf{$\pi$ array}:an array to store each item's predecessor pi. 
+\item \textbf{Size-balanced}: merge the tree according to the size to maintain balance. 
 \end{enumerate}
 \begin{python}
 class UnionFind(object):
-    """
-    Weighted Union Find with path compression
-    """
     def __init__(self):
         self.pi = {}  # item -> pi
         self.sz = {}  # root -> size
