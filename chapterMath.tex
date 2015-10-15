@@ -63,38 +63,98 @@ def countPrimes(n):
 \end{python}
 
 \subsection{Factorization}
-Backtracking: 
-\begin{python}
-def dfs(self, cur, ret):
-    """
-    16
+Backtracking: Section-\ref{factorization}.
 
-    get factors of cur[-1]
-    [16]
-    [2, 8]
-    [2, 2, 4]
-    [2, 2, 2, 2]
+\section{Median}
+\subsection{Basic DualHeap}
+DualHeap to keep track the median when a method to find median is called multiple times. \begin{python}
+import heapq
 
-    [4, 4]
-    """
-    if len(cur) > 1:
-        ret.append(list(cur))
+class DualHeap(object):
+  def __init__(self):
+    self.min_h = []
+    self.max_h = []  # need to negate the value 
 
-    n = cur.pop()
-    start = cur[-1] if cur else 2
-    for i in xrange(start, int(sqrt(n))+1):
-        if n%i == 0:
-            cur.append(i)
-            cur.append(n/i)
-            self.dfs(cur, ret)
-            cur.pop()
+  def insert(self, num):
+    if not self.min_h or num > self.min_h[0]:
+      heapq.heappush(self.min_h, num)
+    else:
+      heapq.heappush(self.max_h, -num)
+    self.balance()
+
+  def balance(self):
+    l1 = len(self.min_h)
+    l2 = len(self.max_h)
+    if l1-l2 > 1:
+      heapq.heappush(self.max_h, -heapq.heappop(self.min_h))
+      self.balance()
+    elif l2-l1 > 1:
+      heapq.heappush(self.min_h, -heapq.heappop(self.max_h))
+      self.balance()
+    return
+
+  def get_median(self):
+    """Straightforward"""
 \end{python}
-\subsubsection{Time Complexity}
-$O(2^n)$ where $n$ is the number of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined： 
 
-$$\sum_i {n \choose i}$$
-
-TODO
-
+\subsection{DualHeap with Lazy Deletion}\label{dh_lazy_del}
+\begin{python}
+import heapq
+from collections import defaultdict
 
 
+class Value(object):
+    def __init__(self, val):
+        self.val = val
+        self.deleted = False
+
+    def __neg__(self):
+        """negate without creating new instance"""
+        self.val = -self.val
+        return self
+
+    def __cmp__(self, other):
+        assert isinstance(other, Value)
+        return self.val - other.val
+
+    def __repr__(self):
+        return repr(self.val)
+
+
+class Heap(object):
+    def __init__(self):
+        self.h = []
+        self.len = 0
+
+    def push(self, item):
+        heapq.heappush(self.h, item)
+        self.len += 1
+
+    def pop(self):
+        self._clean_top()
+        self.len -= 1
+        return heapq.heappop(self.h)
+
+    def remove(self, item):
+        """lazy delete"""
+        item.deleted = True
+        self.len -= 1
+
+    def __len__(self):
+        return self.len
+
+    def _clean_top(self):
+        while self.h and self.h[0].deleted:
+            heapq.heappop(self.h)
+
+    def peek(self):
+        self._clean_top()
+        return self.h[0]
+
+
+class DualHeap(object):
+    def __init__(self):
+        self.min_h = Heap()  # represent right side
+        self.max_h = Heap()  # represent left side
+    # others similar as the previous section's above DualHeap
+\end{python}

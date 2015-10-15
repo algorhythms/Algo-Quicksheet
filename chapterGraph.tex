@@ -8,7 +8,7 @@ V = defaultdict(list)
 
 \section{BFS}
 \subsection{BFS with Abstract Level}
-Start BFS with a set of vertices in abstract level, not necessarily neighboring vertices.
+Start bfs with a set of vertices in abstract level, not necessarily neighboring vertices.
 
 Example:
 $-1$ obstacles, $0$ targets, calculate all other vertices's Manhattan distance to its nearest target:
@@ -33,6 +33,8 @@ $$
 
 \subsubsection*{Code}
 \begin{python}
+self.dirs = ((-1, 0), (1, 0), (0, -1), (0, 1))
+
 def wallsAndGates(self, mat):
     q = [(i, j) for i, row in enumerate(mat) 
          for j, val in enumerate(row) if val == 0]
@@ -103,8 +105,8 @@ For a graph $G=\{V, E\}$, $ A \rightarrow B $, then $A$ is before $B$ in the ord
 \subsection{Algorithm}
 \rih{Core clues}:
 \begin{enumerate}
-\item \textbf{dfs neighbors first}. If the neighbors of current node is  $\neg$visited, then dfs the neighbors
-\item \textbf{process current node}. After visiting all the neighbors, then visit the current node and push it to the result queue.
+\item \textbf{Dfs neighbors first}. If the neighbors of current node is  $\neg$visited, then dfs the neighbors
+\item \textbf{Process current node}. After visiting all the neighbors, then visit the current node and push it to the result queue.
 
 \end{enumerate}
 Notice:
@@ -114,7 +116,7 @@ Notice:
 \end{enumerate}
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.60]{uf}}
+\subfloat{\includegraphics[scale=.70]{uf}}
 \caption{Weighted quick-union traces}
 \label{fig:union_find}
 \end{figure}
@@ -165,20 +167,33 @@ Weighted union-find with path compression.\\
 \rih{Core clues.} 
 \begin{enumerate}
 \item \textbf{$\pi$ array}:an array to store each item's predecessor pi. 
-\item \textbf{Size-balanced}: merge the tree according to the size to maintain balance. 
+\item \textbf{Size-balanced}: merge the tree according to the size to maintain balance.
+\item \textbf{Path compression}: Make the ptr in $\pi$ array to point to its root rather than its immediate parent. 
 \end{enumerate}
+\rih{Code.}
 \begin{python}
 class UnionFind(object):
     def __init__(self):
         self.pi = {}  # item -> pi
         self.sz = {}  # root -> size
 
+    def __len__(self):
+        """number of unions"""
+        return len(self.sz)  # only root nodes have size
+
     def add(self, item):
         if item not in self.pi:
             self.pi[item] = item
             self.sz[item] = 1
 
-    def union(self, a, b):
+    def root(self, item):
+        pi = self.pi[item]
+        if item != pi:
+            self.pi[item] = self.root(pi)
+            # path compression 
+        return self.pi[item]
+
+    def unionize(self, a, b):
         pi1 = self.root(a)
         pi2 = self.root(b)
 
@@ -186,21 +201,15 @@ class UnionFind(object):
             if self.sz[pi1] > self.sz[pi2]:
                 pi1, pi2 = pi2, pi1
                 # size balancing
-
             self.pi[pi1] = pi2
             self.sz[pi2] += self.sz[pi1]
             del self.sz[pi1]
-
-    def root(self, item):
-        pi = self.pi[item]
-        if item != pi:
-            self.pi[item] = self.root(pi)
-            # path compression 
-
-        return self.pi[item]
         
-    def count(self):
-        return len(self.sz)  # only root nodes have size
+    def is_union(self, a, b):
+        if a not in self.pi or b not in self.pi:
+          return False 
+        return self.root(a) == self.root(b)
+        
 \end{python}
 
 \subsection{Complexity}
