@@ -78,6 +78,22 @@ def dfs_eval(self, nums, ops):
     return ret
 \end{python}
 
+\section{Big Number}
+\rih{Plus One.} Given a non-negative number represented as an array of digits, plus one to the number.
+\begin{python}
+def plusOne(self, digits):
+    for i in xrange(len(digits)-1, -1, -1):
+        digits[i] += 1
+        if digits[i] < 10:
+            return digits
+        else:
+            digits[i] -= 10
+
+    # if not return within the loop 
+    digits.insert(0, 1)
+    return digits
+\end{python}
+
 \section{Polish Notation}
 Polish Notation is in-fix while Reverse Polish Notation is post-fix. 
 \subsection{Evaluate Post-fix Expressions}

@@ -12,3 +12,39 @@ $$
 |\leftarrow p
 $$
 
+\section{Event-Driven Algorithm}
+\subsection{Introduction}
+The core philosophy of event-driven algorithm:
+\begin{enumerate}
+\item \textbf{Event}: define \textit{event}; the event are sorted by time of appearance.
+\item \textbf{Heap}: define \textit{heap meaning}.
+\item \textbf{Transition}: define \textit{transition functions} among events impacting the.
+heap. 
+\end{enumerate} 
+
+\subsection{Questions}
+\runinhead{Maximal Overlaps.} Given a list of number intervals, find max number of overlapping
+intervals. 
+\runinhead{Clues:}
+\begin{enumerate}
+\item \textbf{Event}: Every new start of an interval is an event. Scan the sorted intervals (sort the interval by \textit{start}).
+\item \textbf{Heap meaning}: Heap stores the \textit{end} of the interval. 
+\item \textbf{Transition}: Put the ending time into heap, and pop the ending time earlier than the new start time from heap.
+\end{enumerate}
+
+\begin{python}
+def max_overlapping(intervals):
+    maxa = 0
+    intervals.sort(key=operator.attrgetter("start"))
+    h_end = []
+    for itvl in intervals:
+        heapq.heappush(end_heap, itvl.end)
+        
+        while h_end and h_end[0] <= itvl.start:
+            heapq.heappop(h_end)
+
+        maxa = max(maxa, len(h_end))
+
+    return maxa
+\end{python}
+
