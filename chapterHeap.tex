@@ -12,7 +12,7 @@ Basic operations:
 \item swim()/ sift\_up() - recursive
 \item build()/ heapify() - bottom-up sink()
 \end{enumerate}
-\subsection{Sink}
+\subsection{Sink (siftDown)}
 \begin{python}
 def sink(self, idx):
     while 2*idx <= self.N:
@@ -25,7 +25,7 @@ def sink(self, idx):
         self.swap(idx, c)
         idx = c
 \end{python}
-\subsection{Swim}
+\subsection{Swim (siftUp)}
 \begin{python}
 def swim(self, idx):
     while idx > 1 and self.less(idx/2, idx):

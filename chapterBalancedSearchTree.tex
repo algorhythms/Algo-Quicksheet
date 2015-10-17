@@ -42,15 +42,15 @@ Red-black tree is an implementation of 2-3 tree using \textbf{leaning-left red l
 \caption{RB-tree and 2-3 tree}
 \label{fig:LABEL}
 \end{figure}
-The hight of the RB-tree is at most $2\lg N$ where alternating red and black links.
+The hight of the RB-tree is at most $2\lg N$ where alternating red and black links. Red is the special link while black is the default link. 
 
 \runinhead{Perfect black balance.}Every path from root to null link has the same number of black links.
 \subsection{Operations}
 \runinhead{Elementary operations:}
 \begin{enumerate}
-\item Left rotation: orient a (temporarily) right-leaning red link to lean left.
+\item Left rotation: orient a (temporarily) right-leaning red link to lean left. Rotate leftward. 
 \item Right rotation: orient a (temporarily) left-leaning red link to lean right. 
-\item Color flip: Recolor to split a (temporary) 4-node. 
+\item Color flip: Recolor to split a (temporary) 4-node. Rotate rightward. 
 \end{enumerate}
 \begin{figure}[hbtp]
 \centering
@@ -74,21 +74,39 @@ The following code is the simplest version of RB-tree insertion:
 
 \begin{java}
 Node put(Node h, Key key, Value val) {
-    if (h == null)  // std insert, with red link to parent.
-       return new Node(key, val, 1, RED);
-    int cmp = key.compareTo(h.key);
-    if      (cmp < 0) h.left  = put(h.left,  key, val);
-    else if (cmp > 0) h.right = put(h.right, key, val);
-    else h.val = val; // pass
-    if (isRed(h.right) && !isRed(h.left))    h = rotateLeft(h);
-    if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
-    if (isRed(h.left) && isRed(h.right))     flipColors(h);
-    h.N = 1+size(h.left)+size(h.right);
-    return h; 
+  if (h == null)  // std red insert (link to parent).
+    return new Node(key, val, 1, RED);
+  int cmp = key.compareTo(h.key);
+  if      (cmp < 0) h.left  = put(h.left,  key, val);
+  else if (cmp > 0) h.right = put(h.right, key, val);
+  else h.val = val; // pass
+
+  if (isRed(h.right) && !isRed(h.left))    h = rotateLeft(h);
+  if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
+  if (isRed(h.left) && isRed(h.right))     flipColors(h);
+
+  h.N = 1+size(h.left)+size(h.right);
+  return h; 
 }
 \end{java}
 
 Rotate left, rotate right, then flip colors.
+
+\runinhead{Illustration of cases.} Insert into a single 2-node: Figure-\ref{fig:rb_2}. Insert into a single 3-node: Figure-\ref{fig:rb_3}
+\begin{figure}[t]
+\begin{tabular}{cc}
+  \includegraphics[height = 1.7in]{rb_left} &
+  \includegraphics[height = 1.7in]{rb_right}\\
+\end{tabular}
+\caption{(a) smaller than 2-node (b) larger than 2-nod}
+\label{fig:rb_2}
+\end{figure}
+
+\begin{figure}[t]
+        \centerline{\includegraphics[height = 2.8in]{rb_3_left_right_btw}}
+        \caption{(a) larger than 3-node (b) smaller than 3-node (c) between 3-node.}
+    \label{fig:rb_3}
+\end{figure}
 
 \runinhead{Deletion.} Deletion is more complicated. 
 

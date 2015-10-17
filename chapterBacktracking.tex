@@ -1,0 +1,39 @@
+\chapter{Backtracking}
+\section{Introduction}
+\rih{Difference between backtracking and dfs.} \textit{Backtracking} is a more general purpose algorithm. \textit{Dfs} is a specific form of backtracking related to searching tree structures. 
+
+\section{Math}
+\subsection{Factorization}\label{factorization}
+Factorize a number.\\
+\rih{Code}
+\begin{python}
+def dfs(self, cur, ret):
+    """
+    16
+
+    get factors of cur[-1]
+    [16]
+    [2, 8]
+    [2, 2, 4]
+    [2, 2, 2, 2]
+
+    [4, 4]
+    """
+    if len(cur) > 1:
+        ret.append(list(cur))
+
+    n = cur.pop()
+    start = cur[-1] if cur else 2
+    for i in xrange(start, int(sqrt(n))+1):
+        if n%i == 0:
+            cur.append(i)
+            cur.append(n/i)
+            self.dfs(cur, ret)
+            cur.pop()
+\end{python}
+\rih{Time complexity.} $O(2^n)$ where $n$ is the number of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined： 
+
+$$\sum_i {n \choose i}$$
+
+TODO
+
