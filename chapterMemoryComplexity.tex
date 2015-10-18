@@ -1,7 +1,11 @@
 \chapter{Memory Complexity}
 
 \section{Introduction}
-
+When discussing memory complexity, need to consider both 
+\begin{enumerate}
+\item \textbf{Heap}: the declared variables' size.
+\item \textbf{Stack}: the recursive functions' call stack.
+\end{enumerate}}
 \subsection{Tables}
 The memory usage is based on Java.\\
 
@@ -60,6 +64,8 @@ Padding & 8x \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
 \caption{for objects}
 \end{tabular}
+
+The reference takes memory of 24 bytes. 
 
 Reference includes object reference and innner class reference.
 
