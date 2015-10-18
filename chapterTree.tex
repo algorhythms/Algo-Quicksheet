@@ -2,7 +2,7 @@
 
 \section{Binary Tree}
 \subsection{Introductions}
-\runinhead{Get parent ref.} To get a parent reference (implicitly), return the current recursion function to its parent to maintain the path. Sample code:
+\runinhead{Get parent ref.} To get a parent reference (implicitly), \textit{return the Node} of the current recursion function to its parent to maintain the path. Sample code:
 \begin{java}
 Node deleteMin(Node x) {
     if (x.left == null) return x.right;
@@ -11,7 +11,7 @@ Node deleteMin(Node x) {
     return x;
 }
 \end{java}
-\runinhead{Search.} To search a node in binary tree (not necessarily BST), use dfs:
+\runinhead{Construct path from root to target.} To search a node in binary tree (not necessarily BST), use dfs:
 \begin{python}
 def dfs(self, root, t, path, found):
     if not root or found[0]:  # post-call check
@@ -28,9 +28,9 @@ def dfs(self, root, t, path, found):
 \end{python}
 The `found` is a wrapper for boolean to keep it referenced by all calling stack. 
 
-\rih{Lowest common ancestor.} In BST, the searching is straightforward. In normal binary tree, construct the path from root to $node_1$ and $node_2$ respectively, and \textbf{diff} the two paths.
+\runinhead{Lowest common ancestor.} In BST, the searching is straightforward. In normal binary tree, construct the path from root to $node_1$ and $node_2$ respectively, and \textbf{diff} the two paths.
 
-\rih{Find all paths.} Find all paths from root to leafs. For every currently visiting node, add itself to path; search left, search right and pop itself. Record current result when reaching the leaf.
+\runinhead{Find all paths.} Find all paths from root to leafs. For every currently visiting node, add itself to path; search left, search right and pop itself. Record current result when reaching the leaf.
 \begin{python}
 def dfs_path(self, cur, path, ret):
     if not cur:
@@ -47,8 +47,90 @@ def dfs_path(self, cur, path, ret):
  
 \section{Binary Search Tree (BST)}
 \runinhead{Array and BST.}Given either the \textbf{preorder} or \textbf{postorder} (but not inorder) traversal of a BST containing N distinct keys, it is possible to reconstruct the shape of the BST. 
-\subsection{Operations}
-\runinhead{Rank.}
+\subsection{Rank}
+\runinhead{Calculates rank.}
+\begin{enumerate}
+\item When inserting: 
+  \begin{enumerate}
+  \item insert to an existing node: \pyinline{node.cnt_this += 1}
+  \item insert to left subtree: \pyinline{node.cnt_left += 1}
+  \item insert to right subtree: do nothing. 
+\end{enumerate}
+\item When querying rank:
+  \begin{enumerate}
+  \item query equals current node: \pyinline{return node.cnt_left}
+  \item query goes to \textbf{left} node: \pyinline{return rank(node.left, val)};
+  \item query goes to \textbf{right} node: \pyinline{return node.cnt_left} \pyinline{+ node.cnt_this + rank(node.right, val)}
+  \end{enumerate}
+Notice that the \pyinline{rank} calculates a val's rank in a subtree.
+\end{enumerate}
+
+\runinhead{Count of smaller number before itself.} Given an array $A$. For each element $A_i$ in the array, count the number of element before this element $A_i$ is smaller than it and return count number array. Average $O(n \log n)$
+\\
+Clues:
+\begin{enumerate}
+\item Put $A[:i+1]$ into a BST; so as to count the rank of $A[i]$ in the BST
+\end{enumerate}
+Codes:
+\begin{python}
+class Node(object):
+  def __init__(self, val):
+    """Records the left subtree size"""
+    self.val = val
+    self.cnt_left = 0
+    self.cnt_this = 0
+    self.left, self.right = None, None
+
+
+class BST(object):
+  def __init__(self):
+    self.root = None
+
+  def insert(self, root, val):
+    """
+    :return: subtree's root after insertion
+    """
+    if not root:
+      root = Node(val)
+
+    if root.val == val:
+      root.cnt_this += 1
+    elif val < root.val:
+      root.cnt_left += 1
+      root.left = self.insert(root.left, val)
+    else:
+      root.right = self.insert(root.right, val)
+
+    return root
+
+  def rank(self, root, val):
+    """
+    Rank in the root's subtree
+    :return: number of items smaller than val
+    """
+    if not root:
+      return 0
+    if root.val < val:
+      return (root.cnt_this+root.cnt_left+
+              self.rank(root.right, val))
+    elif root.val == val:
+      return root.cnt_left
+    else:
+      return self.rank(root.left, val)
+
+
+class Solution(object):
+  def countOfSmallerNumberII(self, A):
+    tree = BST()
+    ret = []
+    for a in A:
+      tree.root = tree.insert(tree.root, a)
+      ret.append(tree.rank(tree.root, a))
+
+    return ret
+\end{python}
+Notice: if worst case $O(n \log n)$, need to use Red-Back Tree.
+
 
 \subsection{Range search}
 \runinhead{1-d range count}
@@ -114,6 +196,11 @@ def predecessors(self, root, target, stk):
 
 \section{Interval Search Tree}
 TODO
+
+
+\section{Binary Index Tree}
+TODO
+
 
 \section{Segment Tree}
 \subsection{Introduction}
