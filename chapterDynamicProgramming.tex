@@ -57,7 +57,7 @@ Notice:
 
 
 \section{Sequence}
-\rih{Longest common subsequence.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
+\runinhead{Longest common subsequence.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
   F_{i-1, j-1}+1 &\mbox{// if $a[i]==b[j]$} \\
@@ -66,7 +66,7 @@ F_{i. j} = \left\{ \begin{array}{rl}
        \end{array} \right.
 \end{eqnarray*}
 \\
-\rih{Longest common substring.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and
+\runinhead{Longest common substring.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and
 $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
@@ -77,7 +77,7 @@ F_{i. j} = \left\{ \begin{array}{rl}
 
 Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, the $gmax=max\big(\{{F_{i,j}\}\big)$.
 \\
-\rih{Edit distance} Find the minimum number of steps required to convert words $A$ to $B$ using inserting, deleting, replacing. 
+\runinhead{Edit distance} Find the minimum number of steps required to convert words $A$ to $B$ using inserting, deleting, replacing. 
 
 Let $F_{i, j}$ be the minimum number
 of steps required to convert $A[:i]$ to $B[:j]$.
@@ -90,7 +90,7 @@ F_{i. j} = \left\{ \begin{array}{rl}
        \end{array} \right.
 \end{eqnarray*}
 
-\rih{Maximal square.} Find the largest rectangle in the matrix:
+\runinhead{Maximal square.} Find the largest rectangle in the matrix:
 \begin{lstlisting}
 1 0 1 0 0
 1 0 1 1 1
@@ -104,6 +104,21 @@ F_{i. j} = \left\{ \begin{array}{rl}
   0 &\mbox{// otherwise}
        \end{array} \right.
 \end{eqnarray*}
+
+\runinhead{Maximal product subarray.} Find the $A$'s subarray within an array which has the largest product. 
+\begin{itemize}
+\item Let $small_i$ be the smallest product end with $A_i$. 
+\item Let $large_i$ be the largest product end with $A_i$.
+\end{itemize}
+\begin{eqnarray*}
+&& small_i = \min\big( A_i,\ small_{i-1}\cdot A_i,\ large_{i-1}\cdot A_i \big)
+\nonumber \\
+&& large_i = \max\big( A_i,\ small_{i-1}\cdot A_i,\ large_{i-1}\cdot A_i \big)
+\end{eqnarray*}
+
+It can be optimized to use space $O(1)$. 
+
+
 \section{Backpack}
 Given $n$ items with weight $w_i$ and value $v_i$, an integer $C$ denotes the size of a backpack. What is the max value you can fill this backpack?
 
@@ -119,10 +134,10 @@ TODO advanced backpack problem.
 The following formula derives from the question: Best Time to Buy and Sell Stock IV. 
 
 Let $local_{i, j}$ be the max profit at day $i$ with $j$ transactions with last transactions ENDED at day $i$. Let $global_{i, j}$ be the max profit at day $i$ with $j$ transactions.  
-\begin{eqnarray}
+\begin{eqnarray*}
 && local_{i,j} = \max\Big(global_{i-1.j-1}+\Delta, local_{i-1,j}+\Delta\Big) \nonumber \\
 && global_{i,j} = \max\Big(local_{i, j}, global_{i-1,j}\Big)
-\end{eqnarray}
+\end{eqnarray*}
 
 Notice:
 \begin{enumerate}
@@ -132,11 +147,11 @@ Notice:
 \end{enumerate}
 
 \subsubsection{Space optimization}
-\begin{eqnarray}
+\begin{eqnarray*}
 && local_{j} = \max\Big(global_{j-1} + \Delta, local_{j}+\Delta\Big)
 \nonumber \\
 && global_{j} = \max\Big(local_{j}, global_{j}\Big)
-\end{eqnarray}
+\end{eqnarray*}
 
 Notice,
 \begin{enumerate}
@@ -146,11 +161,11 @@ Notice,
 \subsubsection{Alternative definitions}
 Other possible definitions: let $global_{i, j}$ be the max profit
 at day $i$ with UP\ TO $j$ transactions. Then, 
-\begin{eqnarray}
+\begin{eqnarray*}
 && local_{i,j} = \max\Big(global_{i-1.j-1} + \max(0, \Delta), local_{i-1,j}+\Delta\Big)
 \nonumber \\
 && global_{i,j} = \max\Big(local_{i, j}, global_{i-1,j}\Big)
-\end{eqnarray}
+\end{eqnarray*}
 and $global[-1]$ is the global max. 
 
 \section{Game theory - multi players}
