@@ -2,6 +2,7 @@
 \usepackage{ifthen}
 \usepackage[colorlinks, urlcolor=blue]{hyperref}
 \usepackage{amssymb,amsmath,bm}
+\usepackage{verbatim}
 
 \usepackage{enumitem}
 \setlist[itemize]{noitemsep, topsep=0pt}
@@ -33,3 +34,20 @@
 \newcommand\urld[1]{%
   \href{http://#1}{\nolinkurl{#1}}%
 }
+
+% make bmatrix display vertical bar
+\makeatletter
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{#1}}
+\makeatother
+
+% example:
+\begin{comment}
+\begin{bmatrix}[cccc|c]
+   1 & 0 & 3 & -1 & 0 \\
+   0 & 1 & 1 & -1 & 0 \\
+   0 & 0 & 0 & 0 & 0 \\
+\end{bmatrix}
+\end{comment}
