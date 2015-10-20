@@ -198,8 +198,49 @@ def predecessors(self, root, target, stk):
 TODO
 
 
-\section{Binary Index Tree}
-TODO
+\section{Binary Index Tree (BIT)}
+Given an array $A$ of length $n $ starting from $1$. prefix sum $s[i]\triangleq A_1+...+A_i$. BIT uses binary to maintain the array of prefix sum for querying and updating. For $i$-th node in the BIT, 
+$$
+N[i]=A_{j+1}+...+A_i
+$$
+, where $j=i-lowbit(i)$, i.e. set $i$'s lowest bit 1 to 0. $lowbit(i)$ can be defined as \pyinline{return i&-i}, using 2's complement. 
+\\
+Clues:
+\begin{enumerate}
+\item Binary 
+\item Low bit
+\item BIT uses array index starting from \textbf{1}, because 0 doesn't have $lowbit$.
+\end{enumerate}
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[height=1in]{BIT}}
+\caption{Binary Indexed Tree}
+\label{fig:LABEL}
+\end{figure}
+Time complexity, longest update and query is along the leftmost branch, which takes $O(\log_2 n)$.\\
+Code:
+\begin{python}
+class BIT(object):
+    def __init__(self, n):
+        """BIT uses index starting from 1"""
+        self.N = [0 for _ in xrange(n+1)]
+
+    def lowbit(self, i):
+        return i & -i
+
+    def set(self, i, val):
+        while i < len(self.N):
+            self.N[i] += val
+            i += self.lowbit(i)
+
+    def pre_sum(self, i):
+        ret = 0
+        while i > 0:
+            ret += self.N[i]
+            i -= self.lowbit(i)
+
+        return ret
+\end{python}
 
 
 \section{Segment Tree}
