@@ -213,11 +213,19 @@ Clues:
 \end{enumerate}
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[height=1in]{BIT}}
-\caption{Binary Indexed Tree}
+\subfloat{\includegraphics[height=1.1in]{BITget}}
+\caption{Binary Indexed Tree Get Operation}
 \label{fig:LABEL}
 \end{figure}
-Time complexity, longest update is along the leftmost branch, which takes $O(\log_2 n)$ (e.g. 1, 10, 100, 1000, 10000); longest query is along a line starting with node with all 1's (e.g. 1111, 1110, 1100, 1000), which also takes $O(\log_2 n)$.\\
+
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[height=1.05in]{BIT}}
+\caption{Binary Indexed Tree Set Operation}
+\label{fig:LABEL}
+\end{figure}
+
+Time complexity, longest update is along the leftmost branch, which takes $O(\log_2 n)$ (e.g. 1, 10, 100, 1000, 10000); longest query is along a branch starting with node with all 1's (e.g. 1111, 1110, 1100, 1000), which also takes $O(\log_2 n)$.\\
 Code:
 \begin{python}
 class BIT(object):
@@ -233,7 +241,7 @@ class BIT(object):
             self.N[i] += val
             i += self.lowbit(i)
 
-    def pre_sum(self, i):
+    def get(self, i):
         ret = 0
         while i > 0:
             ret += self.N[i]
