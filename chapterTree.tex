@@ -217,7 +217,7 @@ Clues:
 \caption{Binary Indexed Tree}
 \label{fig:LABEL}
 \end{figure}
-Time complexity, longest update and query is along the leftmost branch, which takes $O(\log_2 n)$.\\
+Time complexity, longest update is along the leftmost branch, which takes $O(\log_2 n)$ (e.g. 1, 10, 100, 1000, 10000); longest query is along a line starting with node with all 1's (e.g. 1111, 1110, 1100, 1000), which also takes $O(\log_2 n)$.\\
 Code:
 \begin{python}
 class BIT(object):
