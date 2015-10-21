@@ -118,7 +118,51 @@ F_{i. j} = \left\{ \begin{array}{rl}
 
 It can be optimized to use space $O(1)$. 
 
+\section{String}
+\runinhead{Is palindrome.} Given a string $s$, use an array to determine whether $s[i:j]$.
 
+Let $P_{i,j}$  indicates whether $s[i:j]$ is palindrome. 
+\begin{eqnarray*}
+P_{i. j} = P_{i-1, j+1}\ \&\&\ s[i] = s[j-1]
+\end{eqnarray*}
+
+\runinhead{Minimum palindrome cut.} Given a string s, partition s such that every substring of the partition is a palindrome. Return the minimum cuts needed for a palindrome partitioning of s.
+
+Let $C_i$ be the min cut for $s[:i]$. 
+\begin{eqnarray*}
+C_{i} = \left\{ \begin{array}{rl}
+  \min\big(C[k]+1 \cdot \forall k<i \big) &\mbox{// if $s[k:i]$ is palindrome}
+\\
+  0 &\mbox{// otherwise}
+       \end{array} \right.
+\end{eqnarray*}
+\begin{python}
+def minCut(self, s):
+  n = len(s)
+
+  P = [[False for _ in xrange(n+1)] for _ in xrange(n+1)]
+  for i in xrange(n+1):  # len 0
+    P[i][i] = True
+  for i in xrange(n):  # len 1
+    P[i][i+1] = True
+
+  for i in xrange(n, -1, -1):  # len 2 and above
+    for j in xrange(i+2, n+1):
+      P[i][j] = P[i+1][j-1] and s[i] == s[j-1]
+
+  C = [i for i in xrange(n+1)]  # max is all cut
+  for i in xrange(n+1):
+    if P[0][i]:
+      C[i] = 0
+    else:
+      C[i] = min(
+          C[j] + 1
+          for j in xrange(i)
+          if P[j][i]
+      )
+
+  return C[n]
+\end{python}
 \section{Backpack}
 Given $n$ items with weight $w_i$ and value $v_i$, an integer $C$ denotes the size of a backpack. What is the max value you can fill this backpack?
 

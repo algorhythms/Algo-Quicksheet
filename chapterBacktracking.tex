@@ -2,23 +2,29 @@
 \section{Introduction}
 \rih{Difference between backtracking and dfs.} \textit{Backtracking} is a more general purpose algorithm. \textit{Dfs} is a specific form of backtracking related to searching tree structures. 
 
+\rih{Prune.} Backtrack need to think about pruning using \pyinline{predicate}.
+
 \section{Math}
-\subsection{Factorization}\label{factorization}
-Factorize a number.\\
+\subsection{Decomposition}
+\subsubsection{Factorize a number}.\label{factorization}
+\rih{Core clues}:
+\begin{enumerate}
+\item Expand the search tree \textbf{horizontally}.
+\end{enumerate}
+\rih{Search tree}:
+\begin{python}
+Input: 16
+get factors of cur[-1]
+[16]
+[2, 8]
+[2, 2, 4]
+[2, 2, 2, 2]
+
+[4, 4]
+\end{python}
 \rih{Code}
 \begin{python}
 def dfs(self, cur, ret):
-    """
-    16
-
-    get factors of cur[-1]
-    [16]
-    [2, 8]
-    [2, 2, 4]
-    [2, 2, 2, 2]
-
-    [4, 4]
-    """
     if len(cur) > 1:
         ret.append(list(cur))
 
@@ -37,3 +43,59 @@ $$\sum_i {n \choose i}$$
 
 TODO
 
+\section{String}
+\subsection{Palindrome}
+\subsubsection{Palindrome partition.} Given \pyinline{s = "aab"}, return: \\
+\pyinline{[["aa","b"], ["a","a","b"]]}
+\\
+\rih{Core clues}:
+\begin{enumerate}
+\item Expand the search tree \textbf{horizontally}.
+\end{enumerate}
+\rih{Search process}:
+\begin{python}
+input: "aabbc"
+
+"a", "abbc"
+     "a", "bbc"
+          "b", "bc"
+               "b", "c" (o)
+               "bc" (x)
+          "bb", "c" (o)
+          "bbc" (x)
+     "ab", "bc" (x)
+     "abb", "c" (x)
+     "abbc" (x)
+"aa", "bbc"
+      "b", "bc"
+           "b", "c" (o)
+           "bc" (x)
+      "bb", "c" (o)
+      "bbc" (x)
+"aab", "bc" (x)
+"aabb", "c" (x)
+\end{python}
+\rih{Code}
+\begin{python}
+def partition(self, s):
+    ret = []
+    self.backtrack(s, [], ret)
+    return ret
+
+def backtrack(self, s, cur_lvl, ret):
+    """
+    Let i be the scanning ptr.
+    If s[:i] passes predicate, then backtrack s[i:]
+    """
+    if not s:
+        ret.append(list(cur_lvl))
+
+    for i in xrange(1, len(s)+1):
+        if self.predicate(s[:i]):
+            cur_lvl.append(s[:i])
+            self.backtrack(s[i:], cur_lvl, ret)
+            cur_lvl.pop()
+
+def predicate(self, s):
+    return s == s[::-1]
+\end{python}

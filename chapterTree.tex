@@ -364,8 +364,8 @@ class SegmentTree(object):
         self.modify(root.right, idx, val)
 
         val = DEFAULT
-        if root.left:  root.m = f(val, root.left.m)
-        if root.right: root.m = f(val, root.right.m)
+        if root.left:  val = f(val, root.left.m)
+        if root.right: val = f(val, root.right.m)
         
         root.m = val
 \end{python}
