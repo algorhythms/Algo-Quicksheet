@@ -198,7 +198,7 @@ def predecessors(self, root, target, stk):
 TODO
 
 
-\section{Binary Index Tree (BIT)}
+\section{Binary Index Tree (BIT)}\label{BIT}
 Given an array $A$ of length $n $ starting from $1$. prefix sum $s[i]\triangleq A_1+...+A_i$. BIT uses binary to maintain the array of prefix sum for querying and updating. For $i$-th node in the BIT, 
 $$
 N[i]=A_{j+1}+...+A_i
@@ -253,10 +253,13 @@ class BIT(object):
 
 \section{Segment Tree}
 \subsection{Introduction}
-The structure of \textbf{Segment Tree} is a binary tree which each node has two attributes start and end denote an segment/interval. Notice that by practice, the interval is normally $[start, end)$ but sometimes it can be $[start, end]$, which depends on the question definition. 
+The structure of \textbf{Segment Tree} is a binary tree which each node has two attributes start and end denote an segment/interval. 
+
+Notice that by practice, the interval is normally $[start, end)$ but sometimes it can be $[start, end]$, which depends on the question definition. 
 
 Structure:  
 \begin{lstlisting}[columns=flexible]
+# a Count Segment Tree
                      [0, 4, count=3]
                      /             \
           [0,2,count=1]             [2,4,count=2]
@@ -279,9 +282,9 @@ Components in Segment Tree:
 \begin{enumerate}
 \item Build
 \item Query 
-\item Modify 
+\item Modify
+\item Search 
 \end{enumerate}
-
 Notice:
 \begin{enumerate}
 \item Only build need to change the start and end recursively.
@@ -318,6 +321,7 @@ class SegmentTree(object):
 
         left = self.build_tree(s, (s+e)/2)
         right = self.build_tree((s+e)/2, e)
+
         val = DEFAULT
         if left: val = f(val, left.m)
         if right: val = f(val, right.m)
@@ -358,8 +362,13 @@ class SegmentTree(object):
 
         self.modify(root.left, idx, val)
         self.modify(root.right, idx, val)
+
         val = DEFAULT
-        if root.left: val = f(val, root.left.m)
-        if root.right: val = f(val, root.right.m)
+        if root.left:  root.m = f(val, root.left.m)
+        if root.right: root.m = f(val, root.right.m)
+        
         root.m = val
 \end{python}
+Concrete example - Count Segment Tree \ref{inversionReconstruct}. 
+        
+     
