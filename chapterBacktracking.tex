@@ -6,7 +6,7 @@
 
 \section{Math}
 \subsection{Decomposition}
-\subsubsection{Factorize a number}.\label{factorization}
+\subsubsection{Factorize a number}\label{factorization}
 \rih{Core clues}:
 \begin{enumerate}
 \item Expand the search tree \textbf{horizontally}.
@@ -31,11 +31,15 @@ def dfs(self, cur, ret):
     n = cur.pop()
     start = cur[-1] if cur else 2
     for i in xrange(start, int(sqrt(n))+1):
-        if n%i == 0:
+        if self.predicate(n, i):
             cur.append(i)
             cur.append(n/i)
             self.dfs(cur, ret)
             cur.pop()
+            
+def predicate(self, n, i):
+  return n%i == 0
+  
 \end{python}
 \rih{Time complexity.} $O(2^n)$ where $n$ is the number of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined： 
 

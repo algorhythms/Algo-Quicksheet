@@ -117,6 +117,26 @@ Rotate left, rotate right, then flip colors.
 \caption{B-Tree}
 \label{fig:b-tree}
 \end{figure}
+\subsection{Bascis}
+Half-full principle: 
+
+\begin{tabular}{lll}
+\hline\noalign{\smallskip}
+\textbf{Attrs} & \textbf{Non-leaf} & \textbf{Leaf} \\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+Ptrs & \lceil\frac{n+1}{2}\rceil & \lfloor\frac{n+1}{2}\rfloor \\
+\noalign{\smallskip}\hline\noalign{
+\caption{Nodes at least half-full}
+\end{tabular}
+
+\subsection{Operations}
+Core clues
+\begin{enumerate}
+\item \textbf{Split \& Up}: split half, move up the RIGHT node's FIRST of split nodes
+recursively
+\item The node moved up should be removed in the original node UNLESS it is a leaf
+node. 
+\end{enumerate}
 
 \section{AVL Tree}
 TODO

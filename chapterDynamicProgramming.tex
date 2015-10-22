@@ -121,14 +121,14 @@ It can be optimized to use space $O(1)$.
 \section{String}
 \runinhead{Is palindrome.} Given a string $s$, use an array to determine whether $s[i:j]$.
 
-Let $P_{i,j}$  indicates whether $s[i:j]$ is palindrome. 
+Let $P_{i,j}$  indicates whether $s[i:j]$ is palindrome. We have one condition - whether the head and the end letter are equal: 
 \begin{eqnarray*}
-P_{i. j} = P_{i-1, j+1}\ \&\&\ s[i] = s[j-1]
+P_{i. j} = P_{i-1, j+1}\ \wedge\ s[i] = s[j-1]
 \end{eqnarray*}
 
 \runinhead{Minimum palindrome cut.} Given a string s, partition s such that every substring of the partition is a palindrome. Return the minimum cuts needed for a palindrome partitioning of s.
 
-Let $C_i$ be the min cut for $s[:i]$. 
+Let $C_i$ be the min cut for $s[:i]$. We have 1 more cut from previous state to make $S[:i]$ palindrome. 
 \begin{eqnarray*}
 C_{i} = \left\{ \begin{array}{rl}
   \min\big(C[k]+1 \cdot \forall k<i \big) &\mbox{// if $s[k:i]$ is palindrome}
