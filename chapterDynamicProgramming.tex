@@ -86,7 +86,7 @@ F_{i. j} = \left\{ \begin{array}{rl}
   F_{i-1, j-1} &\mbox{// if $a[i]==b[j]$} \\
   \min\Big(F_{i, j-1}+1, &\mbox{//otherwise, insert}\\
   F_{i-1, j}+1, &\mbox{// delete}\\
-  F_{i_1, j_1}+1\Big) &\mbox{// replace}\\
+  F_{i-1, j-1}+1\Big) &\mbox{// replace}\\
        \end{array} \right.
 \end{eqnarray*}
 
@@ -173,24 +173,28 @@ F_{i, c}= \max\big(&&F_{i-1, c}, \\
 \end{eqnarray*}
 TODO advanced backpack problem. 
 
-\section{Local and global extremes}
+\section{Local and Global Extremes}
 \subsection{Long and short stocks}
-The following formula derives from the question: Best Time to Buy and Sell Stock IV. 
+The following formula derives from the question: Best Time to Buy and Sell Stock IV. Say you have an array for which the $i$-th element is the price of a given stock on day $i$. Design an algorithm to find the maximum profit. You may complete at most $k$ transactions. 
 
-Let $local_{i, j}$ be the max profit at day $i$ with $j$ transactions with last transactions ENDED at day $i$. Let $global_{i, j}$ be the max profit at day $i$ with $j$ transactions.  
+Let $local_{i, j}$ be the max profit with $j$ transactions with last transactions \textbf{ended at} day $i$. Let $global_{i, j}$ be the max profit with transactions \textbf{ended at} or \textbf{before} day $i$ with $j$ transactions. 
+
+To derive transition function for $local$, for any given day $i$, you have two options: 1) transact in one day; 2) hold the stock one more day than previous and then transact. The latter option is equivalent to revert yesterday's transaction and instead transact today. 
+
+To derive transition function for $global$, for any given day $i$, you have two options: 1) transact today; 2) don't transact today. 
 \begin{eqnarray*}
 && local_{i,j} = \max\Big(global_{i-1.j-1}+\Delta, local_{i-1,j}+\Delta\Big) \nonumber \\
 && global_{i,j} = \max\Big(local_{i, j}, global_{i-1,j}\Big)
 \end{eqnarray*}
-
+, where $\Delta$ is the price change (i.e. profit) at day $i$.\\
 Notice:
 \begin{enumerate}
-\item Consider opportunity costs.
+\item Consider opportunity costs and reverting transaction.
 \item The global min is not $glocal[-1]$ but $\max\big(\{global[i]\}\big)$.
 \item You must sell the stock before you buy again (i.e. you can not have higher than 1 in stock position). 
 \end{enumerate}
 
-\subsubsection{Space optimization}
+\runinhead{Space optimization.}
 \begin{eqnarray*}
 && local_{j} = \max\Big(global_{j-1} + \Delta, local_{j}+\Delta\Big)
 \nonumber \\
@@ -202,15 +206,17 @@ Notice,
 \item Must iterate $j$ \textbf{backward}; otherwise we will use the updated value. 
 \end{enumerate}
 
-\subsubsection{Alternative definitions}
+\runinhead{Alternative definitions.}
 Other possible definitions: let $global_{i, j}$ be the max profit
-at day $i$ with UP\ TO $j$ transactions. Then, 
+with transactions ended at or before day $i$ with \textbf{up to} $j$ transactions. Then, 
 \begin{eqnarray*}
 && local_{i,j} = \max\Big(global_{i-1.j-1} + \max(0, \Delta), local_{i-1,j}+\Delta\Big)
 \nonumber \\
 && global_{i,j} = \max\Big(local_{i, j}, global_{i-1,j}\Big)
 \end{eqnarray*}
 and $global[-1]$ is the global max. 
+
+The complexity of the alternative definitions is the same as the original definitions. The bottom line is that different definitions of states result in different transition functions.
 
 \section{Game theory - multi players}
 Assumption: the opponent take the optimal strategy for herself. 
