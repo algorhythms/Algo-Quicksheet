@@ -1,7 +1,8 @@
 \chapter{Heap}
 
 \section{Introduction}
-Heap-ordered. Binary heap is one of the implementations of Priority Queue (ADT). 
+Heap-ordered. Binary heap is one of the implementations of Priority Queue (ADT). The core relationship of elements in the heap:
+$A_{2i} \leq A_{i} \geq A_{2i+1}$.
 
 \section{Operations}
 Assume the root \textbf{starts} at $a[1]$ rather than $a[0]$.
@@ -12,7 +13,8 @@ Basic operations:
 \item swim()/ sift\_up() - recursive
 \item build()/ heapify() - bottom-up sink()
 \end{enumerate}
-\subsection{Sink (siftDown)}
+\subsection{Sink (sift\_down)}
+Core clue: compare parent to the \textit{larger} child. 
 \begin{python}
 def sink(self, idx):
     while 2*idx <= self.N:
@@ -25,7 +27,9 @@ def sink(self, idx):
         self.swap(idx, c)
         idx = c
 \end{python}
-\subsection{Swim (siftUp)}
+
+\subsection{Swim (sift\_up)}
+Core clue: compare child to its parent. 
 \begin{python}
 def swim(self, idx):
     while idx > 1 and self.less(idx/2, idx):
@@ -34,18 +38,25 @@ def swim(self, idx):
         idx = pi
 \end{python}
 \subsection{Heapify}
-Worst case: Heapifying \textbf{a sorted array} is the worst case for heap construction, because the root of each subheap considered sinks all the way to the bottom. The worst case complexity $\sim 2N$.
+Core clue: bottom-up sink().
+\begin{python}
+def heapify(self):
+    for i in xrange(self.N/2, 0, -1):
+        self.sink(i);
+\end{python}
+\runinhead{Complexity.} Heapifying \textbf{a sorted array} is the worst case for heap construction, because the root of each subheap considered sinks all the way to the bottom. The worst case complexity $\sim 2N$. 
 
-Building a heap is O(N) rather than $O(N \lg N)$.
+Building a heap is $O(N)$ rather than $O(N \lg N)$. Intuitively, the deeper the level, the more the nodes, but the less the level to sink down. 
+
+At most $\big\lceil\frac{n}{2^{h+1}}\big\rceil$ nodes of any height $h$.
 
 Proof:
-\begin{eqnarray*}
-&& \because \sum_{i=0}^{+\infty} {ix^i} =\frac{x}{(1-x)^2} \\
-&& \therefore \sum_{h=0}^{\lfloor\lg n\rfloor}{\Big\lceil\frac{n}{2^{h+1}}\Big\rceil
-O(h)} = O\Bigg(n\sum_{h=0}^{\lfloor\lg n\rfloor}{\frac{h}{2^h}}\Bigg) \\
-&& \therefore \sum_{h=0}^{\lfloor\lg n\rfloor}{\Big\lceil\frac{n}{2^{h+1}}\Big\rceil
-O(h)} = O(n)
-\end{eqnarray*}
+\begin{align*}
+\because \sum_{i=0}^{+\infty} {ix^i} =\frac{x}{(1-x)^2} \\
+\therefore \sum_{h=0}^{\lfloor\lg n\rfloor}{\Big\lceil\frac{n}{2^{h+1}}\Big\rceil
+O(h)} &= O\Bigg(n\sum_{h=0}^{\lfloor\lg n\rfloor}{\frac{h}{2^h}}\Bigg) \\
+&= O(n)
+\end{align*}
 
 \section{Implementation}
 \subsection{General}
@@ -53,12 +64,12 @@ The self-implemented binary heap's index usually starts at 1 rather than 0.
 
 The array representation of heap is in \textbf{level-order}.
 
-A 3-heap is an array representation (using 1-based indexing) of a complete 3-way tree. The children of $a[k]$ are $a[3k-1]$, $a[3k]$, and $a[3k+1]$.
-
 The main reason that we can use an array to represent the heap-ordered tree in a binary heap is because the tree is \textbf{complete}.
 
 Suppose that we represent a BST containing N keys using an array, with $a[0]$ empty, the root at $a[1]$. The two children of $a[k]$ will be at $a[2k]$ and $a[2k+1]$. Then, the length of the array might need to be as large as $2^N$.
 
+It is possible to have 3-heap. A 3-heap is an array representation (using 1-based indexing) of a complete 3-way tree.
+The children of $a[k]$ are $a[3k-1]$, $a[3k]$, and $a[3k+1]$.
 \begin{figure}[hbtp]
 \centering
 \subfloat{\includegraphics[scale=.90]{heapRepr}}
@@ -69,8 +80,8 @@ Suppose that we represent a BST containing N keys using an array, with $a[0]$ em
 \subsection{Python Heapq}
 Python only has built in min-heap. To use max-heap, you can: 
 \begin{enumerate}
-\item Revert the number: 1 becomes -1.
-\item Wrap the data into another class and override \textbf{comparators}: \_\_cmp\_\_ or \_\_lt\_\_
+\item Invert the number: 1 becomes -1.
+(usually the best solution)\item Wrap the data into another class and override \textbf{comparators}: \_\_cmp\_\_ or \_\_lt\_\_
 \end{enumerate}
 
 The following code presents the wrapping method:
@@ -91,3 +102,15 @@ Normally the deletion by value in Python is $O(n)$, to achieve $O(\lg n)$ we can
 while heap and heap[0].deleted:
     heapq.heappop(heap)
 \end{python}
+\subsection{Java Priority Queue}
+\begin{java}
+// min-heap
+PriorityQueue<Integer> pq = new PriorityQueue<>(
+    (o1, o2) -> o1-o2
+);
+
+// max-heap
+PriorityQueue<Integer> pq = new PriorityQueue<>(
+    (o1, o2) -> o2-o1
+);
+\end{java}

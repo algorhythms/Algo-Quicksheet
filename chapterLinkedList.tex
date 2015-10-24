@@ -17,6 +17,28 @@ cur = pre.next
 \item Get the $i$-th object
 \item Delete a node 
 \item Reverse
+\begin{figure}[H]
+\centering
+\subfloat{\includegraphics[scale=1.0]{ll_reverse}}
+\caption{Reverse the linked list}
+\label{fig:LABEL}
+\end{figure}
+\begin{python}
+def reverseList(self, head):
+    dummy = ListNode(0)
+    dummy.next = head
+
+    pre = dummy
+    cur = pre.next
+    while pre and cur:
+        pre, cur.next, cur = cur, pre, cur.next
+        # incorrect evaluation order
+        # pre, cur, cur.next = cur, cur.next, pre 
+
+    dummy.next.next = None  # original head
+    return pre  # new head
+\end{python}
+Notice: the evaluation order for the swapping the nodes and links. 
 \end{enumerate}
 
 \subsection{Combined Operations}
@@ -24,5 +46,5 @@ In $O(n)$ without extra space:
 \begin{enumerate}
 \item Determine whether two lists intersects
 \item Determine whether the list is palindrome 
-\item Determine whether the list is acyclic 
+\item Determine whether the list is acyclic
 \end{enumerate}

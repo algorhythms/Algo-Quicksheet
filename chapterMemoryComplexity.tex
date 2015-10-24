@@ -6,7 +6,7 @@ When discussing memory complexity, need to consider both
 \item \textbf{Heap}: the declared variables' size.
 \item \textbf{Stack}: the recursive functions' call stack.
 \end{enumerate}}
-\subsection{Tables}
+\subsection{Memory for Data Type}
 The memory usage is based on Java.\\
 
 \begin{tabular}{ll}
@@ -34,6 +34,7 @@ double & 8\\
 char[] & 2N+24 \\
 int[] & 4N+24 \\
 double[] & 8N+24 \\
+T[] & 8N+24 \\
 
 \noalign{\smallskip}\hline\noalign{\smallskip}
 \caption{for one-dimensional arrays}
@@ -64,12 +65,15 @@ Padding & 8x \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
 \caption{for objects}
 \end{tabular}
+\\
+Notice:
+\begin{enumerate}
+\item The reference takes memory of 8 bytes. 
+\item Reference includes object reference and innner class reference.
+\item T[] only considers reference; if consider underlying data structure, the memory is 8N+24+xN, where $x$ is the underlying data structure memory for each element.
+\item Padding is to make the object memory size of 8's multiple.
+\end{enumerate}
 
-The reference takes memory of 24 bytes. 
-
-Reference includes object reference and innner class reference.
-
-Padding is to make the object memory size of 8's multiple.
 \subsection{Example}
 The generics is passed as Boolean:
 \begin{java}
@@ -77,7 +81,7 @@ public class Box<T> {   // 16 (object overhead)
     private in N;       // 4 (int)
     private T[] items;  // 8 (reference to array)
                         // 8N+24 (array of Boolean references)
-                        // 24N (Boolean objects)
+                        // 24N (underlying Boolean objects)
                         // 4 (padding to round up to a multiple)
 }
 \end{java} 

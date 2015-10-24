@@ -8,7 +8,11 @@ Variants:
 \item get the idx equal or just lower 
 \item get the idx equal or just higher 
 \end{enumerate}
-Binary search, get the idx equal or just lower, which is a very standard binary search:
+Binary search, get the idx equal or just lower, which is a very standard binary search. Notice:
+\begin{enumerate}
+\item To get ``equal'', \pyinline{return mid}.
+\item To get ``just lower'', \pyinline{return lo-1}.
+\end{enumerate}
 \begin{python}
 def bisect(self, A, t):
     lo = 0

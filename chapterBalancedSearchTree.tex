@@ -34,7 +34,7 @@ Summary of splitting the tree.
 \subsection{Properties}
 When inserting a new key into a 2-3 tree, under which one of the following scenarios must the height of the 2-3 tree increase by one? When every node on the search path from the root is a 3-node
 
-\section{Red-Black Tree}
+\section{Red-Black Tree}\label{rbtree}
 \subsection{Properties}
 Red-black tree is an implementation of 2-3 tree using \textbf{leaning-left red link}. \begin{figure}[hbtp]
 \centering
@@ -42,7 +42,7 @@ Red-black tree is an implementation of 2-3 tree using \textbf{leaning-left red l
 \caption{RB-tree and 2-3 tree}
 \label{fig:LABEL}
 \end{figure}
-The hight of the RB-tree is at most $2\lg N$ where alternating red and black links. Red is the special link while black is the default link. 
+The height of the RB-tree is at most $2\lg N$ where alternating red and black links. Red is the special link while black is the default link. 
 
 \runinhead{Perfect black balance.}Every path from root to null link has the same number of black links.
 \subsection{Operations}
@@ -111,6 +111,7 @@ Rotate left, rotate right, then flip colors.
 \runinhead{Deletion.} Deletion is more complicated. 
 
 \section{B-Tree}
+B-tree is the generalization of 2-3 tree. 
 \begin{figure}[hbtp]
 \centering
 \subfloat{\includegraphics[scale=.50]{b-tree}}
@@ -134,7 +135,7 @@ Core clues
 \begin{enumerate}
 \item \textbf{Split \& Up}: split half, move up the RIGHT node's FIRST of split nodes
 recursively
-\item The node moved up should be removed in the original node UNLESS it is a leaf
+\item \textbf{Remove}: the node moved up should be removed in the original node UNLESS it is a leaf
 node. 
 \end{enumerate}
 

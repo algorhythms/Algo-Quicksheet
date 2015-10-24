@@ -7,18 +7,22 @@
 \item Bit position (bit interchangeably)
 \end{enumerate}
 \subsection{Operations}
-\rih{Mask.} 
+\runinhead{Mask.} 
 \begin{enumerate}
-\item Masking to 1: to mask a single bit position, $bit \lor 1$
-\item Masking to 0: to mask a single bit position, $bit \land 0$
-\item Querying a bit position value: to query a single bit position, $bit \land 1$
-\item Toggling bit values: to toggle a single bit position, $bit \oplus 1$
+\item Masking to 1: to mask a single bit position, $bit\OR 1$
+\item Masking to 0: to mask a single bit position, $bit\AND 0$
+\item Querying a bit position value: to query a single bit position, $bit\AND 0010$
+\item Toggling bit values: to toggle a single bit position, $bit\XOR 1$
 \end{enumerate}}
 This can be extended to do masking operations on multiple bits. 
-\rih{Rightmost bit set.} To get the rightmost bit, with the help of 2's complement:
-$$
-rightmost = bits \land -bits 
-$$
+\runinhead{Rightmost bit set.} To get the rightmost bit, with the help of 2's complement:
+\begin{enumerate}
+\item Left extended with 1's:
+$$rightmost = bits \XOR -bits$$
+\item Left extended with 0's:
+$$rightmost = bits \AND -bits$$
+\end{enumerate}
+
 
 \section{Single Number}
 \subsection{Appear three times} 
@@ -45,7 +49,7 @@ To further optimize the space, use bits (bit set) instead of list.
 \item For a bit, there is one and only one bit set containing bit1 in that bit position.
 \item Transition among the 3 bit sets for every number:
 $$
-bitSet^{(i)} = (bitSet^{(i-1)} \land num) \lor (bitSet^{(i)} \land \lnot num)
+bitSet^{(i)} = (bitSet^{(i-1)}\AND num)\OR(bitSet^{(i)}\AND \NOT num)
 $$
 For $i$ appearances, the first part is the bit set \textbf{transited from} $(i-1)$ appearances, and the second part is the bit set \textbf{transited out} from itself. 
 \end{itemize}}
@@ -54,7 +58,7 @@ For $i$ appearances, the first part is the bit set \textbf{transited from} $(i-1
 Given an array of numbers nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.
 
 \begin{itemize}
-\item Easily get: $x = a \oplus b$.
+\item Easily get: $x = a \XOR b$.
 \item $a \neq b$; thus there are at least one 1-bit in $x$ is different.  
 \item Take an arbitrary 1 bit set in $x$, and such bit set can classify the elements in the array into two separate groups.
 \end{itemize}

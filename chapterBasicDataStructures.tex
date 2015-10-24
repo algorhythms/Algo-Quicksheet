@@ -19,7 +19,7 @@ Implementation (for both queue and stack):
 \end{enumerate}}
 Python Library:
 \begin{enumerate}
-\item \pythoninline{collections.deque} \footnote{The naming in collections is awkward: \href{http://stackoverflow.com/questions/18953681/naming-convention-in-collections-why-are-some-lowercase-and-others-capwords}{discussion}.}
+\item \pythoninline{collections.deque} \footnote{The naming in Python collections is awkward: \href{http://stackoverflow.com/questions/18953681/naming-convention-in-collections-why-are-some-lowercase-and-others-capwords}{discussion}.}
 \item \pythoninline{list}
 \item \pythoninline{dict, OrderedDict, DefaultDict}
 \end{enumerate}} 
@@ -50,13 +50,14 @@ Find the largest rectangle in the matrix (histogram). Given $n$ non-negative int
 \label{fig:histogram_area}
 \end{figure}
 
-Keep a stack storing the bars in strictly increasing order, then calculate the area by popping out the stack to get the currently lowest bar which determines the height of the rectangle.
-
-Notice:
+Keep a stack storing the bars in non-decreasing, then calculate the area by popping out the stack to get the currently lowest bar which determines the height of the rectangle.
+\\
+Core clues:
 \begin{enumerate}
-\item Maintain the non-decreasing stack
-\item Calculation of the rectangle width 
-\item Post-processing in the end 
+\item Maintain the non-decreasing stack. slow performance 
+\item Popping triggers the calculation of area
+\item Calculate the rectangle width by index diff
+\item Post-processing in the end
 \end{enumerate}}
 \begin{python}
 def largestRectangleArea(self, height):
@@ -84,7 +85,7 @@ def largestRectangleArea(self, height):
 
 \section{Map}
 \subsection{Math Relations}
-\textbf{OneToOneMap}. One map, dual entries. 
+\textbf{OneToOneMap}. One map, dual entries.
 \begin{python}
 class OneToOneMap(object):
     def __init__(self):
@@ -98,7 +99,7 @@ class OneToOneMap(object):
         return self.m.get(a)
 \end{python}
 \subsection{Operations}
-\textbf{Sorting by value}:
+\runinhead{Sorting by value}. Sort the map entries by values. 
 \begin{python}
 from operators import itemgetter 
 sorted(hm.items(), key=itemgetter(1), reverse=True)

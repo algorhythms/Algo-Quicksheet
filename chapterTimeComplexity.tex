@@ -35,34 +35,45 @@ Notice that $b>1$ rather than $b\geq1$.
 \subsubsection*{Case 1}
 If:
 $$f(n) = o(n^{\log_b a})$$
+
+, where in the condition it is $o$ rather than $O$. \\\\
 Then:
 $$T(n) = \Theta(n^{\log_b a})$$
-
-Notice that in the condition it is $o$ rather than $O$. 
 \subsubsection*{Case 2}
 If:
 $$f(n) = \Theta(n^{\log_b a} \log^{k} n)$$
 
-for some constant $k \geq 0$\\\\
+, for some constant $k \geq 0$\\\\
 Then:
 $$
 T(n) = \Theta(n^{\log_b a} \log^{k+1} n)
 $$
 
+, typically $k=0$ in most cases. 
 \subsubsection*{Case 3}
 If:
 $$f(n) = \omega(n^{\log_b a})$$
+
+, where in the condition it is $\omega$ rather than $\Omega$. \\\\
 And with regularity condition:
 $$f(\frac{n}{b}) \le k f(n)$$
 
-for some constant $k < 1$ and sufficiently large $n$\\\\
+, for some constant $k < 1$ and sufficiently large $n$\\\\
 Then:
 $$T\left(n \right) = \Theta\left(f(n) \right)$$
-
-Notice that in the condition it is $\omega$ rather than $\Omega$. 
-
 \section{Useful Math Equations}
 Euler:
 $$
 \frac{1}{2}+\frac{1}{3}+\frac{1}{4} + ... + \frac{1}{n} = \ln{n}
 $$
+Logarithm power: 
+$$
+a^{\log_b^n} &= n^{\log_b^a}
+$$
+
+proof:
+\begin{align*}
+a^{\log_b^n} &= n^{\log_b^a} \\
+\Leftarrow \ln{a^{\log_b^n}} &= \ln{n^{\log_b^a}}\\
+\Leftarrow  \frac{\ln n}{\ln b}\ln a &=\frac{\ln a}{\ln b}\ln n
+\end{align*}

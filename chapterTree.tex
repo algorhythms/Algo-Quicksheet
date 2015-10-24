@@ -7,15 +7,16 @@
 Node deleteMin(Node x) {
     if (x.left == null) return x.right;
     x.left = deleteMin(x.left);
-    x.count = 1+size(x.left)+size(x.right);
+    // x.count = 1+size(x.left)+size(x.right);
     return x;
 }
 \end{java}
 \runinhead{Construct path from root to target.} To search a node in binary tree (not necessarily BST), use dfs:
 \begin{python}
 def dfs(self, root, t, path, found):
-    if not root or found[0]:  # post-call check
-        return
+    # post-call check
+    if not root: return        
+    if found[0]: return 
 
     path.append(root)
     if root == t:
@@ -33,8 +34,7 @@ The `found` is a wrapper for boolean to keep it referenced by all calling stack.
 \runinhead{Find all paths.} Find all paths from root to leafs. For every currently visiting node, add itself to path; search left, search right and pop itself. Record current result when reaching the leaf.
 \begin{python}
 def dfs_path(self, cur, path, ret):
-    if not cur:
-        return
+    if not cur: return
 
     path.append(cur)
     if not cur.left and not cur.right:
@@ -129,7 +129,7 @@ class Solution(object):
 
     return ret
 \end{python}
-Notice: if worst case $O(n \log n)$, need to use Red-Back Tree.
+Notice: if worst case $O(n \log n)$ is required, need to use Red-Back Tree - Section \ref{rbtree}. However, there is a more elegant way using Segment Tree - Section \ref{segmentTreeInversionCount}.
 
 
 \subsection{Range search}
@@ -144,18 +144,19 @@ int size(Key lo, Key hi) {
 TODO
 
 \runinhead{Closest value} Find the value in BST that is closet to the \pyinline{target}.
-
+\\
 Clues:
 \begin{enumerate}
 \item Find the value just $\leq$ the target.
 \item Find the value just $\geq$ the target.
 \end{enumerate}
-
+\
+\\
 Code for finding either the lower value or higher value:
 \begin{python}
 def find(self, root, target, ret, lower=True):
-  if not root:
-    return
+  """ret: result container"""
+  if not root: return
 
   if root.val == target:
     ret[0] = root.val
@@ -174,19 +175,19 @@ def find(self, root, target, ret, lower=True):
 \end{python}
 
 \runinhead{Closet values} Find $k$ values in BST that are closet to the \pyinline{target}.
-
+\\\\
 Clues:
 \begin{enumerate}
-\item Find the predecessors $\triangleq \{node | node.value \leq target\}$.
-\item Find the successors $\triangleq \{node | node.value \geq target\}$.
+\item Find the predecessors $\triangleq \{node | node.value \leq target\}$. Store in the stack. 
+\item Find the successors $\triangleq \{node | node.value \geq target\}$. Store in the stack.
 \item Merge the predecessors and successors as in merge in MergeSort to get he $k$ values. 
 \end{enumerate}
-
+\
+\\
 Code for finding the predecessors:
 \begin{python}
 def predecessors(self, root, target, stk):
-  if not root:
-    return
+  if not root: return
 
   self.predecessors(root.left, target, stk)
   if root.val <= target:
@@ -195,15 +196,16 @@ def predecessors(self, root, target, stk):
 \end{python}
 
 
-
-
 \section{Binary Index Tree (BIT)}\label{BIT}
+\subsection{Introduction}
+Compared to Segment Tree, BIT is shorter and more elegant. BIT can do most of things that Segment Tree can do and it is easier to code. BIT updates and queries $$i\rightarrow prefixSum$$ in $O(\log n)$ time; however, BIT CANNOT query $$prefixSum \rightarrow i$$
+\subsection{Implementation}
 Given an array $A$ of length $n $ starting from $1$. prefix sum $s[i]\triangleq A_1+...+A_i$. BIT uses binary to maintain the array of prefix sum for querying and updating. For $i$-th node in the BIT, 
 $$
 N[i]=A_{j+1}+...+A_i
 $$
-, where $j=i-lowbit(i)$, i.e. set $i$'s lowest bit 1 to 0. $lowbit(i)$ can be defined as \pyinline{return i&-i}, using 2's complement. 
-\\
+, where $j=i-lowbit(i)$, i.e. set $i$'s lowest bit 1 to 0. $lowbit(i)$ can be defined as \pyinline{return i & -i}, using 2's complement. Notice that the summation ends with $A_i$ since easier to \pyinline{set}.
+\\\\
 Clues:
 \begin{enumerate}
 \item Binary 
@@ -213,18 +215,19 @@ Clues:
 \begin{figure}[hbtp]
 \centering
 \subfloat{\includegraphics[height=1.1in]{BITget}}
-\caption{Binary Indexed Tree Get Operation}
+\caption{Binary Indexed Tree \textit{get} Operation}
 \label{fig:LABEL}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \subfloat{\includegraphics[height=1.05in]{BIT}}
-\caption{Binary Indexed Tree Set Operation}
+\caption{Binary Indexed Tree \textit{set} Operation}
 \label{fig:LABEL}
 \end{figure}
 
-Time complexity, longest update is along the leftmost branch, which takes $O(\log_2 n)$ (e.g. 1, 10, 100, 1000, 10000); longest query is along a branch starting with node with all 1's (e.g. 1111, 1110, 1100, 1000), which also takes $O(\log_2 n)$.\\
+Time complexity, longest update is along the leftmost branch, which takes $O(\log_2 n)$ (e.g. 1, 10, 100, 1000, 10000); longest query is along a branch starting with node with all 1's (e.g. 1111, 1110, 1100, 1000), which also takes $O(\log_2 n)$.
+\\\\
 Code:
 \begin{python}
 class BIT(object):
@@ -235,11 +238,6 @@ class BIT(object):
     def lowbit(self, i):
         return i & -i
 
-    def set(self, i, val):
-        while i < len(self.N):
-            self.N[i] += val
-            i += self.lowbit(i)
-
     def get(self, i):
         ret = 0
         while i > 0:
@@ -247,6 +245,11 @@ class BIT(object):
             i -= self.lowbit(i)
 
         return ret
+        
+    def set(self, i, val):
+        while i < len(self.N):
+            self.N[i] += val
+            i += self.lowbit(i)
 \end{python}
 
 
@@ -265,7 +268,6 @@ Structure:
           /         \               /            \
    [0,1,count=1] [1,2,count=0] [2,3,count=1], [3,4,count=1]
 \end{lstlisting}
-
 Variants:
 \begin{enumerate}
 \item Sum Segment Tree.
@@ -289,9 +291,7 @@ Notice:
 \item Only build need to change the start and end recursively.
 \item Pre-check is preferred in recursive calls.
 \end{enumerate}
-
-
-Code:
+Code: Notice the code has abstracted out segment tree functions of sum, min/max or count, by abstracting the subtree combine function to \pyinline{lambda}.
 \begin{python}
 DEFAULT = 0
 f = lambda x, y: x+y
@@ -311,12 +311,11 @@ class SegmentTree(object):
     def build_tree(self, s, e):
         """
         segment: [s, e)
+        Either check s+1==e or have root.right 
+        only if have root.left
         """
-        if s >= e:
-            return None
-
-        if s+1 == e:
-            return Node(s, e, self.A[s])
+        if s >= e: return None
+        if s+1 == e: return Node(s, e, self.A[s])
 
         left = self.build_tree(s, (s+e)/2)
         right = self.build_tree((s+e)/2, e)

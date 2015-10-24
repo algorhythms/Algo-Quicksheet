@@ -3,20 +3,18 @@
 
 \section{Data Structure}
 \subsection{Basic}
-
 \begin{figure}[hbtp]
 \centering
 \subfloat{\includegraphics[scale=.30]{trie.jpg}}
 \caption{Trie}
 \label{fig:trie} 
 \end{figure}
-
-Notice:
+\runinhead{Notice:}
 \begin{enumerate}
 \item Children are stored in HashMap rather than ArrayList. 
 \item self.word to stores the word and indicates whether a word ends at the current node. 
 \end{enumerate}
-Code: 
+\rih{Code:}
 \begin{python}
 class TrieNode(object):
     def __init__(self, char):
@@ -50,6 +48,7 @@ Code:
 \begin{python}
 class TrieNode:
     def __init__(self):
+        """Implicit storage"""
         self.ended = False
         self.children = {}
 
@@ -90,7 +89,7 @@ class Trie:
 
         return True
 \end{python}
-\subsection{Application}
+\subsection{Applications}
 \begin{enumerate}
 \item Word search in matrix.
 \item Word look up in dictionary.
