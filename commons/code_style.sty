@@ -1,5 +1,6 @@
 \ProvidesPackage{code_style}[2015/07/07 v1.0 code style macros]
 \usepackage[utf8]{inputenc}
+\usepackage{setspace}
 
 
 % Default fixed font does not support bold face
@@ -17,7 +18,7 @@
 % Python style for highlighting
 \newcommand\pythonstyle{\lstset{
     language=Python,
-    basicstyle=\ttb,
+    basicstyle=\setstretch{0.8}\ttb,
     otherkeywords={assert, self, yield},  % Add keywords here
     keywordstyle=\ttm\color{deepblue},
     columns=flexible,
@@ -55,11 +56,11 @@
 
 \newcommand\javastyle{\lstset{
     language=Java,
-    basicstyle=\ttb,
+    basicstyle=\setstretch{0.8}\ttb,
     otherkeywords={},  % Add keywords here
     keywordstyle=\ttm\color{deepblue},
     columns=flexible,
-    literate={-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1,
+    literate={\_}{\ttb{\char`_}}1{-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1,
     keepspaces=true,
     commentstyle=\ttm,
     emph={},  % Custom highlighting
