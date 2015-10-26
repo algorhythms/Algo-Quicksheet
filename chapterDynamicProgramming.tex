@@ -119,6 +119,20 @@ F_{i. j} = \left\{ \begin{array}{rl}
 It can be optimized to use space $O(1)$. 
 
 \section{String}
+\runinhead{Word break.} Given a string $s$ and a dictionary of words $dict$, determine if $s$ can be segmented into a space-separated sequence of $dict$ words.
+
+Let $F_i$ be weather $s[:i]$ can be segmented. 
+\begin{eqnarray*}
+F_{i} = \left\{ \begin{array}{rl}
+  F_{i-len(w)} &\mbox{// if $\exists w\in dict$, \pyinline{s[i-len(w):i]==w}}
+\\
+  false &\mbox{// otherwise}
+       \end{array} \right.
+\end{eqnarray*}
+
+Return all such possible sentences.
+
+
 \runinhead{Is palindrome.} Given a string $s$, use an array to determine whether $s[i:j]$.
 
 Let $P_{i,j}$  indicates whether $s[i:j]$ is palindrome. We have one condition - whether the head and the end letter are equal: 
