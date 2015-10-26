@@ -32,7 +32,7 @@ def reverseList(self, head):
     cur = pre.next
     while pre and cur:
         pre, cur.next, cur = cur, pre, cur.next
-        # incorrect evaluation order
+        # incorrect evaluation order:
         # pre, cur, cur.next = cur, cur.next, pre 
 
     dummy.next.next = None  # original head
