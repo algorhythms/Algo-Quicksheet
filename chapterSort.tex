@@ -255,7 +255,8 @@ def inversion(self, A):
 Core clues:
 \begin{enumerate}
 \item Segment Tree maintains \textbf{index of values} to count the number of at each value.
-\item \pyinline{get(root, end) - get(root, a)} to get the inversion count of $a.$
+\item \pyinline{get(root, end) - get(root, a)} to get the inversion count of $a$.
+\end{enumerate}
 \begin{python}
 class SegmentTree(object):
   def __init__(self):

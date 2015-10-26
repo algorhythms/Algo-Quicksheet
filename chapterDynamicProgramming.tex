@@ -121,7 +121,7 @@ It can be optimized to use space $O(1)$.
 \section{String}
 \runinhead{Word break.} Given a string $s$ and a dictionary of words $dict$, determine if $s$ can be segmented into a space-separated sequence of $dict$ words.
 
-Let $F_i$ be weather $s[:i]$ can be segmented. 
+Let $F_i$ be whether \pyinline{s[:i]} can be segmented. 
 \begin{eqnarray*}
 F_{i} = \left\{ \begin{array}{rl}
   F_{i-len(w)} &\mbox{// if $\exists w\in dict$, \pyinline{s[i-len(w):i]==w}}
@@ -129,9 +129,32 @@ F_{i} = \left\{ \begin{array}{rl}
   false &\mbox{// otherwise}
        \end{array} \right.
 \end{eqnarray*}
+Return all such possible sentences. In original case, we use a bool array to record whether a dp could be segmented. Now we should use a vector for every dp to record how to construct that dp from another dp.
 
-Return all such possible sentences.
+Let $F_i$ be all possible segmented words ends at \pyinline{s[i-1]}. $F_i$ is a list. 
+\begin{eqnarray*}
+F_{i} = \left\{ \begin{array}{rl}
+  F_{i}+[w] &\mbox{// $\forall w\in dict\cdot$} \\
+  & \mbox{ if \pyinline{s[i-len(w):i]==w} $\wedge\ \exists
+F_{i-len(w)$ } \\
+  F_{i}} &\mbox{// otherwise}
+       \end{array} \right.
+\end{eqnarray*}
 
+Reconstruct the sentence from $F_i$. It is like building path for the tree. Using backtracking: 
+\begin{python}
+def build(self, dp, i, cur, ret):
+    if cur_index == 0:
+        ret.append(" ".join(list(cur)))
+        return
+
+    # backtracking
+    for word in dp[i]:
+        cur.appendleft(word)
+        self.build(dp, i-len(word), cur, ret)
+        cur.popleft()
+
+\end{python}
 
 \runinhead{Is palindrome.} Given a string $s$, use an array to determine whether $s[i:j]$.
 
