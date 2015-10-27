@@ -1,4 +1,4 @@
-# Algo-Quicksheet
+# Algo-Quicksheet ![License](https://img.shields.io/badge/license-BSD--3-red.svg)
 Quicksheet for Algorithms
 
 ## Sample Page
