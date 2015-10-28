@@ -84,7 +84,7 @@ of steps required to convert $A[:i]$ to $B[:j]$.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
   F_{i-1, j-1} &\mbox{// if $a[i]==b[j]$} \\
-  \min\Big(F_{i, j-1}+1, &\mbox{//otherwise, insert}\\
+  \min\Big(F_{i, j-1}+1, &\mbox{// otherwise, insert}\\
   F_{i-1, j}+1, &\mbox{// delete}\\
   F_{i-1, j-1}+1\Big) &\mbox{// replace}\\
        \end{array} \right.
