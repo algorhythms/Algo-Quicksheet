@@ -102,3 +102,36 @@ And we know:
 
 
 We expand the formula, although the  naive way of getting the coefficient of $x^{10}$ is tedious. 
+
+\section{Catalan Number}
+\subsection{Math}
+\runinhead{Definition.}
+$$
+C_n = {2n\choose n} - {2n\choose n+1} = {1\over n+1}{2n\choose n} \quad\text{ for }n\ge 0
+$$
+\runinhead{Proof.} Proof of Calatan Number $C_n ={2n\choose n} - {2n\choose n+1}$:
+\begin{itemize}
+\begin{figure}[]
+    \centerline{\includegraphics[height = 1.6in]{catalan_proof}}
+    \caption{Piazza}
+  \label{fig:label}
+\end{figure}
+\item monotonic paths - $n$ right, $n$ up
+$$
+{2n\choose n}
+$$
+\item flip at the line just above the diagonal line - $n-1$ right, $n+1$ up
+$$
+{n-1+n+1\choose n-1}
+$$
+\item thus, the number of path without \textit{exceedance} (i.e. passing the diagonal line) is: 
+\begin{align*}
+C_n &= {2n\choose n} - {2n\choose n-1}\\ 
+&={2n\choose n} - {2n\choose n+1}
+\end{align*}
+\end{itemize}
+
+\subsection{Problems}
+\runinhead{\#Parenthesis.}Number of different ways of adding parenthesis. 
+\runinhead{\#BST.}Number of different Binary Search Trees.
+
