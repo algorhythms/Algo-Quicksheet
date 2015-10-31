@@ -56,7 +56,7 @@ Notice:
 
 
 
-\section{Sequence}
+\section{Sequence}\label{dpSequence}
 \runinhead{Longest common subsequence.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
@@ -77,12 +77,33 @@ F_{i. j} = \left\{ \begin{array}{rl}
 
 Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, the $gmax=max\big(\{{F_{i,j}\}\big)$.
 \\
+\runinhead{Maximum subarray sum.} Find the maximum subarray sum of $A$. 
+
+Let $F_i$  be the maximum subarray sum ending at $A_{i}$
+$$
+F_i = \max(F_{i-1}+A_{i}, 0)
+$$
+
+Then the global $maxa$ is:
+$$
+maxa = \max(F_i, \forall i)
+$$
+
+
+\runinhead{Maximum sum of non-adjacent cells.} Get the maximum sum of non-adjacent
+cells of an array $A$.
+
+Let $F_i$ be the maximum sum of non-adjacent cells for $A[:i]$. You have tow options:
+choose $A_{i-1}$ or not.
+\begin{align*}
+F_{i} = \max\big(F_{i-1}, F_{i-2}+A_{i-1}\big)
+\end{align*}
 \runinhead{Edit distance} Find the minimum number of steps required to convert words $A$ to $B$ using inserting, deleting, replacing. 
 
 Let $F_{i, j}$ be the minimum number
 of steps required to convert $A[:i]$ to $B[:j]$.
 \begin{eqnarray*}
-F_{i. j} = \left\{ \begin{array}{rl}
+F_{i, j} = \left\{ \begin{array}{rl}
   F_{i-1, j-1} &\mbox{// if $a[i]==b[j]$} \\
   \min\Big(F_{i, j-1}+1, &\mbox{// otherwise, insert}\\
   F_{i-1, j}+1, &\mbox{// delete}\\
@@ -99,7 +120,7 @@ F_{i. j} = \left\{ \begin{array}{rl}
 \end{lstlisting}
 Let $F_{i, j}$ represents the max square's length ended at $mat_{i, j}$ (lower right corner).
 \begin{eqnarray*}
-F_{i. j} = \left\{ \begin{array}{rl}
+F_{i, j} = \left\{ \begin{array}{rl}
   \min\big(F_{i-1, j-1}, F_{i-1, j}, F_{i, j-1}\big)+1 &\mbox{// if $mat_{i, j}==1$} \\
   0 &\mbox{// otherwise}
        \end{array} \right.
@@ -133,6 +154,8 @@ The the total volume $vol$:
 $$
 vol = \sum_i(\max\big(0,\min(maxL_i, maxR_{i+1})-A[i]\big))
 $$
+
+
 
 \section{String}
 \runinhead{Word break.} Given a string $s$ and a dictionary of words $dict$, determine if $s$ can be segmented into a space-separated sequence of $dict$ words.

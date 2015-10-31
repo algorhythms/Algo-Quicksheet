@@ -174,7 +174,58 @@ of order.
 \caption{Sort summary}
 \label{fig:trie} 
 \end{figure}
+\section{Partial Quicksort}
+\subsection{Find $m$ smallest}
+\runinhead{Heap-based solution.} $O(n \log m)$
+\runinhead{Partial Quicksort}  Then the $A[:m]$ is sorted $m$ smallest. The algorithm recursively sort the $A[i:j]$
 
+The average time complexity is
+\begin{eqnarray*}
+F(n) = \left\{ \begin{array}{rl}
+  F(\frac{n}{2})+O(n) &\mbox{// if $\frac{n}{2} \geq m$} \\
+  2F(\frac{n}{2})+O(n) &\mbox{// otherwise}
+       \end{array} \right.
+\end{eqnarray*}
+
+\begin{python}
+def partial_qsort(self, A, i, j, m):
+    if i >= j: return
+
+    p = self.pivot(A, i, j)
+    self.partial_qsort(A, i, p, m)
+    if p+1 >= m: return
+    self.partial_qsort(A, p+1, j, m)
+\end{python}
+
+\subsection{Find $k$-th}
+Use partial quick sort to find $k$-th smallest element in the unsorted array. The algorithm recursively sort the $A[i:j]$
+
+The average time complexity is
+\begin{align*}
+F(n) &= F(n/2) + O(n) \\
+&= O(n)
+\end{align*}
+\begin{python}
+def find_kth(self, A, i, j, k):
+    if i >= j: return
+    
+    p = self.pivot(A, i, j)
+    if p == k: return A[p]
+    if p > k:  return self.find_kth(A, i, p, k)
+    else:      return self.find_kth(A, p+1, j, k)
+
+def pivot(self, A, i, j):
+    p = i
+    closed = p
+    for ptr in xrange(i, j):
+        if A[ptr] < A[p]:
+            closed += 1
+            A[ptr], A[closed] = A[closed], A[ptr]
+
+    A[closed], A[p] = A[p], A[closed]
+    return closed
+
+\end{python}
 
 \section{Inversion}
 If $a_i > a_j$ but $i<j$, then this is considered as 1 Inversion. That is, for an element, the count of other elements that are \textit{larger} than the element but appear \textit{before} it. This is the default definition. 

@@ -1,29 +1,50 @@
 \chapter{Array}
 \section{Circular Array}
-Common patterns for solving problems with circular arrays.
+This section describes common patterns for solving problems with circular arrays.
 
 Normally, we should solve the linear problem and circular problem differently.
 
 \subsection{Circular max sum}
-Linear problem can be solved linear with simple algorithm, but the circular sum should use dp. 
+Linear problem can be solved linear with dp algorithm for maximum subarray sum - Section \ref{dpSequence}. 
+
+The circular sum should use dp. 
+
+Problem description: Given an integer array, find a continuous rotate subarray where the sum of numbers is the biggest. Return the index of the first number and the index of the last number. 
+\runinhead{Core clues:}
 \begin{enumerate}
-\item Construct left max sum for max sum over the $[0..i]$ (\textbf{forward} starting from the left side). \\ Construct right max sum for max sum over the indexes $[i..n-1]$ (\textbf{backward} starting from the right side). Notice that the max sum index ends AT or BEFORE i. 
-\item The $maxSum = maxSum[i..n-1]+maxSum[0..i]$
+\item \textbf{State definitions}: 
+
+Construct left max sum $L_i$ for max sum over the $[0..i]$ with subarray starting at 0 (\textit{forward} starting from the left side). 
+
+Construct right max sum $R_i$ for max sum over the indexes $[i+1..n -1]$, with subarray ending at -1 (\textit{backward} starting from the right side). 
+
+Notice, for the two max sums, the index ends AT or BEFORE $i$.
+
+\begin{align*}
+L_i = \max\Big(L_{i-1}, sum(A[:i])\Big) \\ 
+R_i = \max\Big(R_{i+1}, sum(A[i:])\Big)
+\end{align*}
+\item \textbf{Transition functions:}
+
+\item \textbf{Global result}: 
+$$maxa = \max(R_i+L_{i-1}, \forall i)$$
 \end{enumerate}
 
 \subsection{Non-adjacent cell}
+Maximum sum of non-adjacent cells in an array $A$.
+
 To solve circular non-adjacent array problem in linear way, we should consider 2 cases:
 \begin{enumerate}
 \item Not consider the $A[1]$
 \item Not consider the $A[-1]$ 
 \end{enumerate}
-
+and solve them using linear maximum sum of non-adjacent cells separately  - Section \ref{dpSequence}. 
 \subsection{Binary search}
 Searching for an element in a circular sorted array. Half of the array is sorted while the other half is not.
 \begin{enumerate}
 \item If $A[0] < A[mid]$, then all values in the first half of the array are sorted.
 \item If $A[mid] < A[-1]$, then all values in the second half of the array are sorted.
-\item Then decide whether to got the \textbf{sorted half} or the \textbf{unsorted half}.
+\item Then \textit{derive and decide} whether to got the \textbf{sorted half} or the \textbf{unsorted half}.
 \end{enumerate}
 \section{Voting Algorithm}
 \subsection{Majority Number}
@@ -38,38 +59,59 @@ If the counter captures the majority number, two cases will happen. The one is t
  
 This algorithm needs to re-check the current number being counted is indeed the majority number.    
 
+\begin{python}
+def majorityElement(self, nums):
+    """
+    Algorithm:
+    O(n lgn) sort and take the middle one
+    O(n) Moore's Voting Algorithm
+    """
+    mjr = nums[0]
+    cnt = 0
+    for i, v in enumerate(nums):
+        if mjr == v:
+            cnt += 1
+        else:
+            cnt -= 1
+
+        if cnt < 0:
+            mjr = v
+            cnt = 1
+
+    return mjr
+
+\end{python}
 \subsubsection{$\frac{1}{3}$ of the Size}
 Given an array of integers, the majority number is the number that occurs more than $\frac{1}{3}$ of the size of the array. This question can be generalized to be solved by $\frac{1}{k}$ case. 
 
 \subsubsection{$\frac{1}{k}$ of the Size}
-Given an array of integers and a number k, the majority number is the number that occurs more than $\frac{1}{k}$ of the size of
-the array.
+Given an array of integers and a number k, the majority number is the number that occurs more than $\frac{1}{k}$ of the size of the array. In this case, we need to generalize the solution to $\frac{1}{2}$ majority number problem.
 \begin{python}
-class Solution:
-    def majorityNumber(self, nums, k):
-        """
-        Since majority elements appears more 
-        than ceil(n/k) times, there are at 
-        most 2 majority number
-        """
-        cnt = defaultdict(int)
-        for num in nums:
-            if num in cnt:
+def majorityNumber(self, nums, k):
+    """
+    Since majority elements appears more 
+    than ceil(n/k) times, there are at 
+    most k-1 majority number
+    """
+    cnt = defaultdict(int)
+    for num in nums:
+        if num in cnt:
+            cnt[num] += 1
+        else:
+            if len(cnt) < k-1:
                 cnt[num] += 1
             else:
-                if len(cnt) < k-1:
-                    cnt[num] += 1
-                else:
-                    for key in cnt.keys():
-                        cnt[key] -= 1
-                        if cnt[key] == 0:
-                            del cnt[key]
+                for key in cnt.keys():
+                    cnt[key] -= 1
+                    if cnt[key] == 0: del cnt[key]
+    
+    
+    # filter, double-check
+    for key in cnt.keys():
+        if (len(filter(lambda x: x == key, nums)) 
+            > len(nums)/k):
+            return key
 
-        for key in cnt.keys():
-            if (len(filter(lambda x: x == key, nums)) 
-                > len(nums)/k):
-                return key
-
-        raise Exception
+    raise Exception
 \end{python}
 

@@ -1,29 +1,83 @@
 \chapter{Search}
 
 \section{Binary Search}
-Variants:
+\runinhead{Variants:}
 \begin{enumerate}
-\item bisect\_left
-\item bisect\_right
 \item get the idx equal or just lower 
-\item get the idx equal or just higher 
+\item get the idx equal or just higher
+\item \pyinline{bisect_left}
+\item \pyinline{bisect_right} 
 \end{enumerate}
-Binary search, get the idx equal or just lower, which is a very standard binary search. Notice:
+\subsection{idx equal or just lower}
+Binary search, get the idx of the element equal to or just lower than the target. The returned idx is the $A_{idx} \leq target$. It is possible to return $-1$. It is different from the \pyinline{bisect_lect}.
+
+\runinhead{Core clues:}
 \begin{enumerate}
 \item To get ``equal'', \pyinline{return mid}.
 \item To get ``just lower'', \pyinline{return lo-1}.
 \end{enumerate}
 \begin{python}
-def bisect(self, A, t):
-    lo = 0
-    hi = len(A)
+def bin_search(self, A, t, lo=0, hi=None):
+    if hi is None: hi = len(A)
+    
     while lo < hi:
         mid = (lo+hi)/2
-        if A[mid] == t:
-            return mid
-        elif A[mid] < t:
-            lo = mid+1
-        else:
-            hi = mid
+        if A[mid] == t:  return mid
+        elif A[mid] < t: lo = mid+1
+        else:            hi = mid
+
     return lo-1
+\end{python}
+\subsection{idx equal or just higher}
+$A_{idx} \geq target$.
+\begin{python}
+def bin_search(self, A, t, lo=0, hi=None):
+    if hi is None: hi = len(A)
+   
+    while lo < hi:
+        mid = (lo+hi)/2
+        if A[mid] == t:  return mid
+        elif A[mid] < t: lo = mid+1
+        else:            hi = mid
+        
+    return lo
+\end{python}
+\subsection{bisect\_left}
+Return the index where to insert item x in list A. So if t already appears in the list,
+A.insert(t) will insert just before the \textit{leftmost} t already there.
+\runinhead{Core clues:}
+\begin{enumerate}
+\item Move \pyinline{lo} if $A_{mid} < t$
+\item Move \pyinline{hi} if $A_{mid} \geq t$
+\end{enumerate}
+
+\begin{python}
+def bisect_left(A, t, lo=0, hi=None):
+    if hi is None: hi = len(A)
+
+    while lo < hi:
+        mid = (lo+hi)/2
+        if A[mid] < t: lo = mid+1   
+        else:          hi = mid
+
+    return lo
+\end{python}
+
+\subsection{bisect\_right}
+Return the index where to insert item x in list A. So if t already appears in the list, A.insert(t) will insert just after the \textit{rightmost} x already there.
+\runinhead{Core clues:}
+\begin{enumerate}
+\item Move \pyinline{lo} if $A_{mid} \leq t$
+\item Move \pyinline{hi} if $A_{mid} > t$
+\end{enumerate}
+\begin{python}
+def bisect_right(A, t, lo=0, hi=None):
+    if hi is None: hi = len(A)
+
+    while lo < hi:
+        mid = (lo+hi)/2
+        if A[mid] <= t: lo = mid+1
+        else:           hi = mid 
+
+    return lo
 \end{python}
