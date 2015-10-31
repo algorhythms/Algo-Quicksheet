@@ -99,5 +99,62 @@ Polish Notation is in-fix while Reverse Polish Notation is post-fix.
 Straightforward: Use a stack to store the number. Iterate the input, push stack when
 hit numbers, pop stack when hit operators.
 \subsection{Convert In-fix to Post-fix}
-TODO
+Core clues:
+\begin{enumerate}
+\item The stack temporarily stores the operators of \textit{strictly increasing precedence order}.
+\item Digits have the highest precedence, followed by $*, /, +, ($. Notice that $($ operator itself has the \textit{lowest} precedence.
+\item \textit{Match} the brackets. 
+\end{enumerate}
+Code:
+\begin{python}
+def infix2postfix(self, lst):
+  stk = []
+  ret = []  # post fix result
+  for elt in lst:
+    if elt.isdigit():
+      ret.append(elt)
+    elif elt == "(":
+      stk.append(elt)
+    elif elt == ")":
+      while stk and stk[-1] != "(":
+        ret.append(stk.pop())
+      stk.pop()  # pop "("
+    else:
+      while stk and self.precdn(elt) <= self.precdn(stk[-1]):
+        ret.append(stk.pop())
+      stk.append(elt)
+
+  while stk:  # clean up 
+    ret.append(stk.pop())
+
+  return ret
+\end{python}
+
+\subsection{Convert In-fix to Pre-fix}
+\begin{python}
+  def infix2prefix(self, lst):
+    """starting from right the left"""
+    stk = []
+    pre = []
+    for elt in reversed(lst):
+      if elt.isdigit():
+        pre.append(elt)
+      elif elt == ")":
+        stk.append(elt)
+      elif elt == "(":
+        while stk and stk[-1] != ")":
+          pre.append(stk.pop())
+        stk.pop()
+      else:
+        # < rather than <=
+        while stk and self.precdn(elt) < self.precdn(stk[-1]):  
+          pre.append(stk.pop())
+        stk.append(elt)
+
+    while stk:
+      pre.append(stk.pop())
+
+    pre.reverse()
+    return pre
+\end{python}
 

@@ -4,4 +4,29 @@
 \section{Shuffle}
 Equal probability shuffle algorithm.
 
-TODO
+\subsection{Incorrect naive solution}
+Swap current card $A_i$ with a random card from the deck. 
+\begin{java}
+for (int i = 0; i < N; i++) {
+   int j = (int) Math.random()*N;
+   swap(a[i], a[j]);
+}
+\end{java}
+The easiest proof that this algorithm does not produce a uniformly random permutation is that it generates 27 possible outcomes, but there are only 3! = 6 permutations. Since $27\%3 \neq 0$, there must be some permutation is that is picked too much, and some that is picked to little.
+\subsection{Knuth Shuffle}
+Knuth (or Fisher-Yates) shuffling algorithm guarantees to rearrange the elements in uniformly random order. 
+\\
+Core clues:
+\begin{enumerate}
+\item choose index uniformly $\in [i, N)$
+\end{enumerate}
+\begin{java}
+public void shuffle(Object[] a) {
+    int N = a.length;
+    for (int i = 0; i < N; i++) {
+        // choose index uniformly in [i, N)
+        int j = i + (int) (Math.random() * (N - i));
+        swap(a[i], a[j]);
+    }
+}
+\end{java}

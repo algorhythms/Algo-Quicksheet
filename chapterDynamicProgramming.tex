@@ -118,6 +118,22 @@ F_{i. j} = \left\{ \begin{array}{rl}
 
 It can be optimized to use space $O(1)$. 
 
+\runinhead{Trapping Rain Water}
+Given n non-negative integers representing an elevation map where the width of each
+bar is 1, compute how much water it is able to trap after raining.
+\begin{figure}[]
+    \centerline{\includegraphics[height = 1in]{rainwatertrap}}
+    \caption{Trapping Rain Water}
+  \label{fig:rainwatertrap}
+\end{figure}
+
+Let $maxL_i$ be the $\max(A[:i])$; let $maxR_i$ be the $\max(A[i:n])$. The dp of obtaining max is trivial. 
+
+The the total volume $vol$:
+$$
+vol = \sum_i(\max\big(0,\min(maxL_i, maxR_{i+1})-A[i]\big))
+$$
+
 \section{String}
 \runinhead{Word break.} Given a string $s$ and a dictionary of words $dict$, determine if $s$ can be segmented into a space-separated sequence of $dict$ words.
 

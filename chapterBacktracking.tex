@@ -7,11 +7,11 @@
 \section{Math}
 \subsection{Decomposition}
 \subsubsection{Factorize a number}\label{factorization}
-\rih{Core clues}:
+\runinhead{Core clues:}
 \begin{enumerate}
 \item Expand the search tree \textbf{horizontally}.
 \end{enumerate}
-\rih{Search tree}:
+\runinhead{Search tree:}
 \begin{python}
 Input: 16
 get factors of cur[-1]
@@ -41,7 +41,7 @@ def predicate(self, n, i):
   return n%i == 0
   
 \end{python}
-\rih{Time complexity.} $O(2^n)$ where $n$ is the number of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined： 
+\runinhead{Time complexity.} $O(2^n)$ where $n$ is the number of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined： 
 
 $$\sum_i {n \choose i}$$
 
@@ -52,11 +52,11 @@ TODO
 \subsubsection{Palindrome partition.} Given \pyinline{s = "aab"}, return: \\
 \pyinline{[["aa","b"], ["a","a","b"]]}
 \\
-\rih{Core clues}:
+\runinhead{Core clues:}
 \begin{enumerate}
 \item Expand the search tree \textbf{horizontally}.
 \end{enumerate}
-\rih{Search process}:
+\rih{Search process:}
 \begin{python}
 input: "aabbc"
 
@@ -79,7 +79,8 @@ input: "aabbc"
 "aab", "bc" (x)
 "aabb", "c" (x)
 \end{python}
-\rih{Code}
+\rih{Code:}
+
 \begin{python}
 def partition(self, s):
     ret = []
@@ -103,3 +104,38 @@ def backtrack(self, s, cur_lvl, ret):
 def predicate(self, s):
     return s == s[::-1]
 \end{python}
+
+\section{Tree}
+\subsection{BST}
+\subsubsection{Generate Valid BST}
+Generate all valid BST with nodes from 1 to $n$.
+\runinhead{Core clues:}
+\begin{enumerate}
+\item Iterate pivot
+\item Generate left and right
+\end{enumerate}
+\rih{Code:}
+\begin{python}
+def generate(self, start, end):
+  roots = []
+  if start > end:
+    roots.append(None)
+    return roots
+
+  for pivot in range(start, end+1):
+    left_roots = self.generate_cache(start, pivot-1)
+    right_roots = self.generate_cache(pivot+1, end)
+    
+    for left_root in left_roots:
+      for right_root in right_roots:
+        root = TreeNode(pivot)
+        root.left = left_root
+        root.right = right_root
+
+        roots.append(root)
+
+  return roots 
+
+\end{python}
+
+
