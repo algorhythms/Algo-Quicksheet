@@ -127,10 +127,11 @@ F_{i, j} = \left\{ \begin{array}{rl}
        \end{array} \right.
 \end{eqnarray*}
 
-\runinhead{Maximal product subarray.} Find the $A$'s subarray within an array which has the largest product. 
+\runinhead{Maximal product subarray.} Find the subarray within an array $A$ which has the largest product. 
 \begin{itemize}
 \item Let $small_i$ be the smallest product end with $A_i$. 
 \item Let $large_i$ be the largest product end with $A_i$.
+\item The states can be negative. 
 \end{itemize}
 \begin{eqnarray*}
 && small_i = \min\big( A_i,\ small_{i-1}\cdot A_i,\ large_{i-1}\cdot A_i \big)
@@ -248,7 +249,7 @@ Let $F_{i, c}$ be the max value we can carry for index $0..i$ with capacity $c$.
 F_{i, c}= \max\big(&&F_{i-1, c}, \\
 &&F_{i-1, c-w_i}+v_i\big)
 \end{eqnarray*}
-TODO advanced backpack problem. 
+Advanced backpack problem\footnote{\href{http://github.com/tianyicui/pack}{Nine Lectures in Backpack Problem}.}. 
 
 \section{Local and Global Extremes}
 \subsection{Long and short stocks}
