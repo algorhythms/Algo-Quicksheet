@@ -5,6 +5,7 @@
 \item Bit value: bit0, bit1. 
 \item BitSet/Bits
 \item Bit position (bit interchangeably)
+\item 32-bit signed range: $[-2^{31}, 2^{31}-1]$. $0$ is like positive number without complement. 
 \end{enumerate}
 \subsection{Operations}
 \runinhead{Mask.} 
@@ -15,12 +16,16 @@
 \item Toggling bit values: to toggle a single bit position, $bit\XOR 1$
 \end{enumerate}}
 This can be extended to do masking operations on multiple bits. 
+
+\runinhead{Check 2's power}
+$$x\AND(x-1)$$
+
 \runinhead{Rightmost bit set.} To get the rightmost bit, with the help of 2's complement:
 \begin{enumerate}
 \item Left extended with 1's:
-$$rightmost = bits \XOR -bits$$
+$$x \XOR (-x)$$
 \item Left extended with 0's:
-$$rightmost = bits \AND -bits$$
+$$x \AND (-x)$$
 \end{enumerate}
 
 
@@ -37,7 +42,7 @@ Given an array of integers, every element appears three times except for one. Fi
 && 1111
 \end{eqnarray*}
 
-Add (not $\land$) the bit values \textbf{vertically}, then result would be $abcd$ where $a, b, c, d$ can be any number, not just binary. $a, b, c, d$ can be divided by 3 if the all element appears three times. Until here, you can use a list to hold $a, b, c, d$. By mod 3, the single one that does not appear 3 times is found. 
+Add (not $\&$) the bit values \textbf{vertically}, then result would be $abcd$ where $a, b, c, d$ can be any number, not just binary. $a, b, c, d$ can be divided by 3 if the all element appears three times. Until here, you can use a list to hold $a, b, c, d$. By mod 3, the single one that does not appear 3 times is found. 
 
 To generalize to 32-bit \pythoninline{int}, use a list of length 32.
 
@@ -51,8 +56,13 @@ To further optimize the space, use bits (bit set) instead of list.
 $$
 bitSet^{(i)} = (bitSet^{(i-1)}\AND num)\OR(bitSet^{(i)}\AND \NOT num)
 $$
-For $i$ appearances, the first part is the bit set \textbf{transited from} $(i-1)$ appearances, and the second part is the bit set \textbf{transited out} from itself. 
-\end{itemize}}
+\end{itemize}
+
+For $i$ appearances, the first part is the bit set \textbf{transited from} $(i-1)$ appearances, and the second part is the bit set \textbf{transited out} from itself.
+
+Consider each single bit separately. For the $j$-th bit in $num$, if $num_j=1$, the first part indicates $bitSet^{(i-1)}$ will transit in (since transition); the 2nd part is always 0 (since transition out or initially 0). If $num_j=0$, the 1st part is always 0 (since no transition); the 2nd part indicates $bitSet^{(i)}$ will remain the same (since no transition). 
+
+
 
 \subsection{Two Numbers} 
 Given an array of numbers nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.
@@ -63,5 +73,22 @@ Given an array of numbers nums, in which exactly two elements appear only once a
 \item Take an arbitrary 1 bit set in $x$, and such bit set can classify the elements in the array into two separate groups.
 \end{itemize}
 
+\section{Bitwise operators}
+\runinhead{Comparison.} Write a method which finds the maximum of two numbers $a, b$. You should not use if- else or any other comparison operator
+\\
+Clues:
+\begin{enumerate}
+\item check the sign bit $s$ of $a-b$.
+\item return $a-s*(a-b)$
+\end{enumerate}
+Codes:
+\begin{java}
+int getMax(int a, int b) { 
+    int c = a - b;
+    int k = (c >> 31) & 0x1; 
+    int max = a - k * c; 
+    return max;
+}
 
-
+\end{java}
+If consider overflow, it raises another level of difficulty. 

@@ -1,7 +1,7 @@
 \chapter{Graph}
 
 \section{Basic}
-\rih{Graph Representation.} V for a vertex set with a map, mapping from vertex to its neighbors.
+\rih{Graph representation.} V for a vertex set with a map, mapping from vertex to its neighbors.
 \begin{python}
 V = defaultdict(list)
 \end{python}
@@ -11,7 +11,7 @@ V = defaultdict(list)
 Start bfs with a set of vertices in abstract level, not necessarily neighboring vertices.
 
 Example:
-$-1$ obstacles, $0$ targets, calculate all other vertices's Manhattan distance to its nearest target:
+$-1$ obstacles, $0$ targets, calculate all other vertices' Manhattan distance to its nearest target:
 $$
 \begin{bmatrix}
 \infty & -1 & 0 & \infty \\
@@ -52,7 +52,7 @@ def wallsAndGates(self, mat):
 \section{Detect Acyclic}
 \begin{enumerate}
 \item \pythoninline{marked} is reset after a dfs. 
-\item \pythoninline{visited} should be maintained only in the end of the dfs. 
+\item \pythoninline{visited} should be updated only in the end of the dfs. 
 \item For directed graph:
 \begin{enumerate}
 \item Should dfs for all neighbors except for vertices in \pythoninline{visited}, to avoid revisiting. For example, avoid revisiting A, B when start from C in the graph $C \rightarrow A \rightarrow B$.
@@ -60,48 +60,47 @@ def wallsAndGates(self, mat):
 \end{enumerate}
 \item For undirected graph:
 \begin{enumerate}
-\item Should dfs for all neighbors except for the predecessor \pythoninline{pi}. 
-\item Excluding neighbors in \pythoninline{visited} is redundant. 
+\item Should dfs for all neighbors except for the predecessor \pythoninline{pi}. $A-B$.
+\item Excluding neighbors in \pythoninline{visited} is redundant, due to \pyinline{pi}. 
 \end{enumerate}
-\end{enumerate}}
+\end{enumerate}
 
 \subsection{Directed Graph}
 
 \begin{python}
-def dfs(self, V, k, visited, pathset):
-    if k in pathset:
+def dfs(self, V, v, visited, pathset):
+  if v in pathset:
+    return False
+
+  pathset.add(v)
+  for nbr in V[v]:
+    if nbr not in visited:
+      if not self.dfs(V, nbr, visited, pathset):
         return False
 
-    marked.add(k)
-    for nbr in V[k]:
-        if nbr not in visited:
-            if not self.dfs(V, nbr, visited, pathset):
-                return False
-
-    marked.remove(k)
-    pathset.add(k)
-    return True
+  pathset.remove(v)
+  visited.add(v)
+  return True
 \end{python}
 \subsection{Undirected Graph}
 \begin{python}
-def dfs(self, V, k, pi, visited, marked):
-    if k in marked:
+def dfs(self, V, v, pi, visited, pathset):
+  if v in pathset:
+    return False
+
+  pathset.add(v)
+  for nbr in V[v]:
+    if nbr != pi:
+      if not self.dfs(V, nbr, v, visited, pathset):
         return False
 
-    marked.add(k)
-    for neighbor in V[k]:
-        if neighbor != pi:
-            if not self.dfs(V, neighbor, k, 
-                visited, marked):
-                return False
-
-    marked.remove(k)
-    visited.add(k)
-    return True
+  pathset.remove(v)
+  visited.add(v)
+  return True
 \end{python}
 
 \section{Topological Sorting}
-For a graph $G=\{V, E\}$, $ A \rightarrow B $, then $A$ is before $B$ in the ordered list. 
+For a graph $G=\{V, E\}$, if $A \rightarrow B $, then $A$ is before $B$ in the ordered list. 
 \subsection{Algorithm}
 \rih{Core clues}:
 \begin{enumerate}

@@ -1,8 +1,8 @@
 \chapter{Backtracking}
 \section{Introduction}
-\rih{Difference between backtracking and dfs.} \textit{Backtracking} is a more general purpose algorithm. \textit{Dfs} is a specific form of backtracking related to searching tree structures. 
+\runinhead{Difference between backtracking and dfs.} \textit{Backtracking} is a more general purpose algorithm. \textit{Dfs} is a specific form of backtracking related to searching tree structures. 
 
-\rih{Prune.} Backtrack need to think about pruning using \pyinline{predicate}.
+\runinhead{Prune.} Backtrack need to think about pruning using the condition \pyinline{predicate}.
 
 \section{Math}
 \subsection{Decomposition}
@@ -41,11 +41,9 @@ def predicate(self, n, i):
   return n%i == 0
   
 \end{python}
-\runinhead{Time complexity.} $O(2^n)$ where $n$ is the number of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined： 
+\runinhead{Time complexity.} The search tree's size is $O(2^n)$ where $n$ is the number of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined： 
 
-$$\sum_i {n \choose i}$$
-
-TODO
+$$\sum_i {n \choose i} = 2^n$$
 
 \section{String}
 \subsection{Palindrome}

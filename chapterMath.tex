@@ -33,7 +33,7 @@ The main idea here is that every value for $p$ is prime, because we have already
 
 As a refinement, it is sufficient to mark the numbers in step 3 starting from $p^2$, because all the smaller multiples of $p$ will have already been marked at that point by the previous smaller prime factor other than $p$. From $p^2$, $p$ becomes the smaller prime factor of a composite number. This means that the algorithm is allowed to terminate in step 4 when $p^2$ is greater than n.
 
-Another refinement is to initially list odd numbers only, (3, 5, ..., n), and count in increments of 2p in step 3, thus marking only odd multiples of $p$. This actually appears in the original algorithm. This can be generalized with wheel factorization, forming the initial list only from numbers coprime with the first few primes and not just from odds (i.e., numbers coprime with 2), and counting in the correspondingly adjusted increments so that only such multiples of $p$ are generated that are coprime with those small primes, in the first place.
+Another refinement is to initially list odd numbers only, (3, 5, ..., n), and count in increments of $2p$ in step 3, thus marking only odd multiples of $p$. This actually appears in the original algorithm. This can be generalized with wheel factorization, forming the initial list only from numbers coprime with the first few primes and not just from odds (i.e., numbers coprime with 2), and counting in the correspondingly adjusted increments so that only such multiples of $p$ are generated that are coprime with those small primes, in the first place.
 
 To summarized, the refinements include:
 \begin{enumerate}
@@ -86,10 +86,12 @@ class DualHeap(object):
     l1 = len(self.min_h)
     l2 = len(self.max_h)
     if l1-l2 > 1:
-      heapq.heappush(self.max_h, -heapq.heappop(self.min_h))
+      heapq.heappush(self.max_h, 
+                     -heapq.heappop(self.min_h))
       self.balance()
     elif l2-l1 > 1:
-      heapq.heappush(self.min_h, -heapq.heappop(self.max_h))
+      heapq.heappush(self.min_h, 
+                     -heapq.heappop(self.max_h))
       self.balance()
     return
 
@@ -98,6 +100,13 @@ class DualHeap(object):
 \end{python}
 
 \subsection{DualHeap with Lazy Deletion}\label{dh_lazy_del}
+Clues:
+\begin{enumerate}
+\item Wrap the value and wrap the heap
+\item When delete a value, mark it with tombstone. 
+\item When negate the value, only change the value, not the reference. 
+\item When heap pop, clean the op first. 
+\end{enumerate}
 \begin{python}
 import heapq
 from collections import defaultdict

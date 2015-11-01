@@ -13,19 +13,20 @@ The so called concept dp as memoization of recursion does not grasp the core phi
 
 The formula in the following section are unimportant. Instead, what is important is the definition of dp array and transition function derivation.
 \subsection{Common practice}
-\rih{Dummy.} Use dummies to avoid using if-else conditional branch.
+\runinhead{Dummy.} Use dummies to avoid using if-else conditional branch.
 \begin{enumerate}
 \item Use $n+1$ dp arrays to reserve space for dummies. 
 \item Iteration range is $[1, n+1)$.
 \item $n+k$ for k dummies  
 \end{enumerate}
-\rih{State definition.} Two general sets of state definitions:
+\runinhead{State definition.} Two general sets of state definitions - the state 
 \begin{enumerate}
-\item End AT index $i$
-\item End BEFORE index $i$
-\end{enumerate}}
+\item ends \textit{at} index $i$
+\item ends \textit{before} index $i$
+\item ends \textit{at} or \textit{before} index $i$
+\end{enumerate}
 
-\rih{Space optimization.} To avoid MLE, we need to carry out space optimization. Let $o$ be other subscripts, $f$ be the transition function. 
+\runinhead{Space optimization.} To avoid MLE, we need to carry out space optimization. Let $o$ be other subscripts, $f$ be the transition function. 
 
 Firstly,
 $$
@@ -86,7 +87,7 @@ $$
 
 Then the global $maxa$ is:
 $$
-maxa = \max(F_i, \forall i)
+maxa = \max(F_i\cdot \forall i)
 $$
 
 

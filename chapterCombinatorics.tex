@@ -15,6 +15,7 @@ If order does not matter, you can pre-set the order.
 \end{eqnarray*}
 
 \subsection{N objects, K Ceils}
+When $N=10, K=3$:
 $$
 x_1 + x_2 + x_3 = 10
 $$
@@ -23,7 +24,7 @@ $$
 *****|**|***
 $$
 
-, notice that $*$ are duplicated.
+, notice that $*$ are non-order.
 \\
 then the formula is:
 $$
@@ -36,9 +37,10 @@ The meaning is to choose $r$ objects from $n+r$ objects to become the $|$.
 
 \subsection{N objects, K types} \label{N_objects_K_types}
 What is the number of permutation of $N$ objects with $K$ different types:
-$$
-ret = \frac{A_N^N}{\prod_{i=1}^K{A_{sz(i)}^{sz(i)}}}
-$$
+\begin{align*}
+ret &= \frac{A_N^N}{\prod_{k=1}^K{A_{sz(k)}^{sz(k)}}} \\
+&= \frac{N!}{\prod_{k} sz(k)!}
+\end{align*}
 
 \subsection{Inclusion–Exclusion Principle}
 \begin{figure}[hbtp]
@@ -131,7 +133,7 @@ C_n &= {2n\choose n} - {2n\choose n-1}\\
 \end{align*}
 \end{itemize}
 
-\subsection{Problems}
+\subsection{Applications}
 \runinhead{\#Parenthesis.}Number of different ways of adding parenthesis. 
 \runinhead{\#BST.}Number of different Binary Search Trees.
 

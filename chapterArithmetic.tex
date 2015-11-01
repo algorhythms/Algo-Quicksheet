@@ -1,15 +1,16 @@
 \chapter{Arithmetic}
-\section{DFS}
+\section{Backtracking}
+\subsection{Unidirection}
 \rih{Insert operators.} Given a string that contains only digits 0-9 and a target value, return all possibilities to add binary operators (not unary) +, -, or * between the digits so they evaluate to the target value.
 
 Example: 
 \begin{align*}
-"123", 6 \rightarrow ["1+2+3", "1*2*3"] \\ 
-"232", 8 \rightarrow ["2*3+2", "2+3*2"] \\
+``123", 6 \rightarrow [``1+2+3", ``1*2*3"] \\ 
+``232", 8 \rightarrow [``2*3+2", ``2+3*2"] \\
 \end{align*}
 Clues:
 \begin{enumerate}
-\item DFS
+\item Backtracking with horizontal expanding
 \item Special handling for multiplication - caching 
 \item Detect invalid number with leading 0's
 \end{enumerate}}
@@ -23,7 +24,7 @@ def addOperators(self, num, target):
 def dfs(self, num, target, pos, 
         cur_str, cur_val, 
         mul, ret
-    ):
+):
   if pos >= len(num):
     if cur_val == target:
       ret.append(cur_str)
@@ -33,11 +34,11 @@ def dfs(self, num, target, pos,
         continue
       nxt_val = int(num[pos:i+1])
 
-      if not cur_str:
+      if not cur_str:  # 1st number
         self.dfs(num, target, i+1, 
             "%d"%nxt_val, nxt_val,
             nxt_val, ret)
-      else:
+      else:  # +, -, *
         self.dfs(num, target, i+1, 
             cur_str+"+%d"%nxt_val, cur_val+nxt_val, 
             nxt_val, ret)
@@ -48,6 +49,7 @@ def dfs(self, num, target, pos,
             cur_str+"*%d"%nxt_val, cur_val-mul+mul*nxt_val, 
             mul*nxt_val, ret)
 \end{python}
+\subsection{Bidirection}
 \rih{Insert parenthesis.} Given a string of numbers and operators, return all possible results from computing all the different possible ways to group numbers and operators. The valid operators are +, - and *.
 
 Examples:
@@ -95,15 +97,29 @@ def plusOne(self, digits):
 
 \section{Polish Notation}
 Polish Notation is in-fix while Reverse Polish Notation is post-fix. 
-\subsection{Evaluate Post-fix Expressions}
-Straightforward: Use a stack to store the number. Iterate the input, push stack when
-hit numbers, pop stack when hit operators.
+
+Reverse Polish notation (RPN) is a mathematical notation in which every operator follows all of its operands (i.e. operands are followed by operators).
+
+Polish notation (PN) is a mathematical notation in which every operator is followed by its operands. 
+
 \subsection{Convert In-fix to Post-fix}
+\pyinline{ret} stores the final result of reverse polish notation. \pyinline{stk} stores
+the temporary result in strictly increasing order. 
+
+In-fix
+\begin{python}
+5 + ((1 + 2) * 4) - 3
+\end{python}
+
+can be written as
+\begin{python}
+5 1 2 + 4 * + 3 - 
+\end{python}
 Core clues:
 \begin{enumerate}
-\item The stack temporarily stores the operators of \textit{strictly increasing precedence order}.
-\item Digits have the highest precedence, followed by $*, /, +, ($. Notice that $($ operator itself has the \textit{lowest} precedence.
-\item \textit{Match} the brackets. 
+\item \rih{Stack}. The stack temporarily stores the operators of \textit{strictly increasing precedence order}.
+\item \rih{Precedence}. Digits have the highest precedence, followed by $*, /, +, ($. Notice that $($ operator itself has the \textit{lowest} precedence.
+\item \rih{Bracket}. \textit{Match} the brackets. 
 \end{enumerate}
 Code:
 \begin{python}
@@ -130,7 +146,32 @@ def infix2postfix(self, lst):
   return ret
 \end{python}
 
+\subsection{Evaluate Post-fix Expressions}
+\begin{python}
+5 1 2 + 4 * + 3 - 
+\end{python}
+Straightforward: use a \textit{stack} to store the number. Iterate the input, push
+stack when hit numbers, pop stack when hit operators.
+
 \subsection{Convert In-fix to Pre-fix}
+PN is the \textit{reverse} of RPN, thus, scan the expression from right to left; and \pyinline{stk} stores the temporary result in non-decreasing order. 
+
+
+In-fix
+\begin{python}
+5 + ((1 + 2) * 4) - 3
+\end{python}
+
+can be written as
+\begin{python}
+3 4 2 1 + * 5 + - m
+\end{python}
+
+reverse as 
+\begin{python}
+- + 5 * + 1 2 4 3
+\end{python}
+
 \begin{python}
   def infix2prefix(self, lst):
     """starting from right the left"""
@@ -158,3 +199,8 @@ def infix2postfix(self, lst):
     return pre
 \end{python}
 
+
+\subsection{Evaluate Pre-fix Expressions}
+\begin{python}
+- + 5 * + 1 2 4 3
+\end{python}
