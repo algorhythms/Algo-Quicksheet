@@ -44,7 +44,81 @@ def dfs_path(self, cur, path, ret):
     self.dfs_path(cur.right, path, ret)
     path.pop()
 \end{python}
- 
+\subsection{Morris Traversal} 
+Traversal with O(1) space. \footnote{\href{http://www.cnblogs.com/AnnieKim/archive/2013/06/15/MorrisTraversal.html}{ref}}
+
+Time complexity $O(3n).$ - find \pyinline{pre} twice, \pyinline{cur} traverse once. \begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[height=0.9in]{morris_time}}
+\caption{Morris traversal time complexity}
+\label{fig:morrisTime}
+\end{figure}
+
+\subsubsection{Inoder}
+Assign the current node's in-order predecessor's right child to itself (threading). Two ptr \pyinline{cur}, \pyinline{pre}. 
+
+Process:
+\begin{enumerate}
+\item If no left, \textit{consume} \pyinline{cur}, go right 
+\item If left, find in-order predecessor \pyinline{pre}
+\begin{enumerate}
+\item If no thread (i.e. no \pyinline{pre} right child), assign it to \pyinline{cur}; go left
+\item If thread, \textit{consume} \pyinline{cur}, go right. ($\equiv$ no left). 
+\end{enumerate}
+\end{enumerate}
+
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[height=1.6in]{morris_inorder}}
+\caption{Morris inorder traversal}
+\label{fig:morrisInorder}
+\end{figure}
+
+Code:
+\begin{python}
+def morris_inorder(self, root):
+    cur = root
+    while cur:
+        if not cur.left:
+            self.consume(cur)
+            cur = cur.right
+        else:
+            pre = cur.left
+            while pre.right and pre.right != cur:
+                pre = pre.right
+
+            if not pre.right:
+                pre.right = cur
+                cur = cur.left
+            else:
+                pre.right = None
+                self.consume(cur)
+                cur = cur.right
+\end{python}
+\subsubsection{Preoder}
+Similar to inorder. 
+
+Process:
+\begin{enumerate}
+\item If no left, \textit{consume} \pyinline{cur}, go right 
+\item If left, find in-order predecessor \pyinline{pre}
+\begin{enumerate}
+\item If no thread (i.e. no \pyinline{pre} right child), assign it to \pyinline{cur}; \textit{consume} \pyinline{cur}, go left
+\item If thread, go right. ($\equiv$ no left, but no \textit{consume}, since consume before). 
+\end{enumerate}
+\end{enumerate}
+
+\subsubsection{Postorder}
+More tedious.
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[height=1.6in]{morris_postorder}}
+\caption{Morris inorder traversal}
+\label{fig:morrisInorder}
+\end{figure}
+
+TODO
+
 \section{Binary Search Tree (BST)}
 \runinhead{Array and BST.}Given either the \textbf{preorder} or \textbf{postorder} (but not inorder) traversal of a BST containing N distinct keys, it is possible to reconstruct the shape of the BST. 
 \subsection{Rank}
