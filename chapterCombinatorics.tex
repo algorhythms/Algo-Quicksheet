@@ -105,6 +105,44 @@ And we know:
 
 We expand the formula, although the  naive way of getting the coefficient of $x^{10}$ is tedious. 
 
+\section{Permutation}
+
+\subsection{$k$-th permutation}
+Given $n$ and $k$, return the $k$-th permutation sequence. $k\in [1, n!]$. $O(nk)$ in time complexity is easy, can you do it in $O(n^2)$ or less?
+
+Reversed Contour Expansion
+
+Core clues:
+\begin{enumerate}
+\item \pyinline{A = [1, 2, ..., n]}
+
+Suppose for $n$ element, the $k$-th permutation is:
+
+\pyinline{ret = [a0, a1, a2, ..., an-1]}
+\item \rih{Basic case.} Since \pyinline{[a1, a3, ..., an-1]} has $(n-1)!$ permutations,
+if $k < (n-1)!, a_0 = A_0$ (first element in array), else $a_0 = A_{k/(n-1)!}$
+
+\item Recursively, (or iteratively)
+\begin{enumerate}
+\item $a_0 = A_{k_0/(n-1)!}$, where $k_0 = k$
+\item $a_1 = A_{k_1/(n-2)!}$, where $k_1 = k_0\%(n-1)!$ in the remaining array $A$
+\item $a_2 = A_{k_2/(n-3)!}$, where $k_2 = k_1\%(n-2)!$ in the remaining array $A$
+\end{enumerate}
+\end{enumerate}
+\begin{python}
+def getPermutation(self, n, k):
+    k -= 1  # start from 0
+
+    A = range(1, n+1)
+    k %= math.factorial(n)
+    ret = []
+    for i in xrange(n-1, -1, -1):
+        idx, k = divmod(k, math.factorial(i))
+        ret.append(A.pop(idx))
+
+    return "".join(map(str, ret))
+\end{python}
+
 \section{Catalan Number}
 \subsection{Math}
 \runinhead{Definition.}
@@ -137,3 +175,10 @@ C_n &= {2n\choose n} - {2n\choose n-1}\\
 \runinhead{\#Parenthesis.}Number of different ways of adding parenthesis. 
 \runinhead{\#BST.}Number of different Binary Search Trees.
 
+
+\section{Stirling Number}
+a Stirling number of the second kind (or Stirling partition number) is the number of ways to partition a set of n objects into k non-empty subsets and is denoted by $S(n,k)$ or  $\lbrace{n\atop k}\rbrace$.
+
+$$
+\left\{ {n \atop k}\right\} = \frac{1}{k!}\sum_{j=0}^{k} (-1)^{k-j} \binom{k}{j} j^n.
+$$

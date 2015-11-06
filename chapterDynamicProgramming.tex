@@ -241,6 +241,11 @@ def minCut(self, s):
 
   return C[n]
 \end{python}
+\runinhead{ab string.} Change the char in a str only consists of `a' and `b' to non-decreasing order. Find the min number of char changes. 
+
+Two-state dp: `a' $\rightarrow$ `b' and  `b' $\rightarrow$ `a'. 1 cut into 2 segment.
+
+\runinhead{abc string.} Follow up for ab string. Three-state dp: $chr \neq a, chr \neq b, chr \neq c$. 2 cuts into 3 segments. 
 \section{Backpack}
 Given $n$ items with weight $w_i$ and value $v_i$, an integer $C$ denotes the size of a backpack. What is the max value you can fill this backpack?
 
