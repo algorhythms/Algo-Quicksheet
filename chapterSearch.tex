@@ -81,3 +81,32 @@ def bisect_right(A, t, lo=0, hi=None):
 
     return lo
 \end{python}
+\section{Applications}
+\subsection{Rotation}
+\runinhead{Find Minimum in Rotated Sorted Array.} Three cases to consider:
+\begin{enumerate}
+\item Monotonous 
+\item Trough 
+\item Peak
+\end{enumerate}
+
+If the elements can be duplicated, need to detect and skip. 
+\begin{python}
+def findMin(self, A):
+    lo = 0
+    hi = len(A)
+    mini = sys.maxint
+    while lo < hi:
+        mid = (lo+hi)/2
+        mini = min(mini, A[mid])
+        if A[lo] == A[mid]:  # JUMP
+            lo += 1
+        elif A[lo] < A[mid] <= A[hi-1]:
+            return min(mini, A[lo])
+        elif A[lo] > A[mid] <= A[hi-1]:  # trough
+            hi = mid
+        else:  # peak
+            lo = mid+1
+
+    return mini
+\end{python}

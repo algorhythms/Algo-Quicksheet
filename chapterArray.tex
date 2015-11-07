@@ -115,3 +115,40 @@ def majorityNumber(self, nums, k):
     raise Exception
 \end{python}
 
+
+\section{Two Pointers}
+\subsection{Interleaving}
+\runinhead{Interleaving positive and negative numbers.} Given an array with positive and negative integers. Re-range it to interleaving with positive and negative integers.
+\begin{lstlisting}
+Input:
+[-33, -19, 30, 26, 21, -9]
+Output:
+[-33, 30, -19, 26, -9, 21]
+\end{lstlisting}
+Core clues:
+\begin{enumerate}
+\item In 1-pass.
+\item What (positive or negative) is expected for the current position.
+\item Where is the next positive and negative element.
+\end{enumerate}
+\begin{python}
+def rerange(self, A):
+    n = len(A)
+    pos_cnt = len(filter(lambda x: x > 0, A))
+    pos_expt = True if pos_cnt*2 > n else False
+
+    neg = 0  # next negative
+    pos = 0  # next positive
+    for i in xrange(n):
+        while neg < n and A[neg] > 0: neg += 1
+        while pos < n and A[pos] < 0: pos += 1
+        if pos_expt:
+            A[i], A[pos] = A[pos], A[i]
+        else:
+            A[i], A[neg] = A[neg], A[i]
+
+        if i == neg: neg += 1
+        if i == pos: pos += 1
+
+        pos_expt = not pos_expt
+\end{python}

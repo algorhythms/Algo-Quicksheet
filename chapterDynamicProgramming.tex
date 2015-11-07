@@ -204,6 +204,18 @@ Let $P_{i,j}$  indicates whether $s[i:j]$ is palindrome. We have one condition -
 P_{i. j} = P_{i-1, j+1}\ \wedge\ s[i] = s[j-1]
 \end{eqnarray*}
 
+The code for palindrome dp is error-prone due to indexing. Notice that $i \in [0, n), j \in [i, n+1)$.
+\begin{python}
+n = len(s)
+pa = [[False for _ in xrange(n+1)] for _ in xrange(n)]
+for i in xrange(n):
+    pa[i][i] = True
+    pa[i][i+1] = True
+
+for i in xrange(n-2, -1, -1):
+    for j in xrange(i+2, n+1):
+        pa[i][j] = pa[i+1][j-1] and s[i] == s[j-1]
+\end{python}
 \runinhead{Minimum palindrome cut.} Given a string s, partition s such that every substring of the partition is a palindrome. Return the minimum cuts needed for a palindrome partitioning of s.
 
 Let $C_i$ be the min cut for $s[:i]$. We have 1 more cut from previous state to make $S[:i]$ palindrome. 
