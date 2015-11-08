@@ -83,6 +83,35 @@ def largestRectangleArea(self, height):
     return gmax
 \end{python}
 
+
+\subsection{All nearest smaller values}\label{allNearestSmaller}
+\textbf{Nearest smaller}. Left neighbor of a value $v$ to be the value that occurs prior to $v$, is smaller than $v$, and is closer in position to $v$ than any other smaller value.
+
+For each position in a sequence of numbers, search among the \textit{previous} positions for the last position that contains a smaller value. 
+
+Core clues:
+\begin{enumerate}
+\item Maintain a \textit{strictly increasing} stack.  
+\item If all nearest \textit{larger} values, maintain a \textit{strictly decreasing} stack.  
+\end{enumerate}
+
+\begin{python}
+def allNearestSmaller(self, A):
+    P = [-1 for _ in A]
+    stk = []
+    for i, v in enumerate(A):
+        while stk and A[stk[-1]] >= v: stk.pop()
+
+        if stk:
+            P[i] = stk[-1]
+        else:
+            P[i] = -1  # no preceding smaller value
+            
+        stk.append(i)  # store the idx or val
+
+    return P
+\end{python}
+
 \section{Map}
 \subsection{Math Relations}
 \textbf{OneToOneMap}. One map, dual entries.

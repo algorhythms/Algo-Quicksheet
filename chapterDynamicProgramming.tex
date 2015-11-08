@@ -259,6 +259,7 @@ Two-state dp: `a' $\rightarrow$ `b' and  `b' $\rightarrow$ `a'. 1 cut into 2 seg
 
 \runinhead{abc string.} Follow up for ab string. Three-state dp: $chr \neq a, chr \neq b, chr \neq c$. 2 cuts into 3 segments. 
 \section{Backpack}
+\subsection{Classical}
 Given $n$ items with weight $w_i$ and value $v_i$, an integer $C$ denotes the size of a backpack. What is the max value you can fill this backpack?
 
 Let $F_{i, c}$ be the max value we can carry for index $0..i$ with capacity $c$. We have 2 choices: take the $i$-th item or not.
@@ -268,6 +269,20 @@ F_{i, c}= \max\big(&&F_{i-1, c}, \\
 \end{eqnarray*}
 Advanced backpack problem\footnote{\href{http://github.com/tianyicui/pack}{Nine Lectures in Backpack Problem}.}. 
 
+\subsection{Sum}
+\runinhead{k sum.} Given $n$ distinct positive integers, integer $k$ ($k \leq n$) and a number target. Find $k$ numbers where sum is target. Calculate the number of solutions. Since we only need the number of solutions, thus it can be solved using dp. If we need to enumerate all possible answers, need to do dfs instead. 
+
+$$
+sum{j \choose i} = v
+$$
+
+Let $F_{i, j, v}$ means the \#ways of selecting $i$ elements from the first $j$ elements so that their sum equals to $v$. $j$ is the scanning pointer.
+
+You have two options: either select $A_{j-1}$ or not.
+$$
+F_{i, j, v} = F_{i-1, j-1, v-A_{j-1} + F_{i, j-1, v}
+
+Time complexity: O(n^2 k)
 \section{Local and Global Extremes}
 \subsection{Long and short stocks}
 The following formula derives from the question: Best Time to Buy and Sell Stock IV. Say you have an array for which the $i$-th element is the price of a given stock on day $i$. Design an algorithm to find the maximum profit. You may complete at most $k$ transactions. 

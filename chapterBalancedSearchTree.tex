@@ -145,5 +145,57 @@ node.
 \section{AVL Tree}
 TODO
 
+\section{Cartesian Tree}
+Also known as max tree (or min tree). The root is the maximum number in the array. The left subtree and right subtree are the max trees of the subarray divided by the root number.
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=.60]{Cartesian_tree}}
+\caption{Cartesian Tree}
+\label{fig:cartesianTree}
+\end{figure}
+\begin{java}
+Given [2, 5, 6, 0, 3, 1], the max tree is
+     6
+    / \
+   5   3
+  /   / \
+ 2   0   1
+\end{java}
+\runinhead{Construction algorithm.} Similar to all nearest smaller (or larger) values problem - Section \ref{allNearestSmaller}.
+
+Core clues:
+\begin{enumerate}
+\item Use stack to maintain a \textit{strictly decreasing} stack, similar to find the all nearest large elements.
+\itm Maintain the tree for currently scanning $A_i$ with the subarray $A[:i]$.
+\begin{enumerate}
+\item \rih{Left tree.} For each currently scanning node $A_i$, if ${stk}_{-1} \leq A_i$, then ${stk}_{-1}$ is the left subtree of $A_i$. Then pop the stack and iteratively look at ${stk}_{-1}$ again (previously ${stk}_{-2}$). Notice that the original left subtree of $A_i$ should become the right subtree of ${stk}_{-1} $, because the original left subtree appears later and satisfies the decreasing relationship.
+\item \rih{Right tree.} In this stack, ${stk}_{-1} < {stk}_{-2}$ and ${stk}_{-1}$ appears later than ${stk}_{-2}$; thus ${stk}_{-1}$ is the right subtree of ${stk}_{-2}$. The strictly decreasing relationship of stack will be processed when popping the stack. 
+\end{enumerate}
+\end{enumerate}
+
+$O(n)$ since each node on the tree is pushed and popped out from stack once.
+
+\begin{python}
+def maxTree(self, A):
+    stk = []
+    for a in A:
+        cur = TreeNode(a)
+        while stk and stk[-1].val <= cur.val:
+            pre = stk.pop()
+            pre.right = cur.left
+            cur.left = pre
+
+        stk.append(cur)
+
+    pre = None
+    while stk:
+        cur = stk.pop()
+        cur.right = pre
+        pre = cur
+
+    return pre
+\end{python}
 \section{Treap}
+Randomized cartesian tree. 
+
 Heap-like tree. 

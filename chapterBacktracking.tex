@@ -4,6 +4,30 @@
 
 \runinhead{Prune.} Backtrack need to think about pruning using the condition \pyinline{predicate}.
 
+\section{Sequence}
+\runinhead{k sum.} Given $n$ unique integers, number $k$ ($1\leq k\leq n$)  and target. Find all possible $k$ integers where their sum is target. 
+
+Complexity: $O(2^n)$.
+
+Pay attention to the pruning condition.
+
+\begin{python}
+def dfs(self, A, i, k, cur, remain, ret):
+    """self.dfs(A, 0, k, [], target, ret)"""
+    if len(cur) == k and remain == 0:
+        ret.append(list(cur))
+        return
+
+    if (i >= len(A) or len(cur) > k 
+        or len(A)-i+len(cur) < k):
+        return
+
+    self.dfs(A, i+1, k, cur, remain, ret)
+    cur.append(A[i])
+    self.dfs(A, i+1, k, cur, remain-A[i], ret)
+    cur.pop()
+\end{python}
+
 \section{Math}
 \subsection{Decomposition}
 \subsubsection{Factorize a number}\label{factorization}
