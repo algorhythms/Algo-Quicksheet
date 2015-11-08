@@ -119,6 +119,7 @@ Notice:
 \caption{Weighted quick-union traces}
 \label{fig:union_find}
 \end{figure}
+\newpage
 \begin{python}
 from collections import deque
 
@@ -169,7 +170,8 @@ Weighted union-find with path compression.\\
 \item \textbf{Size-balanced}: merge the tree according to the size to maintain balance.
 \item \textbf{Path compression}: Make the ptr in $\pi$ array to point to its root rather than its immediate parent. 
 \end{enumerate}
-\rih{Code.}
+\newpage
+Code:
 \begin{python}
 class UnionFind(object):
     def __init__(self):

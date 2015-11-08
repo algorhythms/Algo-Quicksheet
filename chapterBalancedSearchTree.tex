@@ -146,6 +146,7 @@ node.
 TODO
 
 \section{Cartesian Tree}
+\subsection{Basics}
 Also known as max tree (or min tree). The root is the maximum number in the array. The left subtree and right subtree are the max trees of the subarray divided by the root number.
 \begin{figure}[hbtp]
 \centering
@@ -175,6 +176,7 @@ Core clues:
 
 $O(n)$ since each node on the tree is pushed and popped out from stack once.
 
+\newpage
 \begin{python}
 def maxTree(self, A):
     stk = []
@@ -195,7 +197,18 @@ def maxTree(self, A):
 
     return pre
 \end{python}
-\section{Treap}
-Randomized cartesian tree. 
 
-Heap-like tree. 
+Usually, min tree is more common. 
+\subsection{Treap}
+\rih{Randomized Cartesian tree}. Heap-like tree. It is a Cartesian tree in which each key is given a (randomly chosen) numeric priority. As with any binary search tree, the inorder traversal order of the nodes is the same as the sorted order of the keys.
+
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=.80]{treap}}
+\caption{Treap. Each node x is labeled with x.key: x.priority.}
+\label{fig:treap}
+\end{figure}
+
+Construct a Treap for an array $A$ with index as the $x.key$ randomly chosen priority $x.priority$ $O(n)$. Thus support search, insert, delete into array (i.e. Treap) $O(\log n)$ on average. 
+
+Insertion and deletion - need to perform \textit{rotations} to maintain the min-treap property. 

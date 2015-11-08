@@ -375,6 +375,7 @@ Brute force can be done in $O(n^2)$. Put the $A[i].val$ into $R$ at an index/slo
 \rih{Segment Tree}. Use a segment tree to maintain the size of empty slots. Each node has a $start$ and a $end$ s.t slot indexes $\in [start, end)$. Go down to find the target slot, go up to decrement the size of empty slots. 
 
 Reconstruction of array cannot use BIT since there is no map of $prefixSum \rightarrow i$.
+\newpage
 \begin{python}
 class Node(object):
   def __init__(self, start, end, cnt):

@@ -136,7 +136,7 @@ def infix2postfix(self, lst):
         ret.append(stk.pop())
       stk.pop()  # pop "("
     else:
-      while stk and self.precdn(elt) <= self.precdn(stk[-1]):
+      while stk and precdn(elt) <= precdn(stk[-1]):
         ret.append(stk.pop())
       stk.append(elt)
 
@@ -188,7 +188,7 @@ reverse as
         stk.pop()
       else:
         # < rather than <=
-        while stk and self.precdn(elt) < self.precdn(stk[-1]):  
+        while stk and precdn(elt) < precdn(stk[-1]):  
           pre.append(stk.pop())
         stk.append(elt)
 
