@@ -10,11 +10,11 @@ Example:
 \end{align*}
 Clues:
 \begin{enumerate}
-\item Backtracking with horizontal expanding
-\item Special handling for multiplication - caching 
-\item Detect invalid number with leading 0's
-\end{enumerate}}
-Code: 
+\item Backtracking with \textit{horizontal} expanding
+\item Special handling for multiplication - caching the expression \textit{predecessor} for multiplication association. 
+\item Detect \textit{invalid} number with leading 0's
+\end{enumerate}
+
 \begin{python}
 def addOperators(self, num, target):
   ret = []
@@ -32,8 +32,8 @@ def dfs(self, num, target, pos,
     for i in xrange(pos, len(num)):
       if i != pos and num[pos] == '0':
         continue
+        
       nxt_val = int(num[pos:i+1])
-
       if not cur_str:  # 1st number
         self.dfs(num, target, i+1, 
             "%d"%nxt_val, nxt_val,
@@ -46,7 +46,7 @@ def dfs(self, num, target, pos,
             cur_str+"-%d"%nxt_val, cur_val-nxt_val, 
             -nxt_val, ret)
         self.dfs(num, target, i+1, 
-            cur_str+"*%d"%nxt_val, cur_val-mul+mul*nxt_val, 
+    cur_str+"*%d"%nxt_val, cur_val-mul+mul*nxt_val, 
             mul*nxt_val, ret)
 \end{python}
 \subsection{Bidirection}

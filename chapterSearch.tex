@@ -110,3 +110,55 @@ def findMin(self, A):
 
     return mini
 \end{python}
+\section{Combinations}
+\subsection{Extreme-value problems}\label{extremeValueProblem}
+\runinhead{Longest increasing subsequence.} Array $A$.
+
+Clues:
+\begin{enumerate}
+\item \pyinline{MIN}: \textit{min} of index \textit{last} value of LIS of a particular \textit{len}.
+\item \pyinline{RET}: result table, store the $\pi$'s idx (predecessor); (optional, to build the LIS, no need if only needs to return the length of LIS)
+\item \pyinline{bin_search}: For each currently scanning index \pyinline{i}, if it smaller (i.e. $\neg$ increasing), to maintain the \pyinline{MIN}, binary search to find the position to update the min value. The \pyinline{bin_search} need to find the element $\geq$ to \pyinline{A[i]}.
+\end{enumerate}
+\newpage
+\begin{python}
+def LIS(self, A):
+    n = len(A)
+    MIN = [-1 for _ in xrange(n+1)]
+    
+    l = 1
+    for i in xrange(1, n):
+        if A[i] > A[MIN[l]]:
+            l += 1
+            MIN[l] = i
+        else:
+            j = self.bin_search(MIN, A, A[i], 1, l+1)
+            MIN[j] = i
+
+    return l
+\end{python}
+If need to return the LIS itself. 
+\begin{python}
+    for i in xrange(1, n):
+        if A[i] > A[MIN[l]]:
+            l += 1
+            MIN[l] = i
+
+            RET[i] = MIN[l-1]  # (RET)
+        else:
+            j = self.bin_search(MIN, A, A[i], 1, l+1)
+            MIN[j] = i
+
+            RET[i] = MIN[j-1] if j-1 >= 1 else -1  # (RET)
+
+    # build the LIS (RET)
+    cur = MIN[l]
+    ret = []
+    while True:
+        ret.append(A[cur])
+        if RET[cur] == -1: break
+        cur = RET[cur]
+
+    ret = ret[::-1]
+    print ret
+\end{python}

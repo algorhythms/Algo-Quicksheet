@@ -40,8 +40,17 @@ How a compiler implements a function:
 
 Recursive function: function calls itself. It can always be implemented by using an explicit stack to remove recursion. 
 
-\subsection{Largest Rectangle}
-Find the largest rectangle in the matrix (histogram). Given $n$ non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram. 
+\subsection{Usage}
+The core philosophy of using stack is to maintain a relationship invariant among stack element. 
+
+The \textbf{relationship invariants} can be:
+\begin{enumerate}
+\item strictly asc/ strictly desc
+\item non-desc/ non-asc
+\end{enumerate}
+
+\subsection{Applications}
+\runinhead{Largest Rectangle.} Find the largest rectangle in the matrix (histogram). Given $n$ non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram. 
 
 \begin{figure}[hbtp]
 \centering
@@ -58,7 +67,9 @@ Core clues:
 \item Popping triggers the calculation of area
 \item Calculate the rectangle width by index diff
 \item Post-processing in the end
-\end{enumerate}}
+\end{enumerate}
+\newpage
+Code:
 \begin{python}
 def largestRectangleArea(self, height):
     n = len(height)
@@ -76,7 +87,7 @@ def largestRectangleArea(self, height):
 
         stk.append(i)
 
-    # after processing all heights, process the remaining stack
+    # after array scan, process the dangling stack
     i = n
     ...
 

@@ -58,6 +58,8 @@ Notice:
 
 
 \section{Sequence}\label{dpSequence}
+
+\subsection{Single-state dp}
 \runinhead{Longest common subsequence.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
@@ -66,7 +68,8 @@ F_{i. j} = \left\{ \begin{array}{rl}
   F_{i,j-1}\Big)
        \end{array} \right.
 \end{eqnarray*}
-\\
+
+
 \runinhead{Longest common substring.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and
 $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
 \begin{eqnarray*}
@@ -77,7 +80,30 @@ F_{i. j} = \left\{ \begin{array}{rl}
 \end{eqnarray*}
 
 Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, the $gmax=max\big(\{{F_{i,j}\}\big)$.
-\\
+\runinhead{Longest increasing subsequence}. Find the longest increasing subsequence of an array $A$.
+
+let $F_i$ be the LIS length ends at $A_i$. 
+\begin{eqnarray*}
+F_i = \max(F[j]+1 \cdot\forall j < i) \text{ // if $A_i>A_j$}
+\end{eqnarray*}
+
+Then the global $maxa$ is:
+$$
+maxa = \max(F_i\cdot \forall i)
+$$
+
+Time complexity: $O(n^2)$
+
+In code, notice the \pyinline{else}.
+\begin{python}
+F[i] = max(
+    F[j] + 1 if A[i] > A[j] else 1
+    for j in xrange(i)
+)
+\end{python}
+
+Alternative solution using binary search in $O(n \log n)$ - Section \ref{extremeValueProblem}.
+
 \runinhead{Maximum subarray sum.} Find the maximum subarray sum of $A$. 
 
 Let $F_i$  be the maximum subarray sum ending at $A_{i}$
@@ -127,6 +153,7 @@ F_{i, j} = \left\{ \begin{array}{rl}
        \end{array} \right.
 \end{eqnarray*}
 
+\subsection{Dual-state dp}
 \runinhead{Maximal product subarray.} Find the subarray within an array $A$ which has the largest product. 
 \begin{itemize}
 \item Let $small_i$ be the smallest product end with $A_i$. 
@@ -156,8 +183,17 @@ The the total volume $vol$:
 $$
 vol = \sum_i(\max\big(0,\min(maxL_i, maxR_{i+1})-A[i]\big))
 $$
+\runinhead{Zigzag subsequence.} Find the max length zigzag subsequence which goes up and down alternately within the array $A$.
 
+Let $U_i$ be the max length of zigzag subsequence end at $A_i \wedge$ going up.
 
+Let $D_i$ be the max length of zigzag subsequence end at $A_i \wedge$ going down.
+\begin{align*}
+U_i &= max(D_j+1 \cdot \forall j < i) \text{ // if $A_i > A_j$} \\ 
+D_i &= max(U_j+1 \cdot \forall j < i) \text{ // if $A_i < A_j$} 
+\end{align*}
+
+Notice in python implementation, don't use list comprehension since two states are interleaved and interdependent. 
 
 \section{String}
 \runinhead{Word break.} Given a string $s$ and a dictionary of words $dict$, determine if $s$ can be segmented into a space-separated sequence of $dict$ words.
