@@ -214,8 +214,6 @@ int size(Key lo, Key hi) {
     else              return rank(hi)-rank(lo);
 }
 \end{java}
-\runinhead{1-d range search}
-TODO
 
 \runinhead{Closest value} Find the value in BST that is closet to the \pyinline{target}.
 \\
@@ -272,13 +270,15 @@ def predecessors(self, root, target, stk):
 
 \section{Binary Index Tree (BIT)}\label{BIT}
 \subsection{Introduction}
-Compared to Segment Tree, BIT is shorter and more elegant. BIT can do most of things that Segment Tree can do and it is easier to code. BIT updates and queries $$i\rightarrow prefixSum$$ in $O(\log n)$ time; however, BIT CANNOT query $$prefixSum \rightarrow i$$
+Compared to Segment Tree \ref{section:segmentTree}, BIT is shorter and more elegant. BIT can do most of things that Segment Tree can do and it is easier to code. BIT updates and queries $$i\rightarrow prefixSum$$ in $O(\log n)$ time; however, BIT CANNOT query $$prefixSum \rightarrow i$$
 \subsection{Implementation}
 Given an array $A$ of length $n $ starting from $1$. prefix sum $s[i]\triangleq A_1+...+A_i$. BIT uses binary to maintain the array of prefix sum for querying and updating. For $i$-th node in the BIT, 
 $$
 N[i]=A_{j+1}+...+A_i
 $$
 , where $j=i-lowbit(i)$, i.e. set $i$'s lowest bit 1 to 0. $lowbit(i)$ can be defined as \pyinline{return i & -i}, using 2's complement. Notice that the summation ends with $A_i$ since easier to \pyinline{set}.
+
+For the range, we use $(j, i]$ here instead of $[j, i)$ since more elegant for \pyinline{get(i)} and \pyinline{set(i)}
 \\\\
 Clues:
 \begin{enumerate}
@@ -301,7 +301,7 @@ Clues:
 \end{figure}
 
 Time complexity, longest update is along the leftmost branch, which takes $O(\log_2 n)$ (e.g. 1, 10, 100, 1000, 10000); longest query is along a branch starting with node with all 1's (e.g. 1111, 1110, 1100, 1000), which also takes $O(\log_2 n)$.
-\\\\
+\newpage
 Code:
 \begin{python}
 class BIT(object):
@@ -327,9 +327,11 @@ class BIT(object):
 \end{python}
 
 
-\section{Segment Tree}
+\section{Segment Tree}\label{section:segmentTree}
 \subsection{Introduction}
-The structure of \textbf{Segment Tree} is a binary tree which each node has two attributes start and end denote an segment/interval. 
+Segment Tree is specially built for \textit{range queries}. 
+
+The structure of Segment Tree is a binary tree which each node has two attributes start and end denote an segment/interval. 
 
 Notice that by practice, the interval is normally $[start, end)$ but sometimes it can be $[start, end]$, which depends on the question definition. 
 
@@ -349,11 +351,12 @@ Variants:
 \item Count Segment Tree. 
 \end{enumerate}
 
-For a \textbf{Maximum Segment Tree}, which each node has an extra value max
-to store the maximum value in this node's interval.
+For a Maximum Segment Tree, which each node has an extra value max to store the maximum value in this node's interval.
 
 \subsection{Operations}
-Components in Segment Tree:
+Segment Tree does a decent job for range queries.
+\\
+Components in Segment Tree operations:
 \begin{enumerate}
 \item Build
 \item Query 
@@ -442,5 +445,104 @@ class SegmentTree(object):
         root.m = val
 \end{python}
 Concrete example - Count Segment Tree \ref{inversionReconstruct}. 
+
+\newpage
+\section{Trie}
+\subsection{Basic}
+Trie is aka radix tree, prefix tree. 
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=.30]{trie.jpg}}
+\caption{Trie}
+\label{fig:trie} 
+\end{figure}
+\runinhead{Notice:}
+\begin{enumerate}
+\item Children are stored in HashMap rather than ArrayList. 
+\item self.word to stores the word and indicates whether a word ends at the current
+node. 
+\end{enumerate}
+Codes:
+\begin{python}
+class TrieNode(object):
+    def __init__(self, char):
+        self.char = char
+        self.word = None
+        self.children = {}  # map from char to TrieNode
+
+
+class Trie(object):
+    def __init__(self):
+        self.root = TrieNode(None)
+
+    def add(self, word):
+        word = word.lower()
+        cur = self.root
+        for c in word:
+            if c not in cur.children:
+                cur.children[c] = TrieNode(c)
+            cur = cur.children[c]
+        cur.word = word
+\end{python}
+
+\subsection{Advanced}
+Implicit storage of word in TrieNode: 
+\begin{enumerate}
+\item Implicitly stores the current word. 
+\item Implicitly stores the current char. 
+\item When insert new word, do not override the existing TrieNode. A flag to indicate
+whether there is a word ending here.
+\end{enumerate}
+\newpage
+Code:
+\begin{python}
+class TrieNode:
+    def __init__(self):
+        """Implicit storage"""
+        self.ended = False
+        self.children = {}
+
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        cur = self.root
+        for w in word:
+            if w not in cur.children:   # not override
+                cur.children[w] = TrieNode()
+            cur = cur.children[w]
+
+        cur.ended = True
+
+    def search(self, word):
+        cur = self.root
+        for w in word:
+            if w in cur.children:
+                cur = cur.children[w]
+            else:
+                return False
+
+        if not cur.ended:  # not ended here
+            return False
+
+        return True
+
+    def startsWith(self, prefix):
+        cur = self.root
+        for w in prefix:
+            if w in cur.children:
+                cur = cur.children[w]
+            else:
+                return False
+
+        return True
+\end{python}
+\subsection{Applications}
+\begin{enumerate}
+\item Word search in matrix.
+\item Word look up in dictionary.
+\end{enumerate}
         
      

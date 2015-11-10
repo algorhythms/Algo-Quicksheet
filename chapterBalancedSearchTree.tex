@@ -10,14 +10,14 @@ Insertion into a 3-node at bottom:
 \end{enumerate}
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=1.]{23insert1}}
+\subfloat{\includegraphics[scale=.8]{23insert1}}
 \caption{Insertion 1}
 \label{fig:LABEL}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=1.]{23insert2}}
+\subfloat{\includegraphics[scale=.8]{23insert2}}
 \caption{insert 2}
 \label{fig:LABEL}
 \end{figure}
@@ -26,7 +26,7 @@ Insertion into a 3-node at bottom:
 Summary of splitting the tree. 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.60]{23splitting}}
+\subfloat{\includegraphics[scale=.65]{23splitting}}
 \caption{Splitting temporary 4-ndoe summary}
 \label{fig:splitting}
 \end{figure}
@@ -71,7 +71,7 @@ The height of the RB-tree is at most $2\lg N$ where alternating red and black li
 For every new insertion, the node is always attached with red links. 
 
 The following code is the simplest version of RB-tree insertion: 
-
+\newpage
 \begin{java}
 Node put(Node h, Key key, Value val) {
   if (h == null)  // std red insert (link to parent).
@@ -121,7 +121,7 @@ B-tree is the generalization of 2-3 tree.
 \caption{B-Tree}
 \label{fig:b-tree}
 \end{figure}
-\subsection{Bascis}
+\subsection{Basics}
 Half-full principle: 
 
 \begin{tabular}{lll}
@@ -136,10 +136,12 @@ Ptrs & \lceil\frac{n+1}{2}\rceil & \lfloor\frac{n+1}{2}\rfloor \\
 \subsection{Operations}
 Core clues
 \begin{enumerate}
-\item \textbf{Split \& Up}: split half, move up the RIGHT node's FIRST of split nodes
-recursively
-\item \textbf{Remove}: the node moved up should be removed in the original node UNLESS it is a leaf
-node. 
+\item \textbf{Invariant}: children balanced or left-leaning
+\item \textbf{Split}: split half, thus invariant.
+\item \textbf{Leaf-Up}: no delete, recursively move up the right node's first child;
+thus invariant.
+\item \textbf{Nonleaf-Up}: delete and recursively move up the left's last if left-leaning
+or right's first if balanced; thus invariant. 
 \end{enumerate}
 
 \section{AVL Tree}

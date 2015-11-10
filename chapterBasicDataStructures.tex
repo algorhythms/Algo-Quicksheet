@@ -124,8 +124,8 @@ def allNearestSmaller(self, A):
 \end{python}
 
 \section{Map}
-\subsection{Math Relations}
-\textbf{OneToOneMap}. One map, dual entries.
+\subsection{Math relations}
+\textbf{1-1 Map}. Mathematically, full projection. One map, dual entries.
 \begin{python}
 class OneToOneMap(object):
     def __init__(self):
@@ -139,7 +139,7 @@ class OneToOneMap(object):
         return self.m.get(a)
 \end{python}
 \subsection{Operations}
-\runinhead{Sorting by value}. Sort the map entries by values. 
+\runinhead{Sorting by value.} Sort the map entries by values \pyinline{itemgetter}.
 \begin{python}
 from operators import itemgetter 
 sorted(hm.items(), key=itemgetter(1), reverse=True)
