@@ -7,14 +7,14 @@
 \item Are the objects partially \textbf{duplicated}?
 \end{enumerate}}
 If order does not matter, you can pre-set the order. 
-\subsection{Basic Formula}
+\subsection{Basic formula}
 \begin{eqnarray*}
 && {n \choose k} = \frac{n!}{k!(n-k)!} \\
 && {n \choose k} = {n \choose n-k} \\
 && {n\choose k} = {n-1\choose k} + {n-1 \choose k-1}
 \end{eqnarray*}
 
-\subsection{N objects, K Ceils}
+\subsection{N objects, K ceils}
 When $N=10, K=3$:
 $$
 x_1 + x_2 + x_3 = 10
@@ -39,7 +39,7 @@ The meaning is to choose $r$ objects from $n+r$ objects to become the $|$.
 What is the number of permutation of $N$ objects with $K$ different types:
 \begin{align*}
 ret &= \frac{A_N^N}{\prod_{k=1}^K{A_{sz(k)}^{sz(k)}}} \\
-&= \frac{N!}{\prod_{k} sz(k)!}
+&= \frac{N!}{\prod_{k} sz[k]!}
 \end{align*}
 
 \subsection{Inclusion–Exclusion Principle}
@@ -110,7 +110,7 @@ We expand the formula, although the  naive way of getting the coefficient of $x^
 \subsection{$k$-th permutation}
 Given $n$ and $k$, return the $k$-th permutation sequence. $k\in [1, n!]$. $O(nk)$ in time complexity is easy, can you do it in $O(n^2)$ or less?
 
-Reversed Contour Expansion
+Reversed Cantor Expansion
 
 Core clues:
 \begin{enumerate}
@@ -122,7 +122,7 @@ Suppose for $n$ element, the $k$-th permutation is:
 \item \rih{Basic case.} Since \pyinline{[a1, a3, ..., an-1]} has $(n-1)!$ permutations,
 if $k < (n-1)!, a_0 = A_0$ (first element in array), else $a_0 = A_{k/(n-1)!}$
 
-\item Recursively, (or iteratively)
+\item Recursively, (or iteratively), calculate the values at each position. Similar to Radix. 
 \begin{enumerate}
 \item $a_0 = A_{k_0/(n-1)!}$, where $k_0 = k$
 \item $a_1 = A_{k_1/(n-2)!}$, where $k_1 = k_0\%(n-1)!$ in the remaining array $A$
@@ -143,7 +143,7 @@ def getPermutation(self, n, k):
     return "".join(map(str, ret))
 \end{python}
 
-\section{Catalan Number}
+\section{Catalan Number}\label{section:catalanNumber}
 \subsection{Math}
 \runinhead{Definition.}
 $$
@@ -172,9 +172,15 @@ C_n &= {2n\choose n} - {2n\choose n-1}\\
 \end{itemize}
 
 \subsection{Applications}
-\runinhead{\#Parenthesis.}Number of different ways of adding parenthesis. 
-\runinhead{\#BST.}Number of different Binary Search Trees.
-
+The paths in Figure \ref{fig:catalanProof} can be abstracted to anything that at any time \#right $\geq$ \#up. 
+\runinhead{\#Parentheses.}Number of different ways of adding parentheses. At any time, \#\pyinline{(} $\geq$ \#\pyinline{)}.
+\runinhead{\#BSTs.}Number of different BSTs. Consider it as a set of same binary operators with their operands. Reduce this problem to \#Parentheses. 
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=2.00]{Catalan_number_binary_tree_example}}
+\caption{\#BSTs. Circles are operators; crescents are operands.}
+\label{fig:NumberOfBSTs}
+\end{figure}
 
 \section{Stirling Number}
 a Stirling number of the second kind (or Stirling partition number) is the number of ways to partition a set of n objects into k non-empty subsets and is denoted by $S(n,k)$ or  $\lbrace{n\atop k}\rbrace$.

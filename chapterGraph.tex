@@ -1,10 +1,23 @@
 \chapter{Graph}
 
 \section{Basic}
-\rih{Graph representation.} V for a vertex set with a map, mapping from vertex to its neighbors.
+\runinhead{Graph representation.} $V$ for a vertex set with a map, mapping from vertex to its neighbors. The mapping relationship represents the edges $E$.
 \begin{python}
 V = defaultdict(list)
 \end{python}
+
+\runinhead{Complexity.} Basic complexities: 
+
+\begin{tabular}{lll}
+\hline\noalign{\smallskip}
+\textbf{Algorithm} & \textbf{Time}  & \textbf{Space}\\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+dfs & $O(|E|)$ & $O(|V|), O(\text{longest path})$ \\
+bfs & $O(|E|)$ & $O(|V|)$ \\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+\caption{CAPTIONS}
+\end{tabular}
+
 \section{DFS}
 \rih{Number of Islands.} The most fundamental and classical problem. 
 \begin{python}
@@ -14,7 +27,7 @@ V = defaultdict(list)
 00011
 Answer: 3
 \end{python}
-Clue:
+\rih{Clue}:
 \begin{enumerate}
 \item Iterative dfs
 \end{enumerate}
@@ -34,7 +47,9 @@ class Solution(object):
           cnt += 1
 
     return cnt
-
+\end{python}
+\newpage
+\begin{python}
   def dfs(self, grid, i, j, visited):
     m = len(grid)
     n = len(grid[0])
@@ -47,12 +62,13 @@ class Solution(object):
         not visited[I][J] and grid[I][J] == "1"):
         self.dfs(grid, I, J, visited)
 \end{python}
+If the islands are constantly updating and the query for number of islands is called multiple times, need to use union-find (Section \ref{section:unionFind}) to reduce each query's complexity from $O(mn)$ to $O(\log mn)$.
+
 \section{BFS}
 \subsection{BFS with Abstract Level}
 Start bfs with a set of vertices in abstract level, not necessarily neighboring vertices.
 
-Example:
-$-1$ obstacles, $0$ targets, calculate all other vertices' Manhattan distance to its nearest target:
+Example: $-1$ obstacles, $0$ targets, calculate all other vertices' Manhattan distance to its nearest target:
 $$
 \begin{bmatrix}
 \infty & -1 & 0 & \infty \\
@@ -71,23 +87,22 @@ $$
 0 & -1 & 3 & 4 \\
 \end{bmatrix}
 $$
-
-\subsubsection*{Code}
+\newpage
+\rih{Code:}
 \begin{python}
 self.dirs = ((-1, 0), (1, 0), (0, -1), (0, 1))
 
 def wallsAndGates(self, mat):
-    q = [(i, j) for i, row in enumerate(mat) 
-         for j, val in enumerate(row) if val == 0]
-    for i, j in q:  # iterator
-        for d in self.dirs:
-            I, J = i+d[0], j+d[1]
-            if (0 <= I < m and  0 <= J < n and 
-                mat[I][J] > mat[i][j]+1):
-                mat[I][J] = mat[i][j]+1
-                q.append((I, J))
+  q = [(i, j) for i, row in enumerate(mat) 
+     for j, val in enumerate(row) if val == 0]
+  for i, j in q:  # iterator
+    for d in self.dirs:
+      I, J = i+d[0], j+d[1]
+      if (0 <= I < m and  0 <= J < n and 
+        mat[I][J] > mat[i][j]+1):
+        mat[I][J] = mat[i][j]+1
+        q.append((I, J))
 \end{python}
-
 
 
 \section{Detect Acyclic}
@@ -107,6 +122,7 @@ def wallsAndGates(self, mat):
 \end{enumerate}
 
 \subsection{Directed Graph}
+Detect cycles (any) in directed graph.
 
 \begin{python}
 def dfs(self, V, v, visited, pathset):
@@ -123,7 +139,11 @@ def dfs(self, V, v, visited, pathset):
   visited.add(v)
   return True
 \end{python}
+
+
 \subsection{Undirected Graph}
+Detect cycles (any) in undirected graph.
+
 \begin{python}
 def dfs(self, V, v, pi, visited, pathset):
   if v in pathset:
@@ -154,7 +174,7 @@ Notice:
 \item Need to check ascending order or descending order. 
 \item Need to \textbf{detect cycle}; thus the dfs need to construct result queue and detect cycle simultaneously, by using two sets: $visited$ and $pathset$. 
 \end{enumerate}
-
+\newpage
 \begin{python}
 from collections import deque
 
@@ -191,7 +211,7 @@ def dfs_topo(self, V, v, visited, pathset, ret):
 \item Course scheduling problem with pre-requisite. 
 \end{enumerate}
 
-\section{Union-Find}
+\section{Union-Find}\label{section:unionFind}
 Improvements:
 \begin{enumerate}
 \item Weighting: size-baladnced tree
@@ -201,58 +221,78 @@ Improvements:
 Weighted union-find with path compression.\\
 \rih{Core clues.} 
 \begin{enumerate}
-\item \textbf{$\pi$ array}:an array to store each item's predecessor pi. 
+\item \textbf{$\pi$ array}:an array to store each item's predecessor pi. The predecessor are lazily updated to its ancestor. When \pyinline{x == pi[x]}, then \pyinline{x} is the ancestor (i.e. root).
 \item \textbf{Size-balanced}: merge the tree according to the size to maintain balance.
 \item \textbf{Path compression}: Make the ptr in $\pi$ array to point to its root rather than its immediate parent. 
 \end{enumerate}
-\begin{figure}[H]
+\begin{figure}[]
 \centering
 \subfloat{\includegraphics[scale=.70]{uf}}
 \caption{Weighted quick-union traces}
 \label{fig:union_find}
 \end{figure}
-Code:
+
+\newpage
 \begin{python}
 class UnionFind(object):
-    def __init__(self):
-        self.pi = {}  # item -> pi
-        self.sz = {}  # root -> size
+  def __init__(self):
+    self.pi = {}  # item -> pi
+    self.sz = {}  # root -> size
 
-    def __len__(self):
-        """number of unions"""
-        return len(self.sz)  # only root nodes have size
+  def __len__(self):
+    """number of unions"""
+    return len(self.sz)  # only root nodes have size
 
-    def add(self, item):
-        if item not in self.pi:
-            self.pi[item] = item
-            self.sz[item] = 1
+  def add(self, x):
+    if x not in self.pi:
+      self.pi[x] = x
+      self.sz[x] = 1
 
-    def root(self, item):
-        pi = self.pi[item]
-        if item != pi:
-            self.pi[item] = self.root(pi)
-            # path compression 
-        return self.pi[item]
+  def root(self, x):
+    """path compression"""
+    pi = self.pi[x]
+    if x != pi:
+      self.pi[x] = self.root(pi)
+    return self.pi[x]
 
-    def unionize(self, a, b):
-        pi1 = self.root(a)
-        pi2 = self.root(b)
+  def unionize(self, x, y):
+    pi1 = self.root(x)
+    pi2 = self.root(y)
 
-        if pi1 != pi2:
-            if self.sz[pi1] > self.sz[pi2]:
-                pi1, pi2 = pi2, pi1
-                # size balancing
-            self.pi[pi1] = pi2
-            self.sz[pi2] += self.sz[pi1]
-            del self.sz[pi1]
-        
-    def is_union(self, a, b):
-        if a not in self.pi or b not in self.pi:
-          return False 
-        return self.root(a) == self.root(b)
-        
+    if pi1 != pi2:
+      if self.sz[pi1] > self.sz[pi2]:
+        pi1, pi2 = pi2, pi1
+        # size balancing
+      self.pi[pi1] = pi2
+      self.sz[pi2] += self.sz[pi1]
+      del self.sz[pi1]
+    
+  def isunion(self, x, y):
+    if x not in self.pi or y not in self.pi:
+      return False 
+    return self.root(x) == self.root(y)
 \end{python}
 
 \subsection{Complexity}
 $m$ union-find with $n$ objects: $O(n)+m O(\lg n)$
 
+
+\section{Axis Projection}
+Project the mat dimension from 2D to 1D, using \textit{orthogonal axis}.
+
+\runinhead{Smallest bounding box.} Given the location $(x, y)$ of one of the 1's, return the area of the smallest bounding box that encloses 1's.
+$$
+\begin{bmatrix}
+0& 0& 1& 0 \\
+0& 1& 1& 0 \\ 
+0& 1& 0& 0 \\
+\end{bmatrix}
+$$
+
+Clues:
+\begin{enumerate}
+\item Project the 1's onto x-axis, binary search for the left bound and right bound of the bounding box. 
+\item Do the same for y-axis. 
+\end{enumerate}
+
+Time complexity: $O(m\log n + n \log m)$, where $O(m), O(n)$ is for projection complexity. 

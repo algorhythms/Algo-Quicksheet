@@ -12,7 +12,54 @@ $$
 |\leftarrow p
 $$
 
-\section{Event-Driven Algorithm}
+\section{Operations}
+\runinhead{Merge intervals.} Given a collection of intervals, merge all overlapping intervals.
+
+\textbf{Core clues}:
+\begin{enumerate}
+\item Sort the intervals
+\item When does the overlapping happens?
+[0, 5) vs. [2, 6); [0, 5) vs. [2, 4)
+\end{enumerate}
+\begin{python}
+def merge(self, itvls):
+    if not itvls:
+        return []
+
+    itvls.sort(key=lambda x: x.start)
+    ret = [itvls[0]]
+    for cur in itvls[1:]:
+        pre = ret[-1]
+        if cur.start <= pre.end:  # overlap
+            pre.end = max(pre.end, cur.end)
+        else:
+            ret.append(cur)
+
+    return ret
+\end{python}
+
+\runinhead{Insert intervals.} Given a set of non-overlapping intervals, insert a new interval into the intervals (merge if necessary). Assume that the intervals were initially sorted according to their start times.
+
+\textbf{Core clues}
+\begin{enumerate}
+\item Partition the original list of intervals to left-side intervals and right-side intervals according to the new interval. 
+\item Merge the intermediate intervals with the new interval. Need to mathematically prove it works as expected.
+\end{enumerate}
+
+\begin{python}
+def insert(self, itvls, newItvl):
+    s, e = newItvl.start, newItvl.end
+    left = filter(lambda x: x.end < s, itvls)
+    right = filter(lambda x: x.start > e, itvls)
+    if len(left)+len(right) != len(itvls):
+        s = min(s, itvls[len(left)].start)
+        e = max(e, itvls[-len(right)-1].end)
+
+    return left + [Interval(s, e)] + right
+
+\end{python}
+
+\section{Event-driven algorithm}
 \subsection{Introduction}
 The core philosophy of event-driven algorithm:
 \begin{enumerate}
@@ -25,7 +72,7 @@ heap.
 \subsection{Questions}
 \runinhead{Maximal overlaps.} Given a list of number intervals, find max number of overlapping
 intervals. 
-\runinhead{Clues:}
+\runinhead{Core clues:}
 \begin{enumerate}
 \item \textbf{Event}: Every new start of an interval is an event. Scan the sorted intervals (sort the interval by \textit{start}).
 \item \textbf{Heap meaning}: Heap stores the \textit{end} of the interval. 

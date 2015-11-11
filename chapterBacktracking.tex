@@ -5,7 +5,7 @@
 \runinhead{Prune.} Backtrack need to think about pruning using the condition \pyinline{predicate}.
 
 \section{Sequence}
-\runinhead{k sum.} Given $n$ unique integers, number $k$ ($1\leq k\leq n$)  and target. Find all possible $k$ integers where their sum is target. 
+\runinhead{k sum.} Given $n$ unique integers, number $k$ and target. Find all possible $k$ integers where their sum is target. 
 
 Complexity: $O(2^n)$.
 
@@ -28,46 +28,6 @@ def dfs(self, A, i, k, cur, remain, ret):
     cur.pop()
 \end{python}
 
-\section{Math}
-\subsection{Decomposition}
-\subsubsection{Factorize a number}\label{factorization}
-\runinhead{Core clues:}
-\begin{enumerate}
-\item Expand the search tree \textbf{horizontally}.
-\end{enumerate}
-\runinhead{Search tree:}
-\begin{python}
-Input: 16
-get factors of cur[-1]
-[16]
-[2, 8]
-[2, 2, 4]
-[2, 2, 2, 2]
-
-[4, 4]
-\end{python}
-Code:
-\begin{python}
-def dfs(self, cur, ret):
-    if len(cur) > 1:
-        ret.append(list(cur))
-
-    n = cur.pop()
-    start = cur[-1] if cur else 2
-    for i in xrange(start, int(sqrt(n))+1):
-        if self.predicate(n, i):
-            cur.append(i)
-            cur.append(n/i)
-            self.dfs(cur, ret)
-            cur.pop()
-            
-def predicate(self, n, i):
-  return n%i == 0
-  
-\end{python}
-\runinhead{Time complexity.} The search tree's size is $O(2^n)$ where $n$ is the number of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined： 
-
-$$\sum_i {n \choose i} = 2^n$$
 
 \section{String}
 \subsection{Palindrome}
@@ -127,6 +87,137 @@ def predicate(self, s):
     return s == s[::-1]
 \end{python}
 
+
+
+\section{Math}
+\subsection{Decomposition}
+\subsubsection{Factorize a number}\label{factorization}
+\runinhead{Core clues:}
+\begin{enumerate}
+\item Expand the search tree \textbf{horizontally}.
+\end{enumerate}
+\runinhead{Search tree:}
+\begin{python}
+Input: 16
+get factors of cur[-1]
+[16]
+[2, 8]
+[2, 2, 4]
+[2, 2, 2, 2]
+
+[4, 4]
+\end{python}
+Code:
+\begin{python}
+def dfs(self, cur, ret):
+  if len(cur) > 1:
+    ret.append(list(cur))
+
+  n = cur.pop()
+  start = cur[-1] if cur else 2
+  for i in xrange(start, int(sqrt(n))+1):
+    if self.predicate(n, i):
+      cur.append(i)
+      cur.append(n/i)
+      self.dfs(cur, ret)
+      cur.pop()
+            
+def predicate(self, n, i):
+  return n%i == 0
+  
+\end{python}
+\runinhead{Time complexity.} The search tree's size is $O(2^n)$ where $n$ is the number
+of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined：
+
+
+$$\sum_i {n \choose i} = 2^n$$
+
+
+\section{Arithmetic Expression}
+\subsection{Unidirection}
+\rih{Insert operators.} Given a string that contains only digits 0-9 and a target value,
+return all possibilities to add binary operators (not unary) +, -, or * between the
+digits so they evaluate to the target value.
+
+Example: 
+\begin{align*}
+``123", 6 \rightarrow [``1+2+3", ``1*2*3"] \\ 
+``232", 8 \rightarrow [``2*3+2", ``2+3*2"] \\
+\end{align*}
+Clues:
+\begin{enumerate}
+\item Backtracking with \textit{horizontal} expanding
+\item Special handling for multiplication - caching the expression \textit{predecessor}
+for multiplication association. 
+\item Detect \textit{invalid} number with leading 0's
+\end{enumerate}
+
+\begin{python}
+def addOperators(self, num, target):
+  ret = []
+  self.dfs(num, target, 0, "", 0, 0, ret)
+  return ret
+
+def dfs(self, num, target, pos, 
+        cur_str, cur_val, 
+        mul, ret
+):
+  if pos >= len(num):
+    if cur_val == target:
+      ret.append(cur_str)
+  else:
+    for i in xrange(pos, len(num)):
+      if i != pos and num[pos] == '0':
+        continue
+        
+      nxt_val = int(num[pos:i+1])
+      if not cur_str:  # 1st number
+        self.dfs(num, target, i+1, 
+            "%d"%nxt_val, nxt_val,
+            nxt_val, ret)
+      else:  # +, -, *
+        self.dfs(num, target, i+1, 
+            cur_str+"+%d"%nxt_val, cur_val+nxt_val, 
+            nxt_val, ret)
+        self.dfs(num, target, i+1, 
+            cur_str+"-%d"%nxt_val, cur_val-nxt_val, 
+            -nxt_val, ret)
+        self.dfs(num, target, i+1, 
+    cur_str+"*%d"%nxt_val, cur_val-mul+mul*nxt_val, 
+            mul*nxt_val, ret)
+\end{python}
+\subsection{Bidirection}
+\rih{Insert parenthesis.} Given a string of numbers and operators, return all possible
+results from computing all the different possible ways to group numbers and operators.
+The valid operators are +, - and *.
+
+Examples:
+\begin{align*}
+(2*(3-(4*5))) &= -34 \\
+((2*3)-(4*5)) &= -14 \\
+((2*(3-4))*5) &= -10 \\
+(2*((3-4)*5)) &= -10 \\
+(((2*3)-4)*5) &= 10
+\end{align*}
+Clues: Iterate the operators, divide and conquer - left parts and right parts and then
+combine result. \\
+Code:
+\begin{python}
+def dfs_eval(self, nums, ops):
+  ret = []
+  if not ops:
+    assert len(nums) == 1
+    return nums
+
+  for i, op in enumerate(ops):
+    left_vals = self.dfs_eval(nums[:i+1], ops[:i])
+    right_vals = self.dfs_eval(nums[i+1:], ops[i+1:])
+    for l in left_vals:
+      for r in right_vals:
+        ret.append(self._eval(l, r, op))
+
+  return ret
+\end{python}
 \section{Tree}
 \subsection{BST}
 \subsubsection{Generate Valid BST}

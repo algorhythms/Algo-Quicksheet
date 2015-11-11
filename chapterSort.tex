@@ -24,7 +24,7 @@ List of general algorithms:
 
 \section{Algorithms}
 \subsection{Quick Sort}
-\subsubsection{Normal pivoting}
+\subsubsection{Normal pivoting}\label{section:pivot}
 The key part of quick sort is pivoting:
 \begin{python}
 def pivot(self, A, i, j):
@@ -108,7 +108,9 @@ def pivot_3way(self, A, lo, hi):
 
     return lt+1, gt
 \end{python}
-
+\subsection{Merge Sort}
+TODO
+\section{Properties}
 \subsection{Stability}
 Definition: a stable sort preserves the \textbf{relative order of items with equal keys} (scenario: sorted by time then sorted by location). 
 
@@ -135,7 +137,7 @@ Algorithms:
 \label{fig:trie} 
 \end{figure}
 
-\subsection{Applications}
+\subsection{Sort Applications}
 \begin{enumerate}
 \item Sort
 \item Partial quick sort (selection), k-th largest elements 
@@ -186,7 +188,7 @@ F(n) = \left\{ \begin{array}{rl}
   2F(\frac{n}{2})+O(n) &\mbox{// otherwise}
        \end{array} \right.
 \end{eqnarray*}
-
+Therefore, the complexity is $O(n+m \log m)$.
 \begin{python}
 def partial_qsort(self, A, i, j, m):
     if i >= j: return
@@ -213,19 +215,8 @@ def find_kth(self, A, i, j, k):
     if p == k: return A[p]
     if p > k:  return self.find_kth(A, i, p, k)
     else:      return self.find_kth(A, p+1, j, k)
-
-def pivot(self, A, i, j):
-    p = i
-    closed = p
-    for ptr in xrange(i, j):
-        if A[ptr] < A[p]:
-            closed += 1
-            A[ptr], A[closed] = A[closed], A[ptr]
-
-    A[closed], A[p] = A[p], A[closed]
-    return closed
-
 \end{python}
+Pivoting see section - \ref{section:pivot}.
 
 \section{Inversion}
 If $a_i > a_j$ but $i<j$, then this is considered as 1 Inversion. That is, for an element, the count of other elements that are \textit{larger} than the element but appear \textit{before} it. This is the default definition. 
@@ -303,6 +294,8 @@ def inversion(self, A):
 \end{python}
 
 \subsection{Segment Tree \& Inversion Count}\label{segmentTreeInversionCount}
+Compared to BIT, Segment Tree can process queries of both $idx \rightarrow sum$ and $sum \rightarrow idx$; while BIT can only process $idx \rightarrow sum$.
+
 Core clues:
 \begin{enumerate}
 \item Segment Tree maintains \textbf{index of values} to count the number of at each value.

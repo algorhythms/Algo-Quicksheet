@@ -208,7 +208,7 @@ F_{i} = \left\{ \begin{array}{rl}
 \end{eqnarray*}
 Return all such possible sentences. In original case, we use a bool array to record whether a dp could be segmented. Now we should use a vector for every dp to record how to construct that dp from another dp.
 
-Let $F_i$ be all possible segmented words ends at \pyinline{s[i-1]}. $F_i$ is a list. 
+Let $F_i$ be all possible segmented words ends at \pyinline{s[i-1]}. $F_i$ is a list. $\exists F_i$ means $F_i$ is not empty.
 \begin{eqnarray*}
 F_{i} = \left\{ \begin{array}{rl}
   F_{i}+[w] &\mbox{// $\forall w\in dict\cdot$} \\
@@ -293,7 +293,29 @@ def minCut(self, s):
 
 Two-state dp: `a' $\rightarrow$ `b' and  `b' $\rightarrow$ `a'. 1 cut into 2 segment.
 
-\runinhead{abc string.} Follow up for ab string. Three-state dp: $chr \neq a, chr \neq b, chr \neq c$. 2 cuts into 3 segments. 
+\runinhead{abc string.} Follow up for ab string. Three-state dp: $chr \neq a, chr \neq b, chr \neq c$. 2 cuts into 3 segments.
+
+\section{Combinatorics}
+\subsection{Tree}
+\runinhead{Number of different BSTs.} It can be solved using Catalan number (Section \ref{section:catalanNumber}), but here goes the dp solution. 
+\begin{lstlisting}
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+\end{lstlisting}
+
+Let $F_i$ be the \#BSTs constructed from $i$ elements. The pattern is: 
+\begin{align*}
+F_3 = F_0*F_2 + F_1*F_1 + F_2*F_0
+\end{align*}
+
+Thus, in general, 
+\begin{align*}
+F_i = \sum(F_{j}*F_{i-1-j} \cdot \forall j< i)
+\end{align*}
+
 \section{Backpack}
 \subsection{Classical}
 Given $n$ items with weight $w_i$ and value $v_i$, an integer $C$ denotes the size of a backpack. What is the max value you can fill this backpack?
@@ -316,8 +338,8 @@ Let $F_{i, j, v}$ means the \#ways of selecting $i$ elements from the first $j$ 
 
 You have two options: either select $A_{j-1}$ or not.
 $$
-F_{i, j, v} = F_{i-1, j-1, v-A_{j-1} + F_{i, j-1, v}
-
+F_{i, j, v} = F_{i-1, j-1, v-A_{j-1}} + F_{i, j-1, v}
+$$
 Time complexity: O(n^2 k)
 \section{Local and Global Extremes}
 \subsection{Long and short stocks}

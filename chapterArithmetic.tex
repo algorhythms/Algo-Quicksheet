@@ -1,83 +1,5 @@
 \chapter{Arithmetic}
-\section{Backtracking}
-\subsection{Unidirection}
-\rih{Insert operators.} Given a string that contains only digits 0-9 and a target value, return all possibilities to add binary operators (not unary) +, -, or * between the digits so they evaluate to the target value.
 
-Example: 
-\begin{align*}
-``123", 6 \rightarrow [``1+2+3", ``1*2*3"] \\ 
-``232", 8 \rightarrow [``2*3+2", ``2+3*2"] \\
-\end{align*}
-Clues:
-\begin{enumerate}
-\item Backtracking with \textit{horizontal} expanding
-\item Special handling for multiplication - caching the expression \textit{predecessor} for multiplication association. 
-\item Detect \textit{invalid} number with leading 0's
-\end{enumerate}
-
-\begin{python}
-def addOperators(self, num, target):
-  ret = []
-  self.dfs(num, target, 0, "", 0, 0, ret)
-  return ret
-
-def dfs(self, num, target, pos, 
-        cur_str, cur_val, 
-        mul, ret
-):
-  if pos >= len(num):
-    if cur_val == target:
-      ret.append(cur_str)
-  else:
-    for i in xrange(pos, len(num)):
-      if i != pos and num[pos] == '0':
-        continue
-        
-      nxt_val = int(num[pos:i+1])
-      if not cur_str:  # 1st number
-        self.dfs(num, target, i+1, 
-            "%d"%nxt_val, nxt_val,
-            nxt_val, ret)
-      else:  # +, -, *
-        self.dfs(num, target, i+1, 
-            cur_str+"+%d"%nxt_val, cur_val+nxt_val, 
-            nxt_val, ret)
-        self.dfs(num, target, i+1, 
-            cur_str+"-%d"%nxt_val, cur_val-nxt_val, 
-            -nxt_val, ret)
-        self.dfs(num, target, i+1, 
-    cur_str+"*%d"%nxt_val, cur_val-mul+mul*nxt_val, 
-            mul*nxt_val, ret)
-\end{python}
-\subsection{Bidirection}
-\rih{Insert parenthesis.} Given a string of numbers and operators, return all possible results from computing all the different possible ways to group numbers and operators. The valid operators are +, - and *.
-
-Examples:
-\begin{align*}
-(2*(3-(4*5))) &= -34 \\
-((2*3)-(4*5)) &= -14 \\
-((2*(3-4))*5) &= -10 \\
-(2*((3-4)*5)) &= -10 \\
-(((2*3)-4)*5) &= 10
-\end{align*}
-Clues: Iterate the operators, divide and conquer - left parts and right parts and then combine result. \\
-Code:
-\begin{python}
-def dfs_eval(self, nums, ops):
-    ret = []
-    if not ops:
-        assert len(nums) == 1
-        return nums
-
-    for i, op in enumerate(ops):
-        left_vals = self.dfs_eval(nums[:i+1], ops[:i])
-        right_vals = self.dfs_eval(nums[i+1:], ops[i+1:])
-        for l in left_vals:
-            for r in right_vals:
-                ret.append(self._eval(l, r, op))
-
-    return ret
-\end{python}
 
 \section{Big Number}
 \rih{Plus One.} Given a non-negative number represented as an array of digits, plus one to the number.
@@ -95,14 +17,14 @@ def plusOne(self, digits):
     return digits
 \end{python}
 
-\section{Polish Notation}
+\section{Polish Notations}
 Polish Notation is in-fix while Reverse Polish Notation is post-fix. 
 
-Reverse Polish notation (RPN) is a mathematical notation in which every operator follows all of its operands (i.e. operands are followed by operators).
+Reverse Polish notation (RPN) is a mathematical notation in which every operator follows all of its operands (i.e. operands are followed by operators). RPN should be treated as the orthogonal expression.  
 
 Polish notation (PN) is a mathematical notation in which every operator is followed by its operands. 
 
-\subsection{Convert In-fix to Post-fix}
+\subsection{Convert in-fix to post-fix (RPN)}
 \pyinline{ret} stores the final result of reverse polish notation. \pyinline{stk} stores
 the temporary result in strictly increasing order. 
 
@@ -118,7 +40,7 @@ can be written as
 Core clues:
 \begin{enumerate}
 \item \rih{Stack}. The stack temporarily stores the operators of \textit{strictly increasing precedence order}.
-\item \rih{Precedence}. Digits have the highest precedence, followed by $*, /, +, ($. Notice that $($ operator itself has the \textit{lowest} precedence.
+\item \rih{Precedence}. Digits have the highest precedence, followed by \pyinline{*, /, +, (}. Notice that \pyinline{(} operator itself has the \textit{lowest} precedence.
 \item \rih{Bracket}. \textit{Match} the brackets. 
 \end{enumerate}
 Code:
@@ -146,14 +68,22 @@ def infix2postfix(self, lst):
   return ret
 \end{python}
 
-\subsection{Evaluate Post-fix Expressions}
+\subsection{Evaluate post-fix expressions}\label{section:evaluationPostFix}
+Consider: 
+
+In-fix
+\begin{python}
+5 + ((1 + 2) * 4) - 3
+\end{python}
+
+Post-fix
 \begin{python}
 5 1 2 + 4 * + 3 - 
 \end{python}
 Straightforward: use a \textit{stack} to store the number. Iterate the input, push
 stack when hit numbers, pop stack when hit operators.
 
-\subsection{Convert In-fix to Pre-fix}
+\subsection{Convert in-fix to pre-fix (PN)}
 PN is the \textit{reverse} of RPN, thus, scan the expression from right to left; and \pyinline{stk} stores the temporary result in non-decreasing order. 
 
 
@@ -164,7 +94,7 @@ In-fix
 
 can be written as
 \begin{python}
-3 4 2 1 + * 5 + - m
+3 4 2 1 + * 5 + -
 \end{python}
 
 reverse as 
@@ -200,7 +130,21 @@ reverse as
 \end{python}
 
 
-\subsection{Evaluate Pre-fix Expressions}
+\subsection{Evaluate pre-fix (PN) expressions}
+Consider: 
+
+In-fix
+\begin{python}
+5 + ((1 + 2) * 4) - 3
+\end{python}
+
+Pre-fix
 \begin{python}
 - + 5 * + 1 2 4 3
 \end{python}
+
+reverse as 
+\begin{python}
+3 4 2 1 + * 5 + -
+\end{python}
+Put into \textit{stack}, similar to evaluating post-fix \ref{section:evaluationPostFix}, but pay attention to operands order, which should be reversed when hitting a operator. 

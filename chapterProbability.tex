@@ -14,7 +14,7 @@ for (int i = 0; i < N; i++) {
 \end{java}
 The easiest proof that this algorithm does not produce a uniformly random permutation is that it generates 27 possible outcomes, but there are only 3! = 6 permutations. Since $27\%3 \neq 0$, there must be some permutation is that is picked too much, and some that is picked to little.
 \subsection{Knuth Shuffle}
-Knuth (or Fisher-Yates) shuffling algorithm guarantees to rearrange the elements in uniformly random order. 
+Knuth (aka Fisher-Yates) shuffling algorithm guarantees to rearrange the elements in uniformly random order. 
 \\
 Core clues:
 \begin{enumerate}
@@ -30,3 +30,7 @@ public void shuffle(Object[] a) {
     }
 }
 \end{java}
+
+\section{Expected Value}
+\subsection{Roll dice until expected value.}
+
