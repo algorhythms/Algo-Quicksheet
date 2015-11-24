@@ -284,7 +284,7 @@ Clues:
 \begin{enumerate}
 \item Binary 
 \item Low bit
-\item BIT uses array index starting from \textbf{1}, because 0 doesn't have $lowbit$.
+\item BIT uses array index starting from \textbf{1}, because 0 doesn't have $lowbit$. 0 is the dummy root.
 \end{enumerate}
 \begin{figure}[hbtp]
 \centering
@@ -306,7 +306,10 @@ Code:
 \begin{python}
 class BIT(object):
     def __init__(self, n):
-        """BIT uses index starting from 1"""
+        """
+        BIT uses index starting from 1
+        0 is the dummy root 
+        """
         self.N = [0 for _ in xrange(n+1)]
 
     def lowbit(self, i):
