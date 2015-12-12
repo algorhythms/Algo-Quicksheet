@@ -32,14 +32,14 @@ $$T(n) = a \; T\!\left(\frac{n}{b}\right) + f(n)\mbox{, where }a \geq 1 \mbox{, 
 
 Notice that $b>1$ rather than $b\geq1$.
 
-\subsubsection*{Case 1}
+\subsubsection*{Case 1, dominated by the 1st term}
 If:
 $$f(n) = o(n^{\log_b a})$$
 
 , where in the condition it is $o$ rather than $O$. \\\\
 Then:
 $$T(n) = \Theta(n^{\log_b a})$$
-\subsubsection*{Case 2}
+\subsubsection*{Case 2, non-dominance}
 If:
 $$f(n) = \Theta(n^{\log_b a} \log^{k} n)$$
 
@@ -50,7 +50,7 @@ T(n) = \Theta(n^{\log_b a} \log^{k+1} n)
 $$
 
 , typically $k=0$ in most cases. 
-\subsubsection*{Case 3}
+\subsubsection*{Case 3, dominated by the 2nd term}
 If:
 $$f(n) = \omega(n^{\log_b a})$$
 
@@ -77,3 +77,9 @@ a^{\log_b^n} &= n^{\log_b^a} \\
 \Leftarrow \ln{a^{\log_b^n}} &= \ln{n^{\log_b^a}}\\
 \Leftarrow  \frac{\ln n}{\ln b}\ln a &=\frac{\ln a}{\ln b}\ln n
 \end{align*}
+Discrete to continuous: 
+
+if $f(x)$ is monotonously decreasing, then
+$$
+\int_1^{+\infty}f(x) dx
+$$
