@@ -3,10 +3,12 @@
 \usepackage[colorlinks, urlcolor=blue]{hyperref}
 \usepackage{amssymb,amsmath,bm}
 \usepackage{verbatim}
+\usepackage{tikz}
+\usetikzlibrary{shadows}
 
 \usepackage{enumitem}
-\setlist[itemize]{noitemsep, topsep=0pt}
-\setlist[enumerate]{noitemsep, topsep=0pt}
+\setlist[itemize]{noitemsep, topsep=6pt}
+\setlist[enumerate]{noitemsep, topsep=6pt}
 
 %- short cuts
 \newcommand{\ra}{\rightarrow}
@@ -36,6 +38,7 @@
   \href{http://#1}{\nolinkurl{#1}}%
 }
 
+\newcommand{\hp}{\text{-}}}
 % make bmatrix display vertical bar
 \makeatletter
 \renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
@@ -51,4 +54,7 @@
    0 & 1 & 1 & -1 & 0 \\
    0 & 0 & 0 & 0 & 0 \\
 \end{bmatrix}
-\end{comment}
+
+% itemize list tree; for single-line item
+\newcommand{\treelist}{\tikz[overlay]\draw(-.2,--.15)--(-.2,.6) [path fading=east](-.2,.15)--(.1,.15);}
+\newcommand{\treeitem}{\item[\treelist]}

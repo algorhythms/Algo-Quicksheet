@@ -2,6 +2,10 @@
 \usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in]{geometry}
 \usepackage{color,soul}  % provides \hl{#1}
 \usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{listings}
 
 \newcommand\note[1]{%
   \textcolor{Maroon}{#1}%
@@ -13,3 +17,11 @@
 
 \rih{#1}%
 }
+
+% uniform size box
+\newcommand*{\unibox}[1]{\framebox{\strut #1}}
+
+\lstnewenvironment{pseudo}[1][]{%
+  \lstset{mathescape, columns=flexible}%
+  \lstset{#1}%
+}{}
