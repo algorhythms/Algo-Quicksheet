@@ -26,6 +26,7 @@ List of general algorithms:
 \subsection{Quick Sort}
 \subsubsection{Normal pivoting}\label{section:pivot}
 The key part of quick sort is pivoting:
+\newpage
 \begin{python}
 def pivot(self, A, i, j):
     """
@@ -137,7 +138,7 @@ Algorithms:
 \label{fig:trie} 
 \end{figure}
 
-\subsection{Sort Applications}
+\subsection{Sorting Applications}
 \begin{enumerate}
 \item Sort
 \item Partial quick sort (selection), k-th largest elements 
@@ -169,13 +170,14 @@ of order.
 \item Digital properties of keys: radix sort to achieve $O(N)$.
 \end{enumerate}
 
-\subsection{Summary}
-\begin{figure}[hbtp]
+\subsection{Sorting Summary}
+See Figure \ref{fig:sortSummary}.
+\begin{figure*}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=0.80]{sort_summary}}
+\subfloat{\includegraphics[scale=1.2]{sort_summary}}
 \caption{Sort summary}
-\label{fig:trie} 
-\end{figure}
+\label{fig:sortSummary} 
+\end{figure*}
 \section{Partial Quicksort}
 \subsection{Find $m$ smallest}
 \runinhead{Heap-based solution.} $O(n \log m)$
@@ -207,6 +209,7 @@ The average time complexity is
 F(n) &= F(n/2) + O(n) \\
 &= O(n)
 \end{align*}
+
 \begin{python}
 def find_kth(self, A, i, j, k):
     if i >= j: return

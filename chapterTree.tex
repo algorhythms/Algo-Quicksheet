@@ -1,7 +1,7 @@
 \chapter{Tree}
 
 \section{Binary Tree}
-\subsection{Introductions}
+\subsection{Basic Operations}
 \runinhead{Get parent ref.} To get a parent reference (implicitly), \textit{return the Node} of the current recursion function to its parent to maintain the path. Sample code:
 \begin{java}
 Node deleteMin(Node x) {
@@ -38,18 +38,44 @@ def dfs_path(self, cur, path, ret):
 
     path.append(cur)
     if not cur.left and not cur.right:
-        ret.append("->".join(map(lambda x: str(x.val), path)))
+        ret.append("->".join(map(repr, path)))
 
     self.dfs_path(cur.left, path, ret)
     self.dfs_path(cur.right, path, ret)
     path.pop()
 \end{python}
+
+\runinhead{Leftmost node.} Find the leftmost node. 
+\begin{python}
+def leftmost(self, cur, l):
+    """
+    :param l: offset from center 0, negative means left side. 
+    """
+    if not cur: return l
+    return min(self.leftmost(cur.left, l-1), 
+               self.leftmost(cur.right, l+1))
+\end{python}
+
+Rightmost node can be similarly found.
+
+\runinhead{Diameter of a tree.} The diameter of a tree $\equiv$ longest path in the tree.
+
+Core clues:
+\begin{enumerate}
+\item Start from any vertex, bfs to reach the farthest leaf.
+\item Start from this leaf node, bfs to reach the other farthest leaf. 
+\end{enumerate}
+\begin{python}
+_, _, last = self.bfs(0, V)
+level, pi, last = self.bfs(last, V)
+\end{python}
+
 \subsection{Morris Traversal} 
 Traversal with O(1) space. \footnote{\href{http://www.cnblogs.com/AnnieKim/archive/2013/06/15/MorrisTraversal.html}{ref}}
 
 Time complexity $O(3n).$ - find \pyinline{pre} twice, \pyinline{cur} traverse once. \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[height=0.9in]{morris_time}}
+\subfloat{\includegraphics[height=1.2in]{morris_time}}
 \caption{Morris traversal time complexity}
 \label{fig:morrisTime}
 \end{figure}
@@ -67,13 +93,13 @@ Process:
 \end{enumerate}
 \end{enumerate}
 
-\begin{figure}[hbtp]
+\begin{figure*}[hbtp]
 \centering
-\subfloat{\includegraphics[height=1.6in]{morris_inorder}}
+\subfloat{\includegraphics[height=2.4in]{morris_inorder}}
 \caption{Morris inorder traversal}
 \label{fig:morrisInorder}
-\end{figure}
-\newpage
+\end{figure*}
+
 Code:
 \begin{python}
 def morris_inorder(self, root):
@@ -110,12 +136,12 @@ Process:
 
 \subsubsection{Postorder}
 More tedious.
-\begin{figure}[hbtp]
+\begin{figure*}[hbtp]
 \centering
-\subfloat{\includegraphics[height=1.6in]{morris_postorder}}
-\caption{Morris inorder traversal}
+\subfloat{\includegraphics[height=2.8in]{morris_postorder}}
+\caption{Morris postorder traversal}
 \label{fig:morrisInorder}
-\end{figure}
+\end{figure*}
 
 TODO
 
@@ -270,7 +296,7 @@ def predecessors(self, root, target, stk):
 
 \section{Binary Index Tree (BIT)}\label{BIT}
 \subsection{Introduction}
-Compared to Segment Tree \ref{section:segmentTree}, BIT is shorter and more elegant. BIT can do most of things that Segment Tree can do and it is easier to code. BIT updates and queries $$i\rightarrow prefixSum$$ in $O(\log n)$ time; however, BIT CANNOT query $$prefixSum \rightarrow i$$
+Compared to Segment Tree \ref{section:segmentTree}, BIT is shorter and more elegant. BIT can do most of things that Segment Tree can do and it is easier to code. BIT updates and queries $$i\rightarrow prefixSum$$ in $O(\log n)$ time; however, Segment Tree can but BIT cannot query $$prefixSum \rightarrow i$$
 \subsection{Implementation}
 Given an array $A$ of length $n $ starting from $1$. prefix sum $s[i]\triangleq A_1+...+A_i$. BIT uses binary to maintain the array of prefix sum for querying and updating. For $i$-th node in the BIT, 
 $$
@@ -395,7 +421,7 @@ class SegmentTree(object):
         only if have root.left
         """
         if s >= e: return None
-        if s+1 == e: return Node(s, e, self.A[s])
+        if s == e-1: return Node(s, e, self.A[s])
 
         left = self.build_tree(s, (s+e)/2)
         right = self.build_tree((s+e)/2, e)
@@ -447,7 +473,7 @@ class SegmentTree(object):
         
         root.m = val
 \end{python}
-Concrete example - Count Segment Tree \ref{inversionReconstruct}. 
+The above code abstracts out segment tree function using \pyinline{lambda}. For a concrete example, see Count Segment Tree \ref{inversionReconstruct}. 
 
 \newpage
 \section{Trie}
