@@ -295,7 +295,7 @@ Two-state dp: `a' $\rightarrow$ `b' and  `b' $\rightarrow$ `a'. 1 cut into 2 seg
 
 \runinhead{abc string.} Follow up for ab string. Three-state dp: $chr \neq a, chr \neq b, chr \neq c$. 2 cuts into 3 segments.
 
-\section{Combinatorics}
+\section{Divide \& Conquer}
 \subsection{Tree}
 \runinhead{Number of different BSTs.} It can be solved using Catalan number (Section \ref{section:catalanNumber}), but here goes the dp solution. 
 \begin{lstlisting}
@@ -315,6 +315,24 @@ Thus, in general,
 \begin{align*}
 F_i = \sum(F_{j}*F_{i-1-j} \cdot \forall j< i)
 \end{align*}
+
+\subsection{Array}
+\runinhead{Burst balloons.} Given $n$ balloons, indexed from 0 to $n-1$. Each balloon is painted with a number on it represented by array $A$. You are asked to burst all the balloons. If the you burst balloon i you will get \pythoninline{A[left] * A[i] * A[right]} coins. Here left and right are adjacent indices of i. After the burst, the left and right then becomes adjacent.
+
+Find the maximum coins you can collect by bursting the balloons wisely.
+
+\textbf{Core clues}:
+\begin{enumerate}
+\item Divide \& Conquer
+\item Dividing Boundary 
+\item Reverse Thinking: think about $n$ balloons if $A_i$ is the last one to burst, what now?
+\end{enumerate}
+Let $F_{i, j}$ be the max scores burst all over \pythoninline{A[i:j]}.
+
+\begin{align*}
+F_{i, j} = \max(F_{i,k} + A_{i-1}  A_k A_j + F_{k+1, j} \cdot \forall k)
+\end{align*}
+, where $k$ is the last one to burst.
 
 \section{Backpack}
 \subsection{Classical}
@@ -343,6 +361,8 @@ $$
 Time complexity: O(n^2 k)
 \section{Local and Global Extremes}
 \subsection{Long and short stocks}
+\subsubsection{At most $k$ transactions}
+
 The following formula derives from the question: Best Time to Buy and Sell Stock IV. Say you have an array for which the $i$-th element is the price of a given stock on day $i$. Design an algorithm to find the maximum profit. You may complete at most $k$ transactions. 
 
 Let $local_{i, j}$ be the max profit with $j$ transactions with last transactions \textbf{ended at} day $i$. Let $global_{i, j}$ be the max profit with transactions \textbf{ended at} or \textbf{before} day $i$ with $j$ transactions. 
@@ -385,6 +405,31 @@ with transactions ended at or before day $i$ with \textbf{up to} $j$ transaction
 and $global[-1]$ is the global max. 
 
 The complexity of the alternative definitions is the same as the original definitions. The bottom line is that different definitions of states result in different transition functions.
+\subsubsection{With cool down}
+
+Find the maximum profit. You may complete as many transactions as you like with the following restrictions:
+\begin{itemize}
+\item You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+\item After you sell your stock, you cannot buy stock on next day. (ie, cooldown 1 day)
+\end{itemize}
+
+Let $F_i$ be the max profit from day 0 to day $i$, selling stock at day $i$.
+
+Let $M_i$ be the max profit from day 0 to day $i$.
+
+For $F_i$, at each day $i$, you have two options: 1) Sell the stock that has been held for multiple days. 2) Sell the stock held for 1 day.
+Notice the 1st option, it is equivalent to reverting the previous transaction, selling at day $i$ instead of day $i-1$.
+\begin{eqnarray*}
+F_{i}= \max\big(&&F_{i-1}+A_i-A_{i-1} \\
+&&M_{i-2-CD}+A_i-A_{i-1}\big)
+\end{eqnarray*}
+, where $CD=1$, the cool down time. 
+
+For $M_i$, simply, 
+$$
+M_i = \max(M_{i-1}, F_i)
+$$
+
 
 \section{Game theory - multi players}
 Assumption: the opponent take the optimal strategy for herself. 

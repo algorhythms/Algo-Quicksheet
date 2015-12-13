@@ -62,24 +62,25 @@ $$f(\frac{n}{b}) \le k f(n)$$
 Then:
 $$T\left(n \right) = \Theta\left(f(n) \right)$$
 \section{Useful Math Equations}
-Euler:
+\runinhead{Euler.}
 $$
 \frac{1}{2}+\frac{1}{3}+\frac{1}{4} + ... + \frac{1}{n} = \ln{n}
 $$
-Logarithm power: 
+\runinhead{Logarithm power.}
 $$
 a^{\log_b^n} &= n^{\log_b^a}
 $$
 
-proof:
+Proof:
 \begin{align*}
 a^{\log_b^n} &= n^{\log_b^a} \\
 \Leftarrow \ln{a^{\log_b^n}} &= \ln{n^{\log_b^a}}\\
 \Leftarrow  \frac{\ln n}{\ln b}\ln a &=\frac{\ln a}{\ln b}\ln n
 \end{align*}
-Discrete to continuous: 
+
+\runinhead{Discrete to continuous.}
 
 if $f(x)$ is monotonously decreasing, then
 $$
-\int_1^{+\infty}f(x) dx
+\int_1^{+\infty}f(x) \diff x \leq \sum_{i=1}^{+\infty} f(i) \leq f(1) + \int_1^{+\infty}f(x) \diff x 
 $$
