@@ -405,7 +405,7 @@ f = lambda x, y: x+y
 
 class Node(object):
     def __init__(self, start, end, m):
-        self.start, self.end, self.m = start, end, m
+        self.lo, self.hi, self.m = lo, hi, m
         self.left, self.right = None, None
 
 
@@ -414,57 +414,57 @@ class SegmentTree(object):
         self.A = A
         self.root = self.build_tree(0, len(self.A))
 
-    def build_tree(self, s, e):
+    def build_tree(self, lo, hi):
         """
-        segment: [s, e)
-        Either check s+1==e or have root.right 
+        segment: [lo, hi)
+        Either check lo==hi-1 or have root.right 
         only if have root.left
         """
-        if s >= e: return None
-        if s == e-1: return Node(s, e, self.A[s])
+        if lo >= hi:   return None
+        if lo == hi-1: return Node(lo, hi, self.A[lo])
 
-        left = self.build_tree(s, (s+e)/2)
-        right = self.build_tree((s+e)/2, e)
+        left  = self.build_tree(lo, (lo+hi)/2)
+        right = self.build_tree((lo+hi)/2, hi)
 
         val = DEFAULT
-        if left: val = f(val, left.m)
+        if left:  val = f(val, left.m)
         if right: val = f(val, right.m)
-        root = Node(s, e, val)
-        root.left = left
+        root = Node(lo, hi, val)
+        root.left  = left
         root.right = right
 
         return root
 
-    def query(self, root, s, e):
+    def query(self, root, lo, hi):
         """
         :type root: Node
         """
         if not root:
             return DEFAULT
 
-        if s <= root.start and e >= root.end:
+        if lo <= root.lo and hi >= root.hi:
             return root.m
 
-        if s >= root.end or e <= root.start:
+        if lo >= root.hi or  hi <= root.hi:
             return DEFAULT
 
-        l = self.query(root.left, s, e)
-        r = self.query(root.right, s, e)
+        l = self.query(root.left,  lo, hi)
+        r = self.query(root.right, lo, hi)
         return f(l, r)
 
     def modify(self, root, idx, val):
         """
         :type root: Node
         """
-        if not root or idx >= root.end or idx < root.start:
+        if not root or idx < root.lo or idx >= root.hi:
             return
 
-        if idx == root.start and idx == root.end-1:
+        if idx == root.lo and idx == root.hi-1:
             root.m = val
             self.A[idx] = val
             return
 
-        self.modify(root.left, idx, val)
+        self.modify(root.left,  idx, val)
         self.modify(root.right, idx, val)
 
         val = DEFAULT
