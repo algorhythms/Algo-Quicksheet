@@ -137,21 +137,17 @@ F_{i, j} = \left\{ \begin{array}{rl}
   F_{i-1, j-1}+1\Big) &\mbox{// replace}\\
        \end{array} \right.
 \end{eqnarray*}
+\runinhead{H-index} Given an array of citations $A$ of a researcher, write a function to compute the researcher's h-index.
 
-\runinhead{Maximal square.} Find the largest rectangle in the matrix:
-\begin{lstlisting}
-1 0 1 0 0
-1 0 1 1 1
-1 1 1 1 1
-1 0 0 1 0
-\end{lstlisting}
-Let $F_{i, j}$ represents the max square's length ended at $mat_{i, j}$ (lower right corner).
-\begin{eqnarray*}
-F_{i, j} = \left\{ \begin{array}{rl}
-  \min\big(F_{i-1, j-1}, F_{i-1, j}, F_{i, j-1}\big)+1 &\mbox{// if $mat_{i, j}==1$} \\
-  0 &\mbox{// otherwise}
-       \end{array} \right.
-\end{eqnarray*}
+Let $C_i$ be the \#paper with $=i$ citations.
+
+Let $F_i$ be the \#paper with $\geq i$ citations.
+
+$$
+F_i = F_{i+1} + C_i
+$$
+
+DP takes $O(n)$. If it is sorted, use binary search to achieve $O(\lg n)$.
 
 \subsection{Dual-state dp}
 \runinhead{Maximal product subarray.} Find the subarray within an array $A$ which has the largest product. 
@@ -194,6 +190,24 @@ D_i &= max(U_j+1 \cdot \forall j < i) \text{ // if $A_i < A_j$}
 \end{align*}
 
 Notice in python implementation, don't use list comprehension since two states are interleaved and interdependent. 
+\section{Graph}
+\subsection{Binary Graph}
+\runinhead{Maximal square.} Find the largest rectangle in the matrix:
+\begin{lstlisting}
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 1 1
+1 0 0 1 0
+\end{lstlisting}
+Let $F_{i, j}$ represents the max square's length ended at $mat_{i, j}$ (lower right
+corner).
+\begin{eqnarray*}
+F_{i, j} = \left\{ \begin{array}{rl}
+  \min\big(F_{i-1, j-1}, F_{i-1, j}, F_{i, j-1}\big)+1 &\mbox{// if $mat_{i, j}==1$}
+\\
+  0 &\mbox{// otherwise}
+       \end{array} \right.
+\end{eqnarray*}
 
 \section{String}
 \runinhead{Word break.} Given a string $s$ and a dictionary of words $dict$, determine if $s$ can be segmented into a space-separated sequence of $dict$ words.

@@ -29,7 +29,29 @@ def dfs(self, root, t, path, found):
 \end{python}
 The `found` is a wrapper for boolean to keep it referenced by all calling stack. 
 
-\runinhead{Lowest common ancestor.} In BST, the searching is straightforward. In normal binary tree, construct the path from root to $node_1$ and $node_2$ respectively, and \textbf{diff} the two paths.
+\runinhead{Lowest common ancestor.} In BST, the searching is straightforward. In normal binary tree, construct the path from root to $node_1$ and $node_2$ respectively, and \textbf{diff} the two paths. Time complexity: $O(\lg n)$, space complexity: $O(\lg n)$. 
+
+If the parent pointer is provided, it is possible to reduce the space complexity to $O(1)$, by using two pointers: 
+\begin{python}
+def find_LCA(n1, n2):
+    if not n1 or not n2:
+        return None 
+        
+    d1, d2 = depth(n1), depth(n2)
+    if d2 < d1:
+        n1, n2 = n2, n1
+        d1, d2 = d2, d1
+        
+    # move to the same depth 
+    for _ in xrange(d2-d1):
+        n2 = n2.parent  
+
+    while n1 and not n1 == n2:  
+        n1 = n1.parent
+        n2 = n2.parent
+        
+    return n1
+\end{python}
 
 \runinhead{Find all paths.} Find all paths from root to leafs. For every currently visiting node, add itself to path; search left, search right and pop itself. Record current result when reaching the leaf.
 \begin{python}
