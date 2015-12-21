@@ -111,6 +111,32 @@ def pivot_3way(self, A, lo, hi):
 \end{python}
 \subsection{Merge Sort}
 TODO
+\begin{python}
+class Solution(object):
+    def merge(self, A, m, B, n):
+        """
+        Arrays in asc order.
+        Assume A has enought space.
+        CONSTANT SPACE: starting backward. 
+        """
+        i = m-1
+        j = n-1
+        closed = m+n
+
+        while i >= 0 and j >= 0:
+            closed -= 1
+            if A[i] > B[j]:
+                A[closed] = A[i]
+                i -= 1
+            else:
+                A[closed] = B[j]
+                j -= 1
+
+        # either-or
+        # dangling
+        if j >= 0: A[:closed] = B[:j+1]
+        # if i >= 0: A[:closed] = A[:i+1]
+\end{python}
 \section{Properties}
 \subsection{Stability}
 Definition: a stable sort preserves the \textbf{relative order of items with equal keys} (scenario: sorted by time then sorted by location). 

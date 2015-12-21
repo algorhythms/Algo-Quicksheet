@@ -134,6 +134,7 @@ Ptrs & \lceil\frac{n+1}{2}\rceil & \lfloor\frac{n+1}{2}\rfloor \\
 \end{tabular}
 
 \subsection{Operations}
+\subsubsection{Insertion}
 Core clues
 \begin{enumerate}
 \item \textbf{Invariant}: children balanced or left-leaning
@@ -143,7 +144,17 @@ thus invariant.
 \item \textbf{Nonleaf-Up}: delete and recursively move up the left's last if left-leaning
 or right's first if balanced; thus invariant. 
 \end{enumerate}
-
+\subsubsection{Deletion}
+Core clues
+\begin{enumerate}
+\item \textbf{Invariant}: children $\lceil\frac{n+1}{2}\rceil, \lfloor\frac{n+1}{2}\rfloor$
+\item \textbf{Fuse}: fuse remaining to left sibling, if left not full. \textit{Delete}
+upper level.
+\item \textbf{Redistribute}: Extract the last key of left sibling, if left full. \textit{Adjust}
+upper level.
+\item \textbf{Non-leaf fuse}: fuse remaining to left sibling, if left not full. \textit{Move
+down} the upper level.
+\end{enumerate}
 \section{AVL Tree}
 TODO
 
@@ -180,7 +191,7 @@ Core clues:
 
 $O(n)$ since each node on the tree is pushed and popped out from stack once.
 
-\newpage
+
 \begin{python}
 def maxTree(self, A):
     stk = []
