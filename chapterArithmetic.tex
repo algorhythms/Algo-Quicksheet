@@ -39,7 +39,7 @@ can be written as
 \end{python}
 Core clues:
 \begin{enumerate}
-\item \rih{Stack}. The stack temporarily stores the operators of \textit{strictly increasing precedence order}.
+\item \rih{Stack}. The stack temporarily stores the operators of \textit{strictly increasing precedence order}, except for brackets, which are put onto stack directly.
 \item \rih{Precedence}. Digits have the highest precedence, followed by \pyinline{*, /, +, (}. Notice that \pyinline{(} operator itself has the \textit{lowest} precedence.
 \item \rih{Bracket}. \textit{Match} the brackets. 
 \end{enumerate}
@@ -58,7 +58,8 @@ def infix2postfix(self, lst):
         ret.append(stk.pop())
       stk.pop()  # pop "("
     else:
-      while stk and precdn(elt) <= precdn(stk[-1]):
+      # maintain invariant
+      while stk and not precdn(stk[-1]) < precdn(elt):
         ret.append(stk.pop())
       stk.append(elt)
 
@@ -84,7 +85,7 @@ Straightforward: use a \textit{stack} to store the number. Iterate the input, pu
 stack when hit numbers, pop stack when hit operators.
 
 \subsection{Convert in-fix to pre-fix (PN)}
-PN is the \textit{reverse} of RPN, thus, scan the expression from right to left; and \pyinline{stk} stores the temporary result in non-decreasing order. 
+PN is the \textit{reverse} of RPN, thus, scan the expression from right to left; and \pyinline{stk} stores the temporary result in \textit{non-decreasing} order, except for brackets.
 
 
 In-fix
@@ -92,12 +93,12 @@ In-fix
 5 + ((1 + 2) * 4) - 3
 \end{python}
 
-can be written as
+can be written as the intermediate representation (IR)
 \begin{python}
 3 4 2 1 + * 5 + -
 \end{python}
 
-reverse as 
+reverse as the pre-fix
 \begin{python}
 - + 5 * + 1 2 4 3
 \end{python}
@@ -117,8 +118,8 @@ reverse as
           pre.append(stk.pop())
         stk.pop()
       else:
-        # < rather than <=
-        while stk and precdn(elt) < precdn(stk[-1]):  
+        # maintain invariant
+        while stk and not precdn(stk[-1]) <= precdn(elt):  
           pre.append(stk.pop())
         stk.append(elt)
 
@@ -143,7 +144,7 @@ Pre-fix
 - + 5 * + 1 2 4 3
 \end{python}
 
-reverse as 
+reverse as the intermediate representation (IR)
 \begin{python}
 3 4 2 1 + * 5 + -
 \end{python}

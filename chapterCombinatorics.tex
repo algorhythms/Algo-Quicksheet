@@ -24,7 +24,10 @@ $$
 *****|**|***
 $$
 
-, notice that $*$ are non-order.
+, notice that $*$ are non-order, and it is possible to have 
+$$
+*****||*****
+$$
 \\
 then the formula is:
 $$
@@ -33,7 +36,7 @@ $$
 
 ,where $r=k-1$. 
 \\
-The meaning is to choose $r$ objects from $n+r$ objects to become the $|$.
+Intuitively, the meaning is to choose $r$ objects from $n+r$ objects to become the $|$.
 
 \subsection{N objects, K types} \label{N_objects_K_types}
 What is the number of permutation of $N$ objects with $K$ different types:
@@ -68,22 +71,23 @@ $$
 Let $P_A$ be the set that a 10-combination has more than 3A. $P_B$...4B. $P_C$...5C. 
 
 The result is:
-\begin{eqnarray*}
-&& |3A \cap 4B \cap 5C| = \\
-&& |U| - sum(|P_i|) + sum(|P_i \cap P_j|) - sum(|P_i \cap P_j \cap
-P_k|)
-\end{eqnarray*}
+\begin{align*}
+|3A \cap 4B \cap 5C| = & |U|\\
+& - sum(|P_i|\cdot \forall i) \\
+& + sum(|P_i \cap P_j|\cdot \forall i,j)\\
+& - sum(|P_i \cap P_j \cap P_k|\cdot \forall i,jk)
+\end{align*}
 
-To calculate $|P_i|$, take $|P_1|$ as an example. \textbf{Pre-set} 4A -- if we take any one of these 10-combinations in $P_1$ and remove 4A we are left with a 6-combination with unlimited on the numbers of letters; thus,
+To calculate $|P_i|$, take $|P_A|$ as an example. \textbf{Pre-set} 4A -- if we take any one of these 10-combinations in $P_A$ and remove 4A we are left with a 6-combination with unlimited on the numbers of letters; thus,
 $$
-|P_1|={6+2 \choose 2}
+|P_A|={6+2 \choose 2}
 $$
 
-Similarly, we can get $P_2, P_3$.
+Similarly, we can get $P_B, P_C$.
 
-To calculate $|P_i \cap P_j}|$, take $|P_1 \cap P_2|$ as an example. \textbf{Pre-set} 4A and 5B; thus,
+To calculate $|P_i \cap P_j}|$, take $|P_A \cap P_B|$ as an example. \textbf{Pre-set} 4A and 5B; thus,
 $$
-|P_1 \cap P_2| = {1+2 \choose 2}
+|P_A \cap P_B| = {1+2 \choose 2}
 $$
 
 Similarly, we can get other $|P_i \cap P_j|$.

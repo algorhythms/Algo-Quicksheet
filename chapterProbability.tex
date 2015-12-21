@@ -5,14 +5,21 @@
 Equal probability shuffle algorithm.
 
 \subsection{Incorrect naive solution}
-Swap current card $A_i$ with a random card from the deck. 
+Swap current card $A_i$ with a random card from the entire deck $A$. 
 \begin{java}
 for (int i = 0; i < N; i++) {
    int j = (int) Math.random()*N;
    swap(a[i], a[j]);
 }
 \end{java}
-The easiest proof that this algorithm does not produce a uniformly random permutation is that it generates 27 possible outcomes, but there are only 3! = 6 permutations. Since $27\%3 \neq 0$, there must be some permutation is that is picked too much, and some that is picked to little.
+\begin{python}
+def shuffle(A):
+  n = len(A)
+  for i in xrange(n):
+    j = random.randrange(n)
+    A[i], A[j] = A[j], A[i]
+\end{python}
+Consider 3 cards, the easiest proof that this algorithm does not produce a uniformly random permutation is that it generates $3^3=27$ possible plans (consider steps in plans, duplicated result included), but there are only 3! = 6 permutations. Since $27\%3 \neq 0$, there must be some permutation is that is picked too much, and some that is picked too little.
 \subsection{Knuth Shuffle}
 Knuth (aka Fisher-Yates) shuffling algorithm guarantees to rearrange the elements in uniformly random order. 
 \\
@@ -31,6 +38,13 @@ public void shuffle(Object[] a) {
 }
 \end{java}
 
+\begin{python}
+def shuffle(A):
+  n = len(A)
+  for i in xrange(n):
+    j = random.randrange(i, n)
+    A[i], A[j] = A[j], A[i]
+\end{python}
 \section{Expected Value}
 \subsection{Roll dice until expected value.}
-
+TODO.

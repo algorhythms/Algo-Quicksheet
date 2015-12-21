@@ -33,11 +33,11 @@ The main idea here is that every value for $p$ is prime, because we have already
 
 As a refinement, it is sufficient to mark the numbers in step 3 starting from $p^2$, because all the smaller multiples of $p$ will have already been marked at that point by the previous smaller prime factor other than $p$. From $p^2$, $p$ becomes the smaller prime factor of a composite number. This means that the algorithm is allowed to terminate in step 4 when $p^2$ is greater than n.
 
-Another refinement is to initially list odd numbers only, (3, 5, ..., n), and count in increments of $2p$ in step 3, thus marking only odd multiples of $p$. This actually appears in the original algorithm. This can be generalized with wheel factorization, forming the initial list only from numbers coprime with the first few primes and not just from odds (i.e., numbers coprime with 2), and counting in the correspondingly adjusted increments so that only such multiples of $p$ are generated that are coprime with those small primes, in the first place.
+Another refinement is to initialize list odd numbers only, (3, 5, ..., n), and count in increments of $2p$ in step 3, thus marking only odd multiples of $p$. This actually appears in the original algorithm. This can be generalized with wheel factorization, forming the initial list only from numbers coprime with the first few primes and not just from odds (i.e., numbers coprime with 2), and counting in the correspondingly adjusted increments so that only such multiples of $p$ are generated that are coprime with those small primes, in the first place.
 
 To summarized, the refinements include:
 \begin{enumerate}
-\item Starting from $p^2$.
+\item Starting from $p^2$; thus $p$ is the smaller prime factor. 
 \item Preprocessing even numbers and then only process odd numbers; thus the increment becomes $2p$.
 \end{enumerate}}
 
@@ -49,14 +49,13 @@ def countPrimes(n):
     :type n: int
     :rtype: int
     """
-    if n < 3:
-        return 0
-
-    is_prime = [True for _ in xrange(n)]
+    if n < 3: return 0
+    is_prime = [False if i%2 == 0 else True 
+                for i in xrange(n)]
     is_prime[0], is_prime[1] = False, False
-    for i in xrange(2, int(math.sqrt(n))+1):
+    for i in xrange(3, int(math.sqrt(n))+1, 2):
         if is_prime[i]:
-            for j in xrange(i*i, n, i):
+            for j in xrange(i*i, n, 2*i):
                 is_prime[j] = False
 
     return is_prime.count(True)
