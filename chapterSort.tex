@@ -110,33 +110,86 @@ def pivot_3way(self, A, lo, hi):
     return lt+1, gt
 \end{python}
 \subsection{Merge Sort}
-TODO
+\runinhead{Normal merge} Normal merge sort with extra space
 \begin{python}
-class Solution(object):
-    def merge(self, A, m, B, n):
-        """
-        Arrays in asc order.
-        Assume A has enought space.
-        CONSTANT SPACE: starting backward. 
-        """
-        i = m-1
-        j = n-1
-        closed = m+n
+def merge_sort(self, A):
+  if len(A) <= 1:
+    return
 
-        while i >= 0 and j >= 0:
-            closed -= 1
-            if A[i] > B[j]:
-                A[closed] = A[i]
-                i -= 1
-            else:
-                A[closed] = B[j]
-                j -= 1
+  mid = len(A)/2
+  L, R = A[:mid], A[mid:]
+  self.merge_sort(L)
+  self.merge_sort(R)
 
-        # either-or
-        # dangling
-        if j >= 0: A[:closed] = B[:j+1]
-        # if i >= 0: A[:closed] = A[:i+1]
+  i, j, k = 0, 0, 0
+  while i < len(L) and j < len(R):
+    if L[i] < R[j]:
+      A[k] = L[i]
+      i += 1
+    else:
+      A[k] = R[j]
+      j += 1
+    k += 1
+
+  if i < len(L):
+    A[k:] = L[i:]
+  if j < len(R):
+    A[k:] = R[j:]
 \end{python}
+
+\runinhead{Merge backward} Merge two arrays.  
+\begin{python}
+def merge(self, A, m, B, n):
+  """
+  Arrays in asc order.
+  Assume A has enough space.
+  CONSTANT SPACE: starting backward. 
+  """
+  i = m-1
+  j = n-1
+  closed = m+n
+
+  while i >= 0 and j >= 0:
+    closed -= 1
+    if A[i] > B[j]:
+      A[closed] = A[i]
+      i -= 1
+    else:
+      A[closed] = B[j]
+      j -= 1
+
+  # either-or
+  # dangling
+  if j >= 0: A[:closed] = B[:j+1]
+  # if i >= 0: A[:closed] = A[:i+1]
+\end{python}
+\runinhead{In-place merge}
+In-place merge sort of array without recursive. The basic idea is to avoid the recursive call while using iterative solution.
+
+The algorithm first merge chunk of length of 2, 4, 8 ... until $2^k$ where $2^k$ is large than the length of the array.
+\begin{python}
+def merge_sort(self, A):
+  n = len(A)
+  l = 1
+  while l <= n:
+    for i in range(0, n, l*2):
+      lo, hi = i, min(n, i+2*l)
+      mid = i + l
+      p, q = lo, mid
+      while p < mid and q < hi:
+        if A[p] < A[q]:
+          p += 1
+        else:
+          tmp = A[q]
+          A[p+1:q+1] = A[p:q]
+          A[p] = tmp
+          p, mid, q = p+1, mid+1, q+1
+
+    l *= 2
+
+  return A
+\end{python}
+The time complexity may be degenerated to $O(n^2)$. 
 \section{Properties}
 \subsection{Stability}
 Definition: a stable sort preserves the \textbf{relative order of items with equal keys} (scenario: sorted by time then sorted by location). 
