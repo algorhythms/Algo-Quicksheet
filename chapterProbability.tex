@@ -45,6 +45,50 @@ def shuffle(A):
     j = random.randrange(i, n)
     A[i], A[j] = A[j], A[i]
 \end{python}
+\section{Distribution}
+\subsection{Geometric Distr}
+$$
+P(X=k) = (1-p)^{k-1}p
+$$
+
+Expected number of trials of get a specific outcome:
+$$
+E[T] = \frac{1}{p}
+$$
+, which is the mean of the Geometric Distr. 
+\subsection{Binomial Distr}
+Notations:
+$$
+B(n, p)
+$$
+pmf:
+$$
+{n \choose k}\,p^{k}(1-p)^{n-k}
+$$
+
 \section{Expected Value}
-\subsection{Roll dice until expected value.}
-TODO.
+\subsection{Dice value}
+Expected value of rolling dice until getting a 3
+\subsection{Coupon collector's problem}
+Given n coupons, how many coupons do you expect you need to draw with replacement before having drawn each coupon at least once?
+
+$$
+E[T] = \Theta(n \lg n)
+$$
+, where $T$ is number of trial (i.e. time).
+
+Let $T$ be the time to collect all. $t_i$ be the time to collect the $i$-th new different coupon. $p_i$ be the probability of collecting the $i$-th coupon after $i-1$ coupons have been collected. Observe that:
+\begin{align*}
+p_1 &= \frac{n}{n} \\ 
+p_2 &= \frac{n-1}{n} \\
+p_i &= \frac{n-i+1}{n}
+\end{align*}
+Thus,
+
+\begin{align*}
+E[T] &= \sum_{i=1}^n E[t_i] \\
+&= \sum \frac{1}{p_i} \\
+&= n(\frac{1}{1}+\frac{1}{2}+...+\frac{1}{n})
+\end{align*}
+
+\runinhead{Dice.} How many times must you roll a die until each side has appeared?
