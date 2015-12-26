@@ -157,7 +157,17 @@ Process:
 \end{enumerate}
 
 \subsubsection{Postorder}
-More tedious.
+More tedious but solvable.
+Process:
+\begin{enumerate}
+\item set a temporary var \pyinline{dump = cur}
+\item if no left child, go right
+\item if left child, find the in-order predecessor in left tree
+\begin{enumerate}
+\item if predecessor has no right, set \pyinline{right = cur}, and then goes \pyinline{cur} left
+\item if predecessor \pyinline{right == cur}, set \pyinline{right = None}, \textit{reverse} output the path \pyinline{cur.left} to successor, and then goes \pyinline{cur}'s right. 
+\end{enumerate}
+\end{enumerate}
 \begin{figure*}[hbtp]
 \centering
 \subfloat{\includegraphics[height=2.8in]{morris_postorder}}
