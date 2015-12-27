@@ -94,15 +94,23 @@ level, pi, last = self.bfs(last, V)
 
 \subsection{Morris Traversal} 
 Traversal with O(1) space. \footnote{\href{http://www.cnblogs.com/AnnieKim/archive/2013/06/15/MorrisTraversal.html}{ref}}
-
-Time complexity $O(3n).$ - find \pyinline{pre} twice, \pyinline{cur} traverse once. \begin{figure}[hbtp]
+Three ways of traversal: in-order, pre-order, post-order.
+Time complexity $O(3n).$ - find \pyinline{pre} twice, \pyinline{cur} traverse once.
+\begin{figure}[hbtp]
 \centering
 \subfloat{\includegraphics[height=1.2in]{morris_time}}
 \caption{Morris traversal time complexity}
 \label{fig:morrisTime}
 \end{figure}
 
-\subsubsection{Inoder}
+Core:
+\begin{enumerate}
+\item Threading from \textbf{in-order} predecessor to \pyinline{cur}.
+\item In-order consumes the \pyinline{cur} when going right, pre-order when going left, post-order consumes the left subtree path when going right. 
+\end{enumerate}
+
+\end{enumerate}
+\subsubsection{In-order}
 Assign the current node's in-order predecessor's right child to itself (threading). Two ptr \pyinline{cur}, \pyinline{pre}. 
 
 Process:
@@ -115,10 +123,10 @@ Process:
 \end{enumerate}
 \end{enumerate}
 
-\begin{figure*}[hbtp]
+\begin{figure*}[!htb]
 \centering
-\subfloat{\includegraphics[height=2.4in]{morris_inorder}}
-\caption{Morris inorder traversal}
+\subfloat{\includegraphics[height=2.45in]{morris_inorder}}
+\caption{Morris in-order traversal}
 \label{fig:morrisInorder}
 \end{figure*}
 
@@ -143,8 +151,8 @@ def morris_inorder(self, root):
                 self.consume(cur)
                 cur = cur.right
 \end{python}
-\subsubsection{Preoder}
-Similar to inorder. 
+\subsubsection{Pre-order}
+Similar to in-order. Pre-order consume the current node when setting the thread rather than removing the thread as in in-order.
 
 Process:
 \begin{enumerate}
@@ -155,27 +163,87 @@ Process:
 \item If thread, go right. ($\equiv$ no left, but no \textit{consume}, since consume before). 
 \end{enumerate}
 \end{enumerate}
+Code:
+\begin{python}
+def morris_preorder(self, root):
+    cur = root
+    while cur:
+        if not cur.left:
+            self.consume(cur)
+            cur = cur.right
+        else:
+            pre = cur.left
+            while pre.right and pre.right != cur:
+                pre = pre.right
 
-\subsubsection{Postorder}
-More tedious but solvable.
+            if not pre.right:
+                pre.right = cur
+                self.consume(cur)
+                cur = cur.left
+            else:
+                pre.right = None
+                cur = cur.right
+\end{python}
+\subsubsection{Post-order}
+More tedious but solvable. The process is also similar to in-order.
+
 Process:
 \begin{enumerate}
-\item set a temporary var \pyinline{dump = cur}
-\item if no left child, go right
-\item if left child, find the in-order predecessor in left tree
+\item Set a temporary var \pyinline{dummy.left = root}
+\item If no left, go right
+\item If left, find the in-order predecessor \pyinline{pre} in left tree
 \begin{enumerate}
-\item if predecessor has no right, set \pyinline{right = cur}, and then goes \pyinline{cur} left
-\item if predecessor \pyinline{right == cur}, set \pyinline{right = None}, \textit{reverse} output the path \pyinline{cur.left} to successor, and then goes \pyinline{cur}'s right. 
+\item If no thread, set \pyinline{right = cur} thread; go left.
+\item If thread,  set \pyinline{right = None}, reversely \textit{consume} the path from \pyinline{cur.left} to \pyinline{pre}; go right.
 \end{enumerate}
 \end{enumerate}
-\begin{figure*}[hbtp]
+\begin{figure*}[!htb]
 \centering
 \subfloat{\includegraphics[height=2.8in]{morris_postorder}}
-\caption{Morris postorder traversal}
+\caption{Morris post-order traversal}
 \label{fig:morrisInorder}
 \end{figure*}
+Code:
+\begin{python}
+def morris_postorder(self, root):
+    dummy = TreeNode(0)
+    dummy.left = root
+    cur = dummy
+    while cur:
+        if not cur.left:
+            cur = cur.right
+        else:
+            pre = cur.left
+            while pre.right and pre.right != cur:
+                pre = pre.right
 
-TODO
+            if not pre.right:
+                pre.right = cur
+                cur = cur.left
+            else:
+                pre.right = None
+                self.consume_path(cur.left, pre)
+                cur = cur.right
+
+def _reverse(self, fr, to):
+    """Like reversing linked list"""
+    if fr == to: return
+    cur = fr
+    nxt = cur.right
+    while cur and nxt and cur != to:
+        nxt.right, cur, nxt = cur, nxt, nxt.right
+
+def consume_path(self, fr, to):
+    self._reverse(fr, to)
+
+    cur = to
+    self.consume(cur)
+    while cur != fr:
+        cur = cur.right
+        self.consume(cur)
+
+    self._reverse(to, fr)
+\end{python}
 
 \section{Binary Search Tree (BST)}
 \runinhead{Array and BST.}Given either the \textbf{preorder} or \textbf{postorder} (but not inorder) traversal of a BST containing N distinct keys, it is possible to reconstruct the shape of the BST. 
@@ -359,7 +427,7 @@ Clues:
 \end{figure}
 
 Time complexity, longest update is along the leftmost branch, which takes $O(\log_2 n)$ (e.g. 1, 10, 100, 1000, 10000); longest query is along a branch starting with node with all 1's (e.g. 1111, 1110, 1100, 1000), which also takes $O(\log_2 n)$.
-\newpage
+
 Code:
 \begin{python}
 class BIT(object):
