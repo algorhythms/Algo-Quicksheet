@@ -1,4 +1,18 @@
 \chapter{Array}
+\section{Two-pointer Algorithm}
+\runinhead{Container With Most Water.} Given coordinate $(i, a_i)$, find two lines, which together with x-axis forms a container, such that the container contains the most water.
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=.50]{Container-With-Most-Water.jpg}}
+\caption{Container with Most Water}
+\label{fig:Container-With-Most-Water}
+\end{figure}
+Core clues:
+\begin{enumerate}
+\item \textbf{Two pointers}: $start$, $back$ at two ends. Calculate the current area
+\item \textbf{Move one}: Move the shorter (lower height) pointer. 
+\end{enumerate}
+
 \section{Circular Array}
 This section describes common patterns for solving problems with circular arrays.
 

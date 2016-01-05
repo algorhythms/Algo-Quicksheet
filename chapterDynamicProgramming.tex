@@ -190,6 +190,35 @@ D_i &= max(U_j+1 \cdot \forall j < i) \text{ // if $A_i < A_j$}
 \end{align*}
 
 Notice in python implementation, don't use list comprehension since two states are interleaved and interdependent. 
+\subsection{Automata}
+\runinhead{Decode ways.} `A' encodes 1, `B' 2, ..., `Z' 26, Given an encoded message containing digits $S$, determine the total number of ways to decode it.
+
+For example, given encoded message 12, it could be decoded as ``AB'' (1 2) or ``L'' (12). Thus, the number of ways decoding 12 is 2.
+
+Let $F_i$ be number of decode ways for $s[:i]$. 
+
+\begin{itemize}
+\item If $s_{i-1}$ is 0, we only have one way to decode: $10$ or $20$.
+$$
+F_i = F_{i-2}
+$$ 
+\item If $s_{i-1}$ is not 0, we have two one ways to decode: 1) $1 \sim 9$; or 2) $10 \sim26$
+$$
+F_i = F_{i-1}+F_{i-2}
+$$
+\end{itemize}
+\begin{python}
+if s[i-1] != "0":
+    F[i] = F[i-1]
+    if 10 <= int(s[i-2]+s[i-1]) < 27:
+        F[i] += F[i-2]
+else:  # 0 is special
+    if s[i-2] in ("1", "2"):
+        F[i] = F[i-2]
+    else:
+        return 0
+\end{python}
+\runinhead{Regex}
 \section{Graph}
 \subsection{Binary Graph}
 \runinhead{Maximal square.} Find the largest rectangle in the matrix:

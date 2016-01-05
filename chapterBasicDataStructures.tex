@@ -94,7 +94,30 @@ def largestRectangleArea(self, height):
     return gmax
 \end{python}
 
+\runinhead{Longest Valid Parentheses.} 
+Given a string containing just the characters `(' and `)', find the length of the longest valid (well-formed) parentheses substring. Core clues:
+\begin{enumerate}
+\item \textbf{Define}: Stack holds the INDEX of UNPAIRED brackets, either ( or ).
+\item Thus, \pyinline{stk[-1]} stores the last unpaired bracket. 
+\item The length of the well-formed parentheses is: if currently \textbf{valid}, current scanning index \pyinline{idx} minus the last \textbf{invalid} index of bracket \pyinline{stk[-1]}
+\end{enumerate}
+\begin{python}
+def longestValidParentheses(self, s):
+  stk = []
+  maxa = 0
+  for idx, val in enumerate(s):
+    if val == ")" and stk and s[stk[-1]] == "(":
+      stk.pop()
+      if not stk:
+        maxa = max(maxa, idx+1)
+      else:
+        maxa = max(maxa, idx-stk[-1])
+    else:
+      stk.append(idx)
 
+  return maxa
+
+\end{python}
 \subsection{All nearest smaller values}\label{allNearestSmaller}
 \textbf{Nearest smaller}. Left neighbor of a value $v$ to be the value that occurs prior to $v$, is smaller than $v$, and is closer in position to $v$ than any other smaller value.
 
