@@ -96,18 +96,18 @@ def pivot_3way(self, A, lo, hi):
 
     v = A[lo]
     i = lo  # scanning pointer
-    while i < gt:
+    while i < gt:  # not n or hi
         if A[i] < v:
             lt += 1
             A[lt], A[i] = A[i], A[lt]
             i += 1
-        elif A[i] > v:
+        elif A[i] == v:
+            i += 1
+        else:
             gt -= 1
             A[gt], A[i] = A[i], A[gt]
-        else:
-            i += 1
 
-    return lt+1, gt
+    return lt, gt
 \end{python}
 \subsection{Merge Sort}
 \runinhead{Normal merge} Normal merge sort with extra space
@@ -280,7 +280,7 @@ def partial_qsort(self, A, i, j, m):
     self.partial_qsort(A, p+1, j, m)
 \end{python}
 
-\subsection{Find $k$-th}
+\subsection{Find $k$-th: Quick Select}
 Use partial quick sort to find $k$-th smallest element in the unsorted array. The algorithm recursively sort the $A[i:j]$
 
 The average time complexity is
@@ -288,18 +288,32 @@ The average time complexity is
 F(n) &= F(n/2) + O(n) \\
 &= O(n)
 \end{align*}
-
+\newpage
+Find $k$-th with 2-way partitioning
 \begin{python}
-def find_kth(self, A, i, j, k):
-    if i >= j: return
+def find_kth(self, A, lo, hi, k):
+    if lo >= hi: return
     
-    p = self.pivot(A, i, j)
-    if p == k: return A[p]
-    if p > k:  return self.find_kth(A, i, p, k)
-    else:      return self.find_kth(A, p+1, j, k)
+    p = self.pivot(A, lo, hi)
+    if k == p: return p
+    if k < p:  return self.find_kth(A, lo, p, k)
+    else:      return self.find_kth(A, p+1, hi, k)
 \end{python}
+Find $k$-th with 3-way partitioning. Pay attention to the indexing. $lt$, $gt$ means the last index of less-than portion and larger-than partion. 
+\begin{python}
+def find_kth(self, A, lo, hi, k):
+    if lo >= hi: return
+
+    lt, gt = self.pivot(A, lo, hi)
+    if lt < k < gt: return k
+    if k <= lt: return self.find_kth(A, lo, lt+1, k)
+    else:       return self.find_kth(A, gt, hi, k)
+\end{python}
+
 Pivoting see section - \ref{section:pivot}.
 
+\subsection{Applications}
+\runinhead{Wiggle Sort}
 \section{Inversion}
 If $a_i > a_j$ but $i<j$, then this is considered as 1 Inversion. That is, for an element, the count of other elements that are \textit{larger} than the element but appear \textit{before} it. This is the default definition. 
 
