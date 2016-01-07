@@ -45,6 +45,46 @@ def shuffle(A):
     j = random.randrange(i, n)
     A[i], A[j] = A[j], A[i]
 \end{python}
+
+\runinhead{Proof:}
+
+$n!$ permutations. 
+
+\subsection{Random Maximum}
+Find the index of maximum number in an array with a probability of $\frac{1}{\#maxima}$.
+
+
+\runinhead{Code:}
+\begin{python}
+def random_max(A):
+    maxa, maxa_idx, k = A[0], 0, 1
+    for i in xrange(1, len(A)):
+        if maxa < A[i]:
+            maxa, maxa_idx, k = A[i], i, 1
+        elif maxa == A[i]:
+            k += 1 
+            if random.random() < float(1)/k:
+                maxa_idx = i
+
+    return maxa_idx
+
+\end{python}
+ 
+\runinhead{Proof:} Prove via mathematical induction. 
+
+That is, assuming it works for any array of size $N$, prove it works for any array of size $N+1$.
+
+So, given an array of size $N+1$, think of it as a sub-array of size $N$ followed a new element at the end. By assumption, your algorithm uniformly selects one of the max elements of the sub-array... And then it behaves as follows:
+
+If the new element is larger than the max of the sub-array, return that element. This is obviously correct.
+
+If the new element is less than the max of the sub-array, return the result of the algorithm on the sub-array. Also obviously correct.
+
+The only slightly tricky part is when the new element equals the max element of the sub-array. In this case, let the number of max elements in the sub-array be $k$. Then, by hypothesis, your algorithm selected one of them with probability $\frac{1}{k}$. By keeping that same element with probability $\frac{k}{k+1}$, you make the overall probability of selecting that same element equal $$\frac{1}{k} \cdot \frac{k}{k+1} = \frac{1}{k+1}$$, as desired. You also select the last element with the same probability.
+
+To complete the inductive proof, just verify the algorithm works on an array of size 1
+
+
 \section{Distribution}
 \subsection{Geometric Distr}
 $$

@@ -86,9 +86,11 @@ def pivot_optimized(self, A, lo, hi):
 
 \end{python}
 \subsubsection{3-way pivoting}
+This problem is also known as \textit{Dutch national flag problem}.
+
 3-way pivoting: pivot the array into 3 subarrays: 
 
-$|..\leq..|..=..|..unseen..|..\geq..|$ 
+$$|..\leq..|..=..|..unseen..|..\geq..|$$
 \begin{python}
 def pivot_3way(self, A, lo, hi):
     lt = lo-1  # pointing to end of array LT
@@ -258,27 +260,28 @@ See Figure \ref{fig:sortSummary}.
 \label{fig:sortSummary} 
 \end{figure*}
 \section{Partial Quicksort}
-\subsection{Find $m$ smallest}
-\runinhead{Heap-based solution.} $O(n \log m)$
-\runinhead{Partial Quicksort}  Then the $A[:m]$ is sorted $m$ smallest. The algorithm recursively sort the $A[i:j]$
+\subsection{Find $k$ smallest}
+\runinhead{Heap-based solution.} $O(n \log k)$
+\runinhead{Partial Quicksort}  Then the $A[:k]$ is sorted $k$ smallest. The algorithm recursively sort the $A[i:j]$
 
 The average time complexity is
 \begin{eqnarray*}
 F(n) = \left\{ \begin{array}{rl}
-  F(\frac{n}{2})+O(n) &\mbox{// if $\frac{n}{2} \geq m$} \\
+  F(\frac{n}{2})+O(n) &\mbox{// if $\frac{n}{2} \geq k$} \\
   2F(\frac{n}{2})+O(n) &\mbox{// otherwise}
        \end{array} \right.
 \end{eqnarray*}
-Therefore, the complexity is $O(n+m \log m)$.
+Therefore, the complexity is $O(n+k \log k)$.
 \begin{python}
-def partial_qsort(self, A, i, j, m):
+def partial_qsort(self, A, i, j, k):
     if i >= j: return
 
     p = self.pivot(A, i, j)
-    self.partial_qsort(A, i, p, m)
-    if p+1 >= m: return
-    self.partial_qsort(A, p+1, j, m)
+    self.partial_qsort(A, i, p, k)
+    if k <= p+1: return
+    self.partial_qsort(A, p+1, j, k)
 \end{python}
+The partial quick sort will find the $k$ smallest number in sorted order. If the top $k$ elements are not required to be sorted, then use find $k$-th algorithm 
 
 \subsection{Find $k$-th: Quick Select}
 Use partial quick sort to find $k$-th smallest element in the unsorted array. The algorithm recursively sort the $A[i:j]$
@@ -288,7 +291,7 @@ The average time complexity is
 F(n) &= F(n/2) + O(n) \\
 &= O(n)
 \end{align*}
-\newpage
+
 Find $k$-th with 2-way partitioning
 \begin{python}
 def find_kth(self, A, lo, hi, k):
