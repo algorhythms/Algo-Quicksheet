@@ -11,6 +11,29 @@ Node deleteMin(Node x) {
     return x;
 }
 \end{java}
+
+\runinhead{Max depth.} DFS solution
+\begin{python}
+def fathom(self, root, depth):
+    if not root: return depth
+    else: return max(self.fathom(root.left, depth+1), 
+                     self.fathom(root.right, depth+1))
+\end{python}
+
+\runinhead{Min depth.} Definition of min depth, lowest depth of leaf node. 
+\begin{python}
+def fathom(self, root, depth):
+    if not root: 
+        return depth
+    elif root.right and not root.left: 
+        return self.fathom(root.right, depth+1)
+    elif root.left and not root.right: 
+        return self.fathom(root.left, depth+1)
+    else: 
+        return min(self.fathom(root.left, depth+1), 
+                   self.fathom(root.right, depth+1))
+\end{python}
+
 \runinhead{Construct path from root to target.} To search a node in binary tree (not necessarily BST), use dfs:
 \begin{python}
 def dfs(self, root, t, path, found):
@@ -91,7 +114,7 @@ Core clues:
 _, _, last = self.bfs(0, V)
 level, pi, last = self.bfs(last, V)
 \end{python}
-
+\newpag
 \subsection{Morris Traversal} 
 Traversal with O(1) space. \footnote{\href{http://www.cnblogs.com/AnnieKim/archive/2013/06/15/MorrisTraversal.html}{ref}}
 Three ways of traversal: in-order, pre-order, post-order.
@@ -129,7 +152,7 @@ Process:
 \caption{Morris in-order traversal}
 \label{fig:morrisInorder}
 \end{figure*}
-
+\newpag
 Code:
 \begin{python}
 def morris_inorder(self, root):
