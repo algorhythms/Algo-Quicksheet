@@ -170,7 +170,16 @@ def rerange(self, A):
 \end{python}
 
 \section{Index Remapping}
-\runinhead{Interleaving indexes} Given an array of length $n$
+\subsection{Introduction}
+\runinhead{Virtual Index.} Analogy to physical machine and virtual machine, the underlying indexing $i$ for array $A$ is the physical index. We can create virtual indexing $i'$ for the same array $A$ to map $A_{i'}$ to the physical entry $A_{i}$.
+\subsection{Example}
+\runinhead{Interleaving indexes} Given an array $A$ of length $n$, we want to mapping the virtual indexes to physical indexes such that $A_0$ maps to $A_1$, $A_1$ maps to $A_3$,..., $A_{\lfloor n/2\rfloor}$ maps to $A_0$, as followed: 
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[scale=.70]{virtual_indexes.png}}
+\caption{Virtual Indexes}
+\label{fig:virtual_indexes}
+\end{figure}
 \begin{lstlisting}
 0 -> 1
 1 -> 3
@@ -191,6 +200,7 @@ If $n$ is odd,
 $$
 (2*i+1)\%(n)
 $$
+Thus, by combining two cases, we create the mapping relationship: 
 \begin{python}
 def idx(i):
     return (2*i+1) % (n|1)
