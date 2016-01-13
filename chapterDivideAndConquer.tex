@@ -1,5 +1,9 @@
 \chapter{Divide \& Conquer}
 
 \section{Principles}
-\runinhead{Divide.}
-\runinhead{Reduce \# sub-problems.} After dividing, we have $a$ subproblems. Now need to identify the redundancy in the $a$ sub-problems. Find the common shared calculations among sub-problems and thus try to reduce $a$ to $a-1$
+\runinhead{Divide.}\runinhead{Reduce \# sub-problems.} After dividing, we have $a$ subproblems. Now need to identify the redundancy in the $a$ sub-problems. Find the common shared calculations among sub-problems and thus try to reduce $a$ to $a-1$. Identify the \textbf{commonality}.
+\runinhead{Sub-problem dimension.} Reduce the dimensionality of the original problem; thus consider the simpler version of the problem.
+\runinhead{Input dimension.}  Increase the representation dimensionality of the input. For example, in FFT (Fast Fourier Transform) augment the input with complex space. 
+\begin{align*}
+w_{j, k} = e^{j2\pi i/k}
+\end{align*}
