@@ -6,7 +6,7 @@
 V = defaultdict(list)
 \end{python}
 
-\runinhead{Complexity.} Basic complexities: 
+\runinhead{Complexity.} Basic complexities:
 
 \begin{tabular}{lll}
 \hline\noalign{\smallskip}
@@ -20,11 +20,11 @@ bfs & $O(|E|)$ & $O(|V|)$ \\
 
 \runinhead{Graph \& Tree.} For a undirected graph to be a tree, it needs to satisfied two conditions:
 \begin{enumerate}
-\item Acyclic 
-\item All connected 
+\item Acyclic
+\item All connected
 \end{enumerate}
 \section{DFS}
-\rih{Number of Islands.} The most fundamental and classical problem. 
+\rih{Number of Islands.} The most fundamental and classical problem.
 \begin{python}
 11000
 11000
@@ -43,7 +43,7 @@ class Solution(object):
 
   def numIslands(self, grid):
     cnt = 0
-    visited = [[False for _ in xrange(n)] 
+    visited = [[False for _ in xrange(n)]
                for _ in xrange(m)]
     for i in xrange(m):
       for j in xrange(n):
@@ -63,7 +63,7 @@ class Solution(object):
     for dir in self.dirs:
       I = i+dir[0]
       J = j+dir[1]
-      if (0 <= I < m and 0 <= J < n and 
+      if (0 <= I < m and 0 <= J < n and
         not visited[I][J] and grid[I][J] == "1"):
         self.dfs(grid, I, J, visited)
 \end{python}
@@ -80,7 +80,7 @@ $$
 \infty & \infty & \infty & -1 \\
 \infty & -1 & \infty & -1 \\
 0 & -1 & \infty & \infty \\
-\end{bmatrix} 
+\end{bmatrix}
 $$
 
 is calculated as:
@@ -98,12 +98,12 @@ $$
 self.dirs = ((-1, 0), (1, 0), (0, -1), (0, 1))
 
 def wallsAndGates(self, mat):
-  q = [(i, j) for i, row in enumerate(mat) 
+  q = [(i, j) for i, row in enumerate(mat)
      for j, val in enumerate(row) if val == 0]
   for i, j in q:  # iterator
     for d in self.dirs:
       I, J = i+d[0], j+d[1]
-      if (0 <= I < m and  0 <= J < n and 
+      if (0 <= I < m and  0 <= J < n and
         mat[I][J] > mat[i][j]+1):
         mat[I][J] = mat[i][j]+1
         q.append((I, J))
@@ -112,17 +112,17 @@ def wallsAndGates(self, mat):
 
 \section{Detect Acyclic}
 \begin{enumerate}
-\item \pythoninline{marked} is reset after a dfs. 
-\item \pythoninline{visited} should be updated only in the end of the dfs. 
+\item \pythoninline{marked} is reset after a dfs.
+\item \pythoninline{visited} should be updated only in the end of the dfs.
 \item For directed graph:
 \begin{enumerate}
 \item Should dfs for all neighbors except for vertices in \pythoninline{visited}, to avoid revisiting. For example, avoid revisiting A, B when start from C in the graph $C \rightarrow A \rightarrow B$.
-\item Excluding predecessor \pythoninline{pi} is erroneous in the case of $A \leftrightarrow B$ 
+\item Excluding predecessor \pythoninline{pi} is erroneous in the case of $A \leftrightarrow B$
 \end{enumerate}
 \item For undirected graph:
 \begin{enumerate}
 \item Should dfs for all neighbors except for the predecessor \pythoninline{pi}. $A-B$.
-\item Excluding neighbors in \pythoninline{visited} is redundant, due to \pyinline{pi}. 
+\item Excluding neighbors in \pythoninline{visited} is redundant, due to \pyinline{pi}.
 \end{enumerate}
 \end{enumerate}
 
@@ -166,7 +166,7 @@ def dfs(self, V, v, pi, visited, pathset):
 \end{python}
 
 \section{Topological Sorting}
-For a graph $G=\{V, E\}$, if $A \rightarrow B $, then $A$ is before $B$ in the ordered list. 
+For a graph $G=\{V, E\}$, if $A \rightarrow B $, then $A$ is before $B$ in the ordered list.
 \subsection{Algorithm}
 \rih{Core clues}:
 \begin{enumerate}
@@ -176,8 +176,8 @@ For a graph $G=\{V, E\}$, if $A \rightarrow B $, then $A$ is before $B$ in the o
 \end{enumerate}
 Notice:
 \begin{enumerate}
-\item Need to check ascending order or descending order. 
-\item Need to \textbf{detect cycle}; thus the dfs need to construct result queue and detect cycle simultaneously, by using two sets: $visited$ and $pathset$. 
+\item Need to check ascending order or descending order.
+\item Need to \textbf{detect cycle}; thus the dfs need to construct result queue and detect cycle simultaneously, by using two sets: $visited$ and $pathset$.
 \end{enumerate}
 \newpage
 \begin{python}
@@ -190,7 +190,7 @@ def topological_sort(self, V):
   for v in V.keys():
     if v not in visited:
       if not self.dfs_topo(V, v, visited, set(), ret):
-        return []  # contains cycle 
+        return []  # contains cycle
 
   return list(ret)
 
@@ -213,22 +213,22 @@ def dfs_topo(self, V, v, visited, pathset, ret):
 
 \subsection{Applications}
 \begin{enumerate}
-\item Course scheduling problem with pre-requisite. 
+\item Course scheduling problem with pre-requisite.
 \end{enumerate}
 
 \section{Union-Find}\label{section:unionFind}
 Improvements:
 \begin{enumerate}
 \item Weighting: size-baladnced tree
-\item Path Compression. 
+\item Path Compression.
 \end{enumerate}}
 \subsection{Algorithm}
 Weighted union-find with path compression.\\
-\rih{Core clues.} 
+\rih{Core clues.}
 \begin{enumerate}
 \item \textbf{$\pi$ array}:an array to store each item's predecessor pi. The predecessor are lazily updated to its ancestor. When \pyinline{x == pi[x]}, then \pyinline{x} is the ancestor (i.e. root).
 \item \textbf{Size-balanced}: merge the tree according to the size to maintain balance.
-\item \textbf{Path compression}: Make the ptr in $\pi$ array to point to its root rather than its immediate parent. 
+\item \textbf{Path compression}: Make the ptr in $\pi$ array to point to its root rather than its immediate parent.
 \end{enumerate}
 \begin{figure}[]
 \centering
@@ -271,10 +271,10 @@ class UnionFind(object):
       self.pi[pi1] = pi2
       self.sz[pi2] += self.sz[pi1]
       del self.sz[pi1]
-    
+
   def isunion(self, x, y):
     if x not in self.pi or y not in self.pi:
-      return False 
+      return False
     return self.root(x) == self.root(y)
 \end{python}
 
@@ -289,15 +289,39 @@ Project the mat dimension from 2D to 1D, using \textit{orthogonal axis}.
 $$
 \begin{bmatrix}
 0& 0& 1& 0 \\
-0& 1& 1& 0 \\ 
+0& 1& 1& 0 \\
 0& 1& 0& 0 \\
 \end{bmatrix}
 $$
 
 Clues:
 \begin{enumerate}
-\item Project the 1's onto x-axis, binary search for the left bound and right bound of the bounding box. 
-\item Do the same for y-axis. 
+\item Project the 1's onto x-axis, binary search for the left bound and right bound of the bounding box.
+\item Do the same for y-axis.
 \end{enumerate}
 
-Time complexity: $O(m\log n + n \log m)$, where $O(m), O(n)$ is for projection complexity. 
+Time complexity: $O(m\log n + n \log m)$, where $O(m), O(n)$ is for projection complexity.
+\section{MST}
+Minimum spanning tree.
+\subsection{Kruskal's algorithm}
+\textbf{Core clues:}
+\begin{enumerate}
+\item Vertices $v \in V$ are divided into different sets
+\item Extract min edges to unionize the sets
+\item Terminates when $\forall v\in V$ are in the same set.
+\end{enumerate}
+\textbf{Code:}
+\begin{python}[mathescape]
+def kruskal(G):
+  ret = []
+  uf = UnionFound()
+  for v in G.V:
+    uf.add(v)
+
+  G.E.sort()  # sort by weights
+  for u, v in G.E:
+    if not uf.isunion(u, v):
+      A.append((u, v))
+      uf.unionize(u, v)
+\end{python}
+Complexity: $O(|E|\log |E|)$.

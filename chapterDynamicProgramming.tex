@@ -244,8 +244,7 @@ F_{i, j} = \left\{ \begin{array}{rl}
 Let $F_i$ be whether \pyinline{s[:i]} can be segmented. 
 \begin{eqnarray*}
 F_{i} = \left\{ \begin{array}{rl}
-  F_{i-len(w)} &\mbox{// if $\exists w\in dict$, \pyinline{s[i-len(w):i]==w}}
-\\
+  F_{i-len(w)} &\mbox{// if $\exists w\in dict$, \pyinline{s[i-len(w):i]==w}}\\
   false &\mbox{// otherwise}
        \end{array} \right.
 \end{eqnarray*}
