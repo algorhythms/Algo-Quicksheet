@@ -149,6 +149,17 @@ $$
 
 DP takes $O(n)$. If it is sorted, use binary search to achieve $O(\lg n)$.
 
+\runinhead{Interleaving String} Given $s, a, b$ find whether $s$ is formed by the interleaving
+of $a$ and $b$.
+
+Let $F_{i,j}$ be $s[:i+j]$ is interleaved from $a[:i], b[:j]$.
+
+We have to options to choose $s[i+j-1]$, either from $a[i-1]$ or from $b[j-1]$:
+\begin{align*}
+F_{i,j} &= F_{i-1, j} \wedge s[i+j-1] == a[i-1] \\
+& \vee F_{i,j-1} \wedge s[i+j-1] == b[j-1]
+\end{align*}
+
 \subsection{Dual-state dp}
 \runinhead{Maximal product subarray.} Find the subarray within an array $A$ which has the largest product. 
 \begin{itemize}
