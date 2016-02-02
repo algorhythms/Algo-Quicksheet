@@ -5,7 +5,7 @@
 \section{Introduction}
 The core philosophy of dp:
 \begin{enumerate}
-\item The definition of \textbf{states} 
+\item The definition of \textbf{states}: redefine the original problem into relaxed substructure. 
 \item The definition of the \textbf{transition functions} among states 
 \end{enumerate} 
 
@@ -248,7 +248,20 @@ F_{i, j} = \left\{ \begin{array}{rl}
   0 &\mbox{// otherwise}
        \end{array} \right.
 \end{eqnarray*}
+\subsection{General Graph}
+\runinhead{Shortest path in graph containing negative weights.} Find the shortest path from $s$ to $t$. 
 
+Let $F_{n, v}$ be the shortest path from $v$ to $t$ with at most $n$ vertices. 
+
+Then we can two options:
+\begin{align*}
+F_{n, v} = \min\Big(& F_{n-1, v}, \\
+& \min_{u \in Nbr}(F_{n-1, w}+c_{uv})\Big)
+\end{align*}
+
+, where $c_{uv}$ is the weight cost on edge $(u, v)$, $Nbr$ is neighbors of $v$.
+ 
+Notice that there should not be any negative cycle otherwise the path can be $-\infty$. 
 \section{String}
 \runinhead{Word break.} Given a string $s$ and a dictionary of words $dict$, determine if $s$ can be segmented into a space-separated sequence of $dict$ words.
 
