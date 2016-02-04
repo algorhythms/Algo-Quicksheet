@@ -3,7 +3,7 @@
 
 
 \section{Introduction}
-The core philosophy of dp:
+The philosophy of dp:
 \begin{enumerate}
 \item The definition of \textbf{states}: redefine the original problem into relaxed substructure. 
 \item The definition of the \textbf{transition functions} among states 
@@ -12,19 +12,23 @@ The core philosophy of dp:
 The so called concept dp as memoization of recursion does not grasp the core philosophy of dp. 
 
 The formula in the following section are unimportant. Instead, what is important is the definition of dp array and transition function derivation.
-\subsection{Common practice}
+
+\runinhead{State definitions.} The state definition is the \textbf{redefinition} of the original problem as substructure. 
+
+Three general sets of state definitions of the substructure. 
+\begin{enumerate}
+\item ends \textit{at} index $i$ ($i$ \textbf{required})
+\item ends \textit{before} index $i$ ($i$ \textbf{excluded})
+\item ends \textit{at} or \textit{before} index $i$ ($i$ \textbf{optional})
+\end{enumerate}
+\subsection{Common programming practice}
 \runinhead{Dummy.} Use dummies to avoid using if-else conditional branch.
 \begin{enumerate}
 \item Use $n+1$ dp arrays to reserve space for dummies. 
 \item Iteration range is $[1, n+1)$.
 \item $n+k$ for k dummies  
 \end{enumerate}
-\runinhead{State definition.} Two general sets of state definitions - the state 
-\begin{enumerate}
-\item ends \textit{at} index $i$
-\item ends \textit{before} index $i$
-\item ends \textit{at} or \textit{before} index $i$
-\end{enumerate}
+
 
 \runinhead{Space optimization.} To avoid MLE, we need to carry out space optimization. Let $o$ be other subscripts, $f$ be the transition function. 
 
@@ -60,26 +64,28 @@ Notice:
 \section{Sequence}\label{dpSequence}
 
 \subsection{Single-state dp}
-\runinhead{Longest common subsequence.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. We have two situations: $a[i]==b[j]$ or not.
+\runinhead{Longest common subsequence.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. 
+
+We have two situations: $a[i]=b[j]$ or not.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
-  F_{i-1, j-1}+1 &\mbox{// if $a[i]==b[j]$} \\
-  \max\Big(F_{i-1, j},&\mbox{// otherwise} \\
+  F_{i-1, j-1}+1 &\mbox{// if $a[i]=b[j]$} \\
+  \max\Big(F_{i-1, j}, &\mbox{// otherwise} \\
   F_{i,j-1}\Big)
        \end{array} \right.
 \end{eqnarray*}
 
 
 \runinhead{Longest common substring.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and
-$b[:j]$. We have two situations: $a[i]==b[j]$ or not.
+$b[:j]$. We have two situations: $a[i]=b[j]$ or not.
 \begin{eqnarray*}
 F_{i. j} = \left\{ \begin{array}{rl}
-  F_{i-1, j-1}+1 &\mbox{// if $a[i]==b[j]$} \\
+  F_{i-1, j-1}+1 &\mbox{// if $a[i]=b[j]$} \\
   0 &\mbox{// otherwise}
        \end{array} \right.
 \end{eqnarray*}
 
-Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, the $gmax=max\big(\{{F_{i,j}\}\big)$.
+Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, the $gmax=\max\big(\{{F_{i,j}\}\big)$.
 \runinhead{Longest increasing subsequence}. Find the longest increasing subsequence of an array $A$.
 
 let $F_i$ be the LIS length ends at $A_i$. 
@@ -131,7 +137,7 @@ Let $F_{i, j}$ be the minimum number
 of steps required to convert $A[:i]$ to $B[:j]$.
 \begin{eqnarray*}
 F_{i, j} = \left\{ \begin{array}{rl}
-  F_{i-1, j-1} &\mbox{// if $a[i]==b[j]$} \\
+  F_{i-1, j-1} &\mbox{// if $a[i]=b[j]$} \\
   \min\Big(F_{i, j-1}+1, &\mbox{// otherwise, insert}\\
   F_{i-1, j}+1, &\mbox{// delete}\\
   F_{i-1, j-1}+1\Big) &\mbox{// replace}\\
@@ -139,10 +145,11 @@ F_{i, j} = \left\{ \begin{array}{rl}
 \end{eqnarray*}
 \runinhead{H-index} Given an array of citations $A$ of a researcher, write a function to compute the researcher's h-index.
 
-Let $C_i$ be the \#paper with $=i$ citations.
-
-Let $F_i$ be the \#paper with $\geq i$ citations.
-
+Need some re-representation of information: 
+\begin{enumerate}
+\item Let $C_i$ be the \#paper with $=i$ citations.
+\item Let $F_i$ be the \#paper with $\geq i$ citations.
+\end{enumerate}
 $$
 F_i = F_{i+1} + C_i
 $$
@@ -156,8 +163,8 @@ Let $F_{i,j}$ be $s[:i+j]$ is interleaved from $a[:i], b[:j]$.
 
 We have to options to choose $s[i+j-1]$, either from $a[i-1]$ or from $b[j-1]$:
 \begin{align*}
-F_{i,j} &= F_{i-1, j} \wedge s[i+j-1] == a[i-1] \\
-& \vee F_{i,j-1} \wedge s[i+j-1] == b[j-1]
+F_{i,j} &= \Big(F_{i-1, j} \wedge s[i+j-1] = a[i-1]\Big) \\
+& \vee \Big(F_{i,j-1} \wedge s[i+j-1] = b[j-1]\Big)
 \end{align*}
 
 \subsection{Dual-state dp}
@@ -168,9 +175,9 @@ F_{i,j} &= F_{i-1, j} \wedge s[i+j-1] == a[i-1] \\
 \item The states can be negative. 
 \end{itemize}
 \begin{eqnarray*}
-&& small_i = \min\big( A_i,\ small_{i-1}\cdot A_i,\ large_{i-1}\cdot A_i \big)
+&& small_i = \min\Big( A_i,\ small_{i-1}\cdot A_i,\ large_{i-1}\cdot A_i \Big)
 \nonumber \\
-&& large_i = \max\big( A_i,\ small_{i-1}\cdot A_i,\ large_{i-1}\cdot A_i \big)
+&& large_i = \max\Big( A_i,\ small_{i-1}\cdot A_i,\ large_{i-1}\cdot A_i \Big)
 \end{eqnarray*}
 
 It can be optimized to use space $O(1)$. 
@@ -184,11 +191,11 @@ bar is 1, compute how much water it is able to trap after raining.
   \label{fig:rainwatertrap}
 \end{figure}
 
-Let $maxL_i$ be the $\max(A[:i])$; let $maxR_i$ be the $\max(A[i:n])$. The dp of obtaining max is trivial. 
+Let $maxL_i$ be the $\max_{i}(A[:i])$; let $maxR_i$ be the $\max_{i}(A[i:n])$. The dp of obtaining max is trivial. 
 
 The the total volume $vol$:
 $$
-vol = \sum_i(\max\big(0,\min(maxL_i, maxR_{i+1})-A[i]\big))
+vol = \sum_i\max\big(0,\min(maxL_i, maxR_{i+1})-A[i]\big)
 $$
 \runinhead{Zigzag subsequence.} Find the max length zigzag subsequence which goes up and down alternately within the array $A$.
 
@@ -196,8 +203,8 @@ Let $U_i$ be the max length of zigzag subsequence end at $A_i \wedge$ going up.
 
 Let $D_i$ be the max length of zigzag subsequence end at $A_i \wedge$ going down.
 \begin{align*}
-U_i &= max(D_j+1 \cdot \forall j < i) \text{ // if $A_i > A_j$} \\ 
-D_i &= max(U_j+1 \cdot \forall j < i) \text{ // if $A_i < A_j$} 
+U_i &= \max(D_j+1 \cdot \forall j < i) \text{ // if $A_i > A_j$} \\ 
+D_i &= \max(U_j+1 \cdot \forall j < i) \text{ // if $A_i < A_j$} 
 \end{align*}
 
 Notice in python implementation, don't use list comprehension since two states are interleaved and interdependent. 
@@ -239,11 +246,18 @@ else:  # 0 is special
 1 1 1 1 1
 1 0 0 1 0
 \end{lstlisting}
-Let $F_{i, j}$ represents the max square's length ended at $mat_{i, j}$ (lower right
+Let $F_{i, j}$ represents the max square's length ended at $mat_{ij}$ (lower right
 corner).
+
+\begin{figure}[!htp]
+\centering
+\subfloat{\includegraphics[scale=.80]{squareMatrix}}
+\caption{Expand the maximal square}
+\label{fig:squareMatrix}
+\end{figure}
 \begin{eqnarray*}
 F_{i, j} = \left\{ \begin{array}{rl}
-  \min\big(F_{i-1, j-1}, F_{i-1, j}, F_{i, j-1}\big)+1 &\mbox{// if $mat_{i, j}==1$}
+  \min\big(F_{i-1, j-1}, F_{i-1, j}, F_{i, j-1}\big)+1 &\mbox{// if $mat_{i j}=1$}
 \\
   0 &\mbox{// otherwise}
        \end{array} \right.
@@ -299,7 +313,7 @@ def build(self, dp, i, cur, ret):
 
 \end{python}
 
-\runinhead{Is palindrome.} Given a string $s$, use an array to determine whether $s[i:j]$.
+\runinhead{Is palindrome.} Given a string $s$, use an array to determine whether $s[i:j]$ is palindrome.
 
 Let $P_{i,j}$  indicates whether $s[i:j]$ is palindrome. We have one condition - whether the head and the end letter are equal: 
 \begin{eqnarray*}
@@ -320,7 +334,7 @@ for i in xrange(n-2, -1, -1):
 \end{python}
 \runinhead{Minimum palindrome cut.} Given a string s, partition s such that every substring of the partition is a palindrome. Return the minimum cuts needed for a palindrome partitioning of s.
 
-Let $C_i$ be the min cut for $s[:i]$. We have 1 more cut from previous state to make $S[:i]$ palindrome. 
+Let $C_i$ be the min cut for $s[:i]$. We have \textit{1 more cut} from previous state to make $S[:i]$ palindrome. 
 \begin{eqnarray*}
 C_{i} = \left\{ \begin{array}{rl}
   \min\big(C[k]+1 \cdot \forall k<i \big) &\mbox{// if $s[k:i]$ is palindrome}
@@ -372,7 +386,7 @@ Two-state dp: `a' $\rightarrow$ `b' and  `b' $\rightarrow$ `a'. 1 cut into 2 seg
    2     1         2                 3
 \end{lstlisting}
 
-Let $F_i$ be the \#BSTs constructed from $i$ elements. The pattern is: 
+Let $F_i$ be the \#BSTs constructed from $i$ elements. The pattern of choosing one element as the root is: 
 \begin{align*}
 F_3 = F_0*F_2 + F_1*F_1 + F_2*F_0
 \end{align*}
@@ -390,15 +404,17 @@ Find the maximum coins you can collect by bursting the balloons wisely.
 \textbf{Core clues}:
 \begin{enumerate}
 \item Divide \& Conquer
-\item Dividing Boundary 
-\item Reverse Thinking: think about $n$ balloons if $A_i$ is the last one to burst, what now?
+\item Boundary definition
+\item Reverse Thinking: think about $n$ balloons if $A_i$ is the last one to burst, what now? - Backward dp
 \end{enumerate}
 Let $F_{i, j}$ be the max scores burst all over \pythoninline{A[i:j]}.
 
 \begin{align*}
 F_{i, j} = \max(F_{i,k} + A_{i-1}  A_k A_j + F_{k+1, j} \cdot \forall k)
 \end{align*}
-, where $k$ is the last one to burst.
+, where $k$ is the last one to burst. 
+
+Notice that $A_{i-1}, A_{j}$ go beyond $[i, j)$.
 
 \section{Knapsack}
 Knapsack problem is different from the sequence problem. It is a problem of \textbf{bag} rather than of sequence, since the order of element does not matter. 
@@ -481,17 +497,17 @@ Find the maximum profit. You may complete as many transactions as you like with 
 \item After you sell your stock, you cannot buy stock on next day. (ie, cooldown 1 day)
 \end{itemize}
 
-Let $F_i$ be the max profit from day 0 to day $i$, selling stock at day $i$.
+Let $F_i$ be the max profit from day 0 to day $i$, selling stock at day $i$. (i.e. ended at)
 
-Let $M_i$ be the max profit from day 0 to day $i$.
+Let $M_i$ be the max profit from day 0 to day $i$. (i.e. ended at or brefore)
 
 For $F_i$, at each day $i$, you have two options: 1) Sell the stock that has been held for multiple days. 2) Sell the stock held for 1 day.
 Notice the 1st option, it is equivalent to reverting the previous transaction, selling at day $i$ instead of day $i-1$.
 \begin{eqnarray*}
-F_{i}= \max\big(&&F_{i-1}+A_i-A_{i-1} \\
-&&M_{i-2-CD}+A_i-A_{i-1}\big)
+F_{i}= \max\big(&&F_{i-1}+\Delta \\
+&&M_{i-2-CD}+\Delta \big)
 \end{eqnarray*}
-, where $CD=1$, the cool down time. 
+, where $CD=1$, the cool down time, $\Delta = A_i-A_{i-1}$ 
 
 For $M_i$, simply, 
 $$
@@ -503,7 +519,7 @@ $$
 Assumption: the opponent take the optimal strategy for herself. 
 
 \subsection{Coin game}
-\runinhead{Same side} There are $n$ coins with different value in a line. Two players take turns to take 1 or 2 coins from left side. The player who take the coins with the most value wins.
+\runinhead{Single side.} There are $n$ coins with different value in a line. Two players take turns to take 1 or 2 coins from left side. The player who take the coins with the most value wins.
 
 let $F_i^p$ represents maximum values he can get for index $i..last$, for the person p. There are 2 choices: take the $i$-th coin or take the $i$-th and $(i+1)$-th coin.
 \begin{eqnarray*}
@@ -512,7 +528,7 @@ F_i^p = \max\big(&A_i&+S[i+1:]-F_{i+1}^{p'},  \\
 \end{eqnarray*}
 The above equation can be further optimized by merging the sum $S$.
 
-\runinhead{Dual sides}There are n coins in a line. Two players take turns to take a coin from one of the ends of the line until there are no more coins left. The player with the larger amount of money wins.
+\runinhead{Dual sides.}There are n coins in a line. Two players take turns to take a coin from either of the ends of the line until there are no more coins left. The player with the larger amount of money wins.
 
 let $F_{i, j}^p$ represents maximum values he can get for index $i..j$, for
 the person p. There are 2 choices: take the $i$-th coin or take the $j$-th coin.
