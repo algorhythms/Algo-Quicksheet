@@ -315,7 +315,29 @@ def find_kth(self, A, lo, hi, k):
 
 Pivoting see section - \ref{section:pivot}.
 
-\runinhead{Find $k$-th in union of two sorted array.} TODO
+\runinhead{Find $k$-th in union of two sorted array.} Given sorted two arrays $A, B$, find the $k$-th element (0 based index).
+
+Core clues:
+\begin{enumerate}
+\item To reduce the complexity of $O(\log (m+n))$, need to half the arrays.
+\item Decide which half of the array to disregard. 
+\item Decide whether to disregard the median (i.e. boundary point).
+\end{enumerate}
+\begin{python}
+def find_kth(self, A, B, k):
+  if not A:  return B[k]
+  if not B:  return A[k]
+  if k == 0: return min(A[0], B[0])
+
+  m, n = len(A), len(B)
+  if A[m/2] >= B[n/2]:
+    if k > m/2+n/2:
+      return self.find_kth(A, B[n/2+1:], k-n/2-1)  # exclude median
+    else:
+      return self.find_kth(A[:m/2], B, k)  # exclude median
+  else:
+    return self.find_kth(B, A, k)
+\end{python}
 \subsection{Applications}
 \runinhead{Wiggle Sort.} TODO
 \section{Inversion}
