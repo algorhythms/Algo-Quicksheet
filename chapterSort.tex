@@ -339,7 +339,14 @@ def find_kth(self, A, B, k):
     return self.find_kth(B, A, k)
 \end{python}
 \subsection{Applications}
-\runinhead{Wiggle Sort.} TODO
+\runinhead{Wiggle Sort.} Given an unsorted array $A$, reorder it such that $A_0 < A_1 > A_2 < A_3$. Do it in $O(n)$ time and $O(1)$ space. 
+
+Core clues:
+\begin{enumerate}
+\item Quick selection for finding median (Average $O(n)$)
+\item Three-way partitioning to split the data
+\item Re-mapping the index to do in-place partitioning
+\end{enumerate}
 \section{Inversion}
 If $a_i > a_j$ but $i<j$, then this is considered as 1 Inversion. That is, for an element, the count of other elements that are \textit{larger} than the element but appear \textit{before} it. This is the default definition. 
 
