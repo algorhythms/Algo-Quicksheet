@@ -19,10 +19,10 @@
 \newcommand\pythonstyle{\lstset{
     language=Python,
     basicstyle=\setstretch{0.8}\ttb,
-    otherkeywords={assert, self, yield, as},  % Add keywords here
+    morekeywords={super, assert, self, yield, as},  % Add keywords here
     keywordstyle=\ttm\color{deepblue},
     columns=flexible,
-    literate={\_}{\ttb{\char`_}}1{-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1,
+    literate={\_}{\ttb{\char`_}}1{-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1{\\}{\ttb{\char`\\}}1{\{}{\ttb{\char`\{}}1{\}}{\ttb{\char`\}}}1,
     keepspaces=true,
     commentstyle=\ttm\color{lightgray},
     emph={},  % Custom highlighting
@@ -57,10 +57,10 @@
 \newcommand\javastyle{\lstset{
     language=Java,
     basicstyle=\setstretch{0.8}\ttb,
-    otherkeywords={},  % Add keywords here
+    morekeywords={},  % Add keywords here
     keywordstyle=\ttm\color{deepblue},
     columns=flexible,
-    literate={\_}{\ttb{\char`_}}1{-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1,
+    literate={\_}{\ttb{\char`_}}1{-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1{\\}{\ttb{\char`\\}}1{\{}{\ttb{\char`\{}}1{\}}{\ttb{\char`\}}}1,
     keepspaces=true,
     commentstyle=\ttm,
     emph={},  % Custom highlighting
