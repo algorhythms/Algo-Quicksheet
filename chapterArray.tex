@@ -80,7 +80,7 @@ At any time in the execution, let $A'$ be the prefix of $A$ that has been proces
 if $counter>0$, then keep track the candidate $x$'s counter, the $x$
 is the majority number of $A'$.  If $counter =0$, then for $A'$ we can pair the elements
 s.t. are all pairs has distinct element. Thus, it does not hold that $cnt_x>n-cnt_x$;
-thus $x\in A'$.
+thus $x\in A'$. $\blacksquare$
  
 Re-check: This algorithm needs to re-check the current number being counted is indeed the majority number.    
 
@@ -188,7 +188,7 @@ def rerange(self, A):
 \begin{figure}[hbtp]
 \centering
 \subfloat{\includegraphics[scale=.70]{virtual_indexes.png}}
-\caption{Virtual Indexes}
+\caption{Virtual Indexes. Remapping}
 \label{fig:virtual_indexes}
 \end{figure}
 \begin{lstlisting}

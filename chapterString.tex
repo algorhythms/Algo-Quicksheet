@@ -29,7 +29,7 @@ def grow(self, s, count_map, pi, cur, ret):
 
 
 \section{KMP}
-Find string $W$ in string $S$ within complexity of $O(|W|+|S|)$.
+Find string $W$ in string $S$ within complexity of $O(|W|+|S|)$. KMP - reflect upon yourself before judging others.
 \subsection{Prefix suffix table}
 Partial match table (also known as "failure function"). After a failure matching, you know that the matched suffix before the failure point is already matched; therefore when you shift the $W$, you only need to shift the prefix onto the position of the previous suffix. The prefix and suffix must be proper prefix and suffix.
 
