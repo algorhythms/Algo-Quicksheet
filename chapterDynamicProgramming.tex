@@ -59,6 +59,11 @@ Notice:
 \item Must iterate $o$ \textbf{backward} to un-updated value. 
 \end{enumerate}
 
+\runinhead{Backtrace array.} Normally dp returns the number of count/combinations. To reconstruct the result, store the parent index a backtrace array . 
+
+$$
+\pi[i]=j
+$$
 
 
 \section{Sequence}\label{dpSequence}
@@ -166,6 +171,21 @@ We have to options to choose $s[i+j-1]$, either from $a[i-1]$ or from $b[j-1]$:
 F_{i,j} &= \Big(F_{i-1, j} \wedge s[i+j-1] = a[i-1]\Big) \\
 & \vee \Big(F_{i,j-1} \wedge s[i+j-1] = b[j-1]\Big)
 \end{align*}
+
+\runinhead{Largest divisible subset.} Given a list of distinct positive integers $A$, find the largest subset $S$ such that every pair $(S_i, S_j)$ of elements in this
+subset satisfies: $S_i \% S_j = 0 \text{ or } S_j \% S_i = 0$.
+
+Let $F_i$ be the length of the divisible subset ending at $A_i$. 
+
+$$
+F_i = \max_{j: j< i, A_i\%A_j=0}(1+F_j)
+$$
+
+Let $\pi_i$ be the index of the previous element of $A_i$ in the divisible subset. $\pi_i$ is used to reconstruct the array.
+
+$$
+\pi_i = \arg\max_{j: j< i, A_i\%A_j=0}(1+F_j)
+$$
 
 \subsection{Dual-state dp}
 \runinhead{Maximal product subarray.} Find the subarray within an array $A$ which has the largest product. 

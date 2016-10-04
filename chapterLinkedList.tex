@@ -11,6 +11,8 @@ pre = dummy
 cur = pre.next
 \end{python}
 
+In majority case, we need a reference to pre.
+
 \subsection{Basic Operations}
 \begin{enumerate}
 \item Get the length
@@ -31,9 +33,10 @@ def reverseList(self, head):
     pre = dummy
     cur = pre.next
     while pre and cur:
-        pre, cur.next, cur = cur, pre, cur.next
-        # incorrect evaluation order:
-        # pre, cur, cur.next = cur, cur.next, pre 
+        nxt = cur.next
+        # left to right eval for multi-assignment7
+        cur.next = pre
+        pre, cur = cur, nxt
 
     dummy.next.next = None  # original head
     return pre  # new head
@@ -104,7 +107,7 @@ class LRUCache(object):
             return
 
         head = self.head
-        cur.next, cur.pre, head.pre = head, None, cur
+        cur.next, cur.pre, head.pre = head, None, cur  # safe
         self.head = cur
 
     def _pop(self):
@@ -117,6 +120,7 @@ class LRUCache(object):
         pre = last.pre
         pre.next = None
         self.tail = pre
+        
         return last
 
     def _elevate(self, cur):
@@ -128,7 +132,7 @@ class LRUCache(object):
             assert self.tail == cur
             self._pop()
         else:
-            pre.next, nxt.pre = nxt, pre
+            pre.next, nxt.pre = nxt, pre  # safe
 
         self._appendleft(cur)
 \end{python}

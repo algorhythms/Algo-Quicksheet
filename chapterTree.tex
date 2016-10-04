@@ -7,7 +7,6 @@
 Node deleteMin(Node x) {
     if (x.left == null) return x.right;
     x.left = deleteMin(x.left);
-    // x.count = 1+size(x.left)+size(x.right);
     return x;
 }
 \end{java}
@@ -21,6 +20,8 @@ def fathom(self, root, depth):
 \end{python}
 
 \runinhead{Min depth.} Definition of min depth, lowest depth of leaf node. 
+
+Notice, that the additional checking is necessary.
 \begin{python}
 def fathom(self, root, depth):
     if not root: 
@@ -34,7 +35,40 @@ def fathom(self, root, depth):
                    self.fathom(root.right, depth+1))
 \end{python}
 
-\runinhead{Construct path from root to target.} To search a node in binary tree (not necessarily BST), use dfs:
+\runinhead{Height.} The height of a node is the number of edges from the node to the deepest leaf.
+
+\begin{python}
+def dfs(self, node):
+    if not node:
+        return -1  # leaves index start from 0
+
+    height = 1 + max(
+        self.dfs(node.left), 
+        self.dfs(node.right)
+    )
+    
+    # do something
+     
+    return height
+\end{python}
+
+Application: leaf by leaf traversal. 
+\begin{python}
+def dfs(self, node, leaves):
+    if not node:
+        return -1  # leaves index start from 0
+
+    height = 1 + max(
+        self.dfs(node.left, leaves), 
+        self.dfs(node.right, leaves)
+    )
+    if height >= len(leaves):
+        leaves.append([])  # grow
+
+    leaves[height].append(node.val)
+    return height
+\end{python}
+\runinhead{Construct path from root to a target.} To search a node in binary tree (not necessarily BST), use dfs:
 \begin{python}
 def dfs(self, root, t, path, found):
     # post-call check
@@ -52,9 +86,9 @@ def dfs(self, root, t, path, found):
 \end{python}
 The \pyinline{found} is a wrapper for boolean to keep it referenced by all calling stack. 
 
-\runinhead{Lowest common ancestor.} In BST, the searching is straightforward. In normal binary tree, construct the path from root to $node_1$ and $node_2$ respectively, and \textbf{diff} the two paths. Time complexity: $O(\lg n)$, space complexity: $O(\lg n)$. 
+\runinhead{Lowest common ancestor.} Method 1: In BST, the searching is straightforward. In normal binary tree, construct the path from root to $node_1$ and $node_2$ respectively, and \textbf{diff} the two paths. Time complexity: $O(\lg n)$, space complexity: $O(\lg n)$. 
 
-If the parent pointer is provided, it is possible to reduce the space complexity to $O(1)$, by using two pointers: 
+Method 2: If the parent pointer is provided, it is possible to reduce the space complexity to $O(1)$, by using two pointers: 
 \begin{python}
 def find_LCA(n1, n2):
     if not n1 or not n2:
@@ -62,8 +96,7 @@ def find_LCA(n1, n2):
         
     d1, d2 = depth(n1), depth(n2)
     if d2 < d1:
-        n1, n2 = n2, n1
-        d1, d2 = d2, d1
+        return find_LCA(n2, n1)  # swap
         
     # move to the same depth 
     for _ in xrange(d2-d1):
@@ -78,15 +111,15 @@ def find_LCA(n1, n2):
 
 \runinhead{Find all paths.} Find all paths from root to leafs. For every currently visiting node, add itself to path; search left, search right and pop itself. Record current result when reaching the leaf.
 \begin{python}
-def dfs_path(self, cur, path, ret):
+def dfs(self, cur, path, ret):
     if not cur: return
 
     path.append(cur)
     if not cur.left and not cur.right:
         ret.append("->".join(map(repr, path)))
 
-    self.dfs_path(cur.left, path, ret)
-    self.dfs_path(cur.right, path, ret)
+    self.dfs(cur.left, path, ret)
+    self.dfs(cur.right, path, ret)
     path.pop()
 \end{python}
 
@@ -113,7 +146,34 @@ Core clues:
 \begin{python}
 _, _, last = self.bfs(0, V)
 level, pi, last = self.bfs(last, V)
+
+def bfs(self, s, V):
+    # bfs
+    visited = [False for _ in xrange(len(V))]
+    pi = [-1 for _ in xrange(len(V))]
+    last = s
+    level = 0
+    q = [s]
+    while q:
+        l = len(q)
+        for i in xrange(l):
+            cur = q[i]
+            last = cur
+            visited[cur] = True
+            for nbr in V[cur]:
+                if not visited[nbr]:
+                    pi[nbr] = cur
+                    q.append(nbr)
+
+        q = q[l:]
+        level += 1
+
+    return level, pi, last
 \end{python}
+
+, where $V$ is the vertices of graph $G$.
+
+
 \newpag
 \subsection{Morris Traversal} 
 Traversal with O(1) space. \footnote{\href{http://www.cnblogs.com/AnnieKim/archive/2013/06/15/MorrisTraversal.html}{ref}}
@@ -161,13 +221,13 @@ def morris_inorder(self, root):
         if not cur.left:
             self.consume(cur)
             cur = cur.right
-        else:
+        else:  6
             pre = cur.left
             while pre.right and pre.right != cur:
                 pre = pre.right
 
             if not pre.right:
-                pre.right = cur
+                 6  pre.right = cur
                 cur = cur.left
             else:
                 pre.right = None
@@ -270,6 +330,22 @@ def consume_path(self, fr, to):
 
 \section{Binary Search Tree (BST)}
 \runinhead{Array and BST.}Given either the \textbf{preorder} or \textbf{postorder} (but not inorder) traversal of a BST containing N distinct keys, it is possible to reconstruct the shape of the BST. 
+\subsection{Property} $\forall$ node, the node value is larger than the largest value in its left subtree; and is smaller than the smallest value in the righhht subtree:
+$$
+\max(node.left) \leq node.val \leq \min(node.right)
+$$
+
+Leftmost node is the smallest node of the tree; rightmost node is the largest node of the tree.
+
+Find such info takes $O(n\lg n)$ for all subtrees; and we can cache such info into the following data structure to achieve $O(n)$.
+
+\begin{python}
+class BSTInfo(object):
+    def __init__(self, sz, lo, hi):
+        self.sz = sz
+        self.lo = lo
+        self.hi = hi
+\end{python}
 \subsection{Rank}
 \runinhead{Calculates rank.}
 \begin{enumerate}
@@ -527,8 +603,8 @@ f = lambda x, y: x+y
 
 
 class Node(object):
-    def __init__(self, start, end, m):
-        self.lo, self.hi, self.m = lo, hi, m
+    def __init__(self, start, end, val):
+        self.lo, self.hi, self.val = lo, hi, val
         self.left, self.right = None, None
 
 
@@ -539,6 +615,7 @@ class SegmentTree(object):
 
     def build_tree(self, lo, hi):
         """
+        Bottom-up build
         segment: [lo, hi)
         Either check lo==hi-1 or have root.right 
         only if have root.left
@@ -550,8 +627,8 @@ class SegmentTree(object):
         right = self.build_tree((lo+hi)/2, hi)
 
         val = DEFAULT
-        if left:  val = f(val, left.m)
-        if right: val = f(val, right.m)
+        if left:  val = f(val, left.val)
+        if right: val = f(val, right.val)
         root = Node(lo, hi, val)
         root.left  = left
         root.right = right
@@ -560,13 +637,14 @@ class SegmentTree(object):
 
     def query(self, root, lo, hi):
         """
+        Post-checking
         :type root: Node
         """
         if not root:
             return DEFAULT
 
         if lo <= root.lo and hi >= root.hi:
-            return root.m
+            return root.val
 
         if lo >= root.hi or  hi <= root.hi:
             return DEFAULT
@@ -583,7 +661,7 @@ class SegmentTree(object):
             return
 
         if idx == root.lo and idx == root.hi-1:
-            root.m = val
+            root.val = val
             self.A[idx] = val
             return
 
@@ -591,10 +669,10 @@ class SegmentTree(object):
         self.modify(root.right, idx, val)
 
         val = DEFAULT
-        if root.left:  val = f(val, root.left.m)
-        if root.right: val = f(val, root.right.m)
+        if root.left:  val = f(val, root.left.val)
+        if root.right: val = f(val, root.right.val)
         
-        root.m = val
+        root.val = val
 \end{python}
 The above code abstracts out segment tree function using \pyinline{lambda}. For a concrete example, see Count Segment Tree \ref{inversionReconstruct}. 
 
@@ -611,7 +689,7 @@ Trie is aka radix tree, prefix tree.
 \runinhead{Notice:}
 \begin{enumerate}
 \item Children are stored in HashMap rather than ArrayList. 
-\item self.word to stores the word and indicates whether a word ends at the current
+\item \pyinline{self.word} to stores the word and indicates whether a word ends at the current
 node. 
 \end{enumerate}
 Codes:
@@ -634,6 +712,7 @@ class Trie(object):
             if c not in cur.children:
                 cur.children[c] = TrieNode(c)
             cur = cur.children[c]
+            
         cur.word = word
 \end{python}
 
@@ -664,6 +743,7 @@ class Trie:
         for w in word:
             if w not in cur.children:   # not override
                 cur.children[w] = TrieNode()
+
             cur = cur.children[w]
 
         cur.ended = True

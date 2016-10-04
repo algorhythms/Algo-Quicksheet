@@ -4,6 +4,9 @@
 
 \runinhead{Prune.} Backtrack need to think about pruning using the condition \pyinline{predicate}.
 
+\runinhead{Jump.} Jump to skip ones the same as its parent to avoid duplication.
+
+\runinhead{Complexity.} $O(b^d)$, where $b$ is the branching factor and $d$ is the depth. 
 \section{Sequence}
 \runinhead{k sum.} Given $n$ unique integers, number $k$ and target. Find all possible $k$ integers where their sum is target. 
 
@@ -87,7 +90,24 @@ def predicate(self, s):
     return s == s[::-1]
 \end{python}
 
+\subsection{Word Abbreviation}
+\runinhead{Core clues:}
+\begin{enumerate}
+\item Pivot a letter
+\item Left side as a number, right side dfs 
+\end{enumerate}
 
+\begin{python}
+def dfs(self, word):
+    if not word:
+        yield ""
+
+    for l in xrange(len(word)+1):
+        left_num = str(l) if l else ""
+        for right in self.dfs(word[l+1:]):
+            yield left_num + word[l:l+1] + right
+            # note word[l:l+1] and right default ''
+\end{python}
 
 \section{Math}
 \subsection{Decomposition}

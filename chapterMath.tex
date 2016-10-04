@@ -14,15 +14,29 @@
 \item Transitivity
 \item Totality
 \end{enumerate}
+\section{Divisor}
+\runinhead{gcd.} Greatest common divisor.
 
+\begin{python}
+def gcd(a, b):
+    while b:
+        a, b = b, a%b
+
+    return a
+\end{python}
+
+Proof. Euclidean Algorithm. Proove the following recursive form:
+$$
+gcd(a,b) = gcd(b, r)
+$$
 \section{Prime Numbers}
 \subsection{Sieve of Eratosthenes}
 \subsubsection{Basics}
 To find all the prime numbers less than or equal to a given integer n by Eratosthenes' method:
 \begin{enumerate}
-\item Create a list of consecutive integers from 2 through n: (2, 3, 4, ..., n).
+\item Create a   list of consecutive integers from 2 through n: (2, 3, 4, ..., n).
 \item Initially, let $p$ equal 2, the first prime number.
-\item Starting from $p$, enumerate its multiples by counting to n in increments of $p$, and mark them in the list (these will be $2p$, $3p$, $4p$, ... ; the $p$ itself should not be marked).
+\item Starting from $p$, enumerate its multiples by counting to n in increments of  $p$, and mark them in the list (these will be $2p$, $3p$, $4p$, ... ; the $p$ itself should not be marked).
 \item Find the first number greater than $p$ in the list that is not marked. If there was no such number, stop. Otherwise, let $p$ now equal this new number (which is the next prime), and repeat from step 3.
 \end{enumerate}
 
@@ -66,7 +80,10 @@ Backtracking: Section-\ref{factorization}.
 
 \section{Median}
 \subsection{Basic DualHeap}
-DualHeap to keep track the median when a method to find median is called multiple times. \begin{python}
+DualHeap to keep track the median when a method to find median is called multiple times.
+
+Here we use the negation of the value as a trick to convert min-heap to max-heap.
+\begin{python}
 import heapq
 
 class DualHeap(object):
@@ -165,4 +182,32 @@ class DualHeap(object):
         self.min_h = Heap()  # represent right side
         self.max_h = Heap()  # represent left side
     # others similar as the previous section's above DualHeap
+\end{python}
+
+\section{Modular}
+\subsection{Power of 4}
+To check whether a number of the power of 4, we can check whether it mod 3 equals 1.
+\begin{align*}
+4^a &\equiv 1^a\mod 3 \\
+&\equiv 1 \mod 3
+\end{align*}
+
+Alternatively, we can use bit manipulation based on the power of 4 in the binary form of \pyinline{repeat n 1 << 2}. 
+
+\section{Ord}
+\runinhead{Number in lexical order.} Given an integer n, return 1 - n in lexicographical order. For example, given 13, return: [1,10,11,12,13,2,3,4,5,6,7,8,9].
+
+\begin{python}
+def gen():
+    i = 1
+    for _ in xrange(n):
+        yield i
+        if i * 10 <= n:
+            i *= 10  # * 10
+        elif i % 10 != 9 and i + 1 <= n:
+            i += 1  # for current digit
+        else:
+            while i % 10 == 9 or i + 1 > n:
+                i /= 10
+            i += 1
 \end{python}

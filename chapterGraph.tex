@@ -164,6 +164,55 @@ def dfs(self, V, v, pi, visited, pathset):
   visited.add(v)
   return True
 \end{python}
+\section{Directed Graph}
+Use \pyinline{G  = defaultdict(dict)} to represent directed graph, so that later on the edge weight can be accessed as \pyinline{G[s][e]}.
+
+\runinhead{dfs.} Dfs in directed graph:
+\begin{python}
+def dfs(self, G, s, e, path):
+    if s not in G or e not in G:
+        return INVALID
+    if e in G[s]:
+        return G[s][e]
+    for nbr in G[s]:
+        if nbr not in path:
+            path.add(nbr)
+            val = self.dfs(G, nbr, e, path)
+            if val != -1.0:
+                return val * G[s][nbr]
+            path.remove(nbr)
+
+    return INVALID
+\end{python}
+
+\section{Paths}
+\subsection{Euler Path} 
+an Eulerian path is a path in a graph which visits every edge exactly once ($\forall e \in E$).
+
+Hierholzer's algorithm to find an Euler path in a graph. The graph must be directed graph.
+
+\runinhead{Core clue.} The algorithm exhaustively visit all the edges during the dfs. 
+\begin{python}
+def findItinerary(self, tickets):
+    G = defaultdict(list)
+    for elt in tickets:
+        s, e = elt
+        heapq.heappush(G[s], e)  # heap lexical order
+
+    ret = deque()
+    self.dfs(G, 'JFK', ret)
+    return list(ret)
+
+def dfs(self, G, cur, ret):
+    while G[cur]:
+        self.dfs(G, heapq.heappop(G[cur]), ret)
+
+    ret.appendleft(cur)
+\end{python}
+
+\subsection{Hamiltonian Path} 
+
+A Hamiltonian path is a path in a graph which visits every vertex exactly once ($\forall v \in V$). This problem is proved to be NP.
 
 \section{Topological Sorting}
 For a graph $G=\{V, E\}$, if $A \rightarrow B $, then $A$ is before $B$ in the ordered list.

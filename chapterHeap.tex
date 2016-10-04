@@ -93,7 +93,7 @@ Python only has built in min-heap. To use max-heap, you can:
 
 The following code presents the wrapping method:
 \begin{python}
-class Value(object):
+class HeapValue(object):
     def __init__(self, val):
         self.val = val
         self.deleted = False  # lazy delete 
@@ -121,3 +121,8 @@ PriorityQueue<Integer> pq = new PriorityQueue<>(
     (o1, o2) -> o2-o1
 );
 \end{java}
+
+\section{Derivatives}
+\subsection{Heap of Linked Lists}
+Maintain a heap of linked lists, pop the min head, and push the head's next back to the heap. 
+

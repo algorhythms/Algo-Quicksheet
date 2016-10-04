@@ -15,6 +15,54 @@ Proof by contradiction, the solution of greedy algorithm is $\mat{G}$ and the op
 Two general technique it is impossible to have $\mat{O}\neq \mat{G}$:
 \begin{enumerate}
 \item Exchange method 
-\item Stays-head mehod 
+\item Stays-head method 
 \end{enumerate}
- 
+
+\section{Extreme First}
+\runinhead{Rearranging String $k$ distance apart.} Given a non-empty string $s$ and an integer $k$, rearrange the string such that the same characters are at least distance
+$k$ from each other.
+
+\textbf{Core clues.} 
+\begin{enumerate}
+\item The char with the most count put to the result first - greedy.
+\item Fill every $k$ slots as cycle - greedily fill high-count char as many as possible.
+\end{enumerate}
+
+\textbf{Implementations.}
+\begin{enumerate}
+\item Use a heap as a way to get the char of the most count. 
+\item \pyinline{while} loop till exhaust the heap
+\end{enumerate}
+
+\begin{python}
+def rearrangeString(self, s, k):
+  if not s or k == 0: return s
+
+  d = defaultdict(int)
+  for c in s:
+    d[c] += 1
+
+  h = []
+  for char, cnt in d.items():
+    heapq.heappush(h, Val(cnt, char))
+
+  ret = []
+  while h:
+    cur = []
+    for _ in xrange(k):
+      if not h: 
+        return "".join(ret) if len(ret) == len(s) else ""
+
+      e = heapq.heappop(h)
+      ret.append(e.val)
+      e.cnt -= 1
+      if e.cnt > 0:
+        cur.append(e)
+
+    for e in cur:
+      heapq.heappush(h, e)
+
+  return "".join(ret)
+
+\end{python}
+

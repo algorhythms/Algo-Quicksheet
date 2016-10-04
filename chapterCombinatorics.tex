@@ -151,6 +151,17 @@ def getPermutation(self, n, k):
     return "".join(map(str, ret))
 \end{python}
 
+\subsection{Numbers counting}
+\runinhead{Count numbers with unique digit.} Given a non-negative integer n, count all numbers with unique digits, $x$, where $0 \leq x < 10^n$.
+
+Digit by digit: 
+\begin{enumerate}
+\item The 1st digit has 10 possibilities. The 2nd digit has 9 possibilities. Therefore it seems to be $A_{10}^n$.
+\item Exception: The first digit cannot be 0. Therefore it is $9\times 9\times 8\times ...\times (10-i)$
+\end{enumerate}
+
+
+
 \section{Catalan Number}\label{section:catalanNumber}
 \subsection{Math}
 \runinhead{Definition.}

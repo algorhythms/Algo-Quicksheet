@@ -8,6 +8,9 @@
 \item \pyinline{bisect_left}
 \item \pyinline{bisect_right} 
 \end{enumerate}
+
+Note the subtle differences.
+
 \subsection{idx equal or just lower}
 Binary search, get the idx of the element equal to or just lower than the target. The returned idx is the $A_{idx} \leq target$. It is possible to return $-1$. It is different from the \pyinline{bisect_lect}.
 
@@ -84,7 +87,7 @@ def bisect_right(A, t, lo=0, hi=None):
 \end{python}
 \section{Applications}
 \subsection{Rotation}
-\runinhead{Find Minimum in Rotated Sorted Array.} Three cases to consider:
+\runinhead{Find Minimum in Rotated Sorted Array.} Case by case analysis. Three cases to consider:
 \begin{enumerate}
 \item Monotonous 
 \item Trough 
@@ -117,8 +120,8 @@ def findMin(self, A):
 
 Clues:
 \begin{enumerate}
-\item \pyinline{MIN}: \textit{min} of index \textit{last} value of LIS of a particular \textit{len}.
-\item \pyinline{RET}: result table, store the $\pi$'s idx (predecessor); (optional, to build the LIS, no need if only needs to return the length of LIS)
+\item \pyinline{MIN}: \textit{min} of index \textit{last} value of LIS of a particular \textit{\textbf{len}}.
+\item \pyinline{PI}: result table, store the $\pi$'s idx (predecessor); (optional, to build the LIS, no need if only needs to return the length of LIS)
 \item \pyinline{bin_search}: For each currently scanning index \pyinline{i}, if it smaller (i.e. $\neg$ increasing), to maintain the \pyinline{MIN}, binary search to find the position to update the min value. The \pyinline{bin_search} need to find the element $\geq$ to \pyinline{A[i]}.
 \end{enumerate}
 \newpage
@@ -145,20 +148,20 @@ If need to return the LIS itself.
             l += 1
             MIN[l] = i
 
-            RET[i] = MIN[l-1]  # (RET)
+            PI[i] = MIN[l-1]  # (PI)
         else:
             j = self.bin_search(MIN, A, A[i], 1, l+1)
             MIN[j] = i
 
-            RET[i] = MIN[j-1] if j-1 >= 1 else -1  # (RET)
+            PI[i] = MIN[j-1] if j-1 >= 1 else -1  # (PI)
 
     # build the LIS (RET)
     cur = MIN[l]
     ret = []
     while True:
         ret.append(A[cur])
-        if RET[cur] == -1: break
-        cur = RET[cur]
+        if PI[cur] == -1: break
+        cur = PI[cur]
 
     ret = ret[::-1]
     print ret

@@ -27,6 +27,7 @@ def grow(self, s, count_map, pi, cur, ret):
         count_map[k] += i*2
 \end{python}
 
+Jump within the looping to avoid repetition. 
 
 \section{KMP}
 Find string $W$ in string $S$ within complexity of $O(|W|+|S|)$. KMP - reflect upon yourself before judging others.
@@ -58,7 +59,7 @@ T = [0 for _ in xrange(len(needle)+1)]
 T[0] = -1
 T[1] = 0
 
-cnd = 0  
+cnd = 0  # candidate 
 i = 2  # table index
 while i < len(needle)+1:
     if needle[i-1] == needle[cnd]:  # matched
@@ -72,6 +73,8 @@ while i < len(needle)+1:
         cnd = 0
         i += 1
 \end{python}
+
+\pythoninline{T[cnd]} is the length, thus just the next index to be processed in the next loop. 
 \subsection{Searching algorithm}
 \begin{figure}[F]
 \centering

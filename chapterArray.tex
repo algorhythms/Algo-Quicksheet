@@ -16,7 +16,7 @@ Core clues:
 \section{Circular Array}
 This section describes common patterns for solving problems with circular arrays.
 
-Normally, we should solve the linear problem and circular problem differently.
+Normally, we should solve the linear problem and circular problem very differently.
 
 \subsection{Circular max sum}
 Linear problem can be solved linear with dp algorithm for maximum subarray sum - Section \ref{dpSequence}. 
@@ -45,7 +45,7 @@ $$maxa = \max(R_i+L_{i-1}, \forall i)$$
 \end{enumerate}
 
 \subsection{Non-adjacent cell}
-Maximum sum of non-adjacent cells in an array $A$.
+Maximum sum of non-adjacent cells in an array $A$. (House robbery problem)
 
 To solve circular non-adjacent array problem in linear way, we should consider 2 cases:
 \begin{enumerate}
@@ -167,8 +167,10 @@ def rerange(self, A):
     neg = 0  # next negative
     pos = 0  # next positive
     for i in xrange(n):
+        # search for the next 
         while neg < n and A[neg] > 0: neg += 1
         while pos < n and A[pos] < 0: pos += 1
+        
         if pos_expt:
             A[i], A[pos] = A[pos], A[i]
         else:

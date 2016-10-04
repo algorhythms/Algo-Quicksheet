@@ -21,7 +21,7 @@ Python Library:
 \begin{enumerate}
 \item \pythoninline{collections.deque} \footnote{The naming in Python collections is awkward: \href{http://stackoverflow.com/questions/18953681/naming-convention-in-collections-why-are-some-lowercase-and-others-capwords}{discussion}.}
 \item \pythoninline{list}
-\item \pythoninline{dict, OrderedDict, DefaultDict}
+\item \pythoninline{dict, OrderedDict, defaultdict}
 \end{enumerate}} 
 Java Library:
 \begin{enumerate}
@@ -39,6 +39,8 @@ How a compiler implements a function:
 \end{enumerate}
 
 Recursive function: function calls itself. It can always be implemented by using an explicit stack to remove recursion. 
+
+Stack can convert recursive \textbf{dfs} to iterative. 
 
 \subsection{Usage}
 The core philosophy of using stack is to maintain a relationship invariant among stack element. 
@@ -63,7 +65,7 @@ Keep a stack storing the bars in non-decreasing, then calculate the area by popp
 \\
 Core clues:
 \begin{enumerate}
-\item Maintain the non-decreasing stack. slow performance 
+\item \textbf{Invariant}: Maintain the non-decreasing stack, using INDEX.
 \item Popping triggers the calculation of area
 \item Calculate the rectangle width by index diff
 \item Post-processing in the end
@@ -97,7 +99,7 @@ def largestRectangleArea(self, height):
 \runinhead{Longest Valid Parentheses.} 
 Given a string containing just the characters `(' and `)', find the length of the longest valid (well-formed) parentheses substring. Core clues:
 \begin{enumerate}
-\item \textbf{Define}: Stack holds the INDEX of UNPAIRED brackets, either ( or ).
+\item \textbf{Invariant}: Stack holds the INDEX of UNPAIRED brackets, either ( or ).
 \item Thus, \pyinline{stk[-1]} stores the last unpaired bracket. 
 \item The length of the well-formed parentheses is: if currently \textbf{valid}, current scanning index \pyinline{idx} minus the last \textbf{invalid} index of bracket \pyinline{stk[-1]}
 \end{enumerate}
@@ -125,7 +127,8 @@ For each position in a sequence of numbers, search among the \textit{previous} p
 
 Core clues:
 \begin{enumerate}
-\item Maintain a \textit{strictly increasing} stack.  
+\item Nearest $\equiv$ spactial locality.
+\item \textbf{Invariant}: Maintain a \textit{strictly increasing} stack.  
 \item If all nearest \textit{larger} values, maintain a \textit{strictly decreasing} stack.  
 \end{enumerate}
 
@@ -166,4 +169,5 @@ class OneToOneMap(object):
 \begin{python}
 from operators import itemgetter 
 sorted(hm.items(), key=itemgetter(1), reverse=True)
+sorted(hm.items(), key=lambda x: x[1], reverse=True)
 \end{python}

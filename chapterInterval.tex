@@ -59,7 +59,7 @@ def insert(self, itvls, newItvl):
 
 \end{python}
 
-\section{Event-driven algorithm}
+\section{Event-driven algorithms}
 \subsection{Introduction}
 The core philosophy of event-driven algorithm:
 \begin{enumerate}
@@ -82,7 +82,7 @@ intervals.
 \begin{python}
 def max_overlapping(intervals):
     maxa = 0
-    intervals.sort(key=operator.attrgetter("start"))
+    intervals.sort(key=lambda x: x.start)
     h_end = []
     for itvl in intervals:
         heapq.heappush(end_heap, itvl.end)

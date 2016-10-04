@@ -19,7 +19,7 @@ List of general algorithms:
 \begin{enumerate}
 \item $|A_p|..\leq..|..unseen..|..\geq..|$ maintain the 3 subarrays.
 \end{enumerate}
-\item Heap sort: compared to quick sort it is guaranteed $O(N \lg N)$, compared to merge sort it is $O(1)$ extra space. 
+\item Heap sort: compared to quick sort it is guaranteed $O(n \lg n)$, compared to merge sort it is $O(1)$ extra space. 
 \end{enumerate}
 
 \section{Algorithms}
@@ -28,18 +28,18 @@ List of general algorithms:
 The key part of quick sort is pivoting:
 \newpage
 \begin{python}
-def pivot(self, A, i, j):
+def pivot(self, A, lo, hi):
     """
     pivoting algorithm:
     | p | closed set | open set |
     | closed set | p | open set |
     """
-    p = i
+    p = lo
     closed = p
-    for ptr in xrange(i, j):
-        if A[ptr] < A[p]:
+    for i in xrange(lo, hi):
+        if A[i] < A[p]:
             closed += 1
-            A[ptr], A[closed] = A[closed], A[ptr]
+            A[i], A[closed] = A[closed], A[i]
 
     A[closed], A[p] = A[p], A[closed]
     return closed
@@ -139,7 +139,7 @@ def merge_sort(self, A):
     A[k:] = R[j:]
 \end{python}
 
-\runinhead{Merge backward} Merge two arrays.  
+\runinhead{Merge backward.} Merge two arrays in place of one of the arrays.  
 \begin{python}
 def merge(self, A, m, B, n):
   """
@@ -262,7 +262,21 @@ See Figure \ref{fig:sortSummary}.
 \section{Partial Quicksort}
 \subsection{Find $k$ smallest}
 \runinhead{Heap-based solution.} $O(n \log k)$
-\runinhead{Partial Quicksort}  Then the $A[:k]$ is sorted $k$ smallest. The algorithm recursively sort the $A[i:j]$
+
+Version 1, construct heap with $n$ numbers, and take $k$: $O(n+k\log n)$, where $O(n)$ is for constructing heap. 
+
+Version 2. construct heap with $k$ numbers, and iterate $n$: $O(k+n\log k)$. 
+
+The 2nd version is much master than 1st based on emperical analysis; additionally, it has smaller memory impact. 
+
+In python there are:
+\begin{python}
+heapq.nlargest(n, iterable[, key])
+heapq.nsmallest(n, iterable[, key])
+\end{python}
+
+\newpage
+\runinhead{Partial Quicksort}  Then the $A[:k]$ is sorted $k$ smallest. The algorithm recursively sort the $A[lo:hi]$
 
 The average time complexity is
 \begin{eqnarray*}
@@ -273,18 +287,18 @@ F(n) = \left\{ \begin{array}{rl}
 \end{eqnarray*}
 Therefore, the complexity is $O(n+k \log k)$.
 \begin{python}
-def partial_qsort(self, A, i, j, k):
-    if i >= j: return
+def partial_qsort(self, A, lo, hi, k):
+    if lo >= hi: return
 
-    p = self.pivot(A, i, j)
-    self.partial_qsort(A, i, p, k)
+    p = self.pivot(A, lo, hi)
+    self.partial_qsort(A, lo, p, k)
     if k <= p+1: return
-    self.partial_qsort(A, p+1, j, k)
+    self.partial_qsort(A, p+1, hi, k)
 \end{python}
 The partial quick sort will find the $k$ smallest number in sorted order. If the top $k$ elements are not required to be sorted, then use find $k$-th algorithm 
 
 \subsection{Find $k$-th: Quick Select}
-Use partial quick sort to find $k$-th smallest element in the unsorted array. The algorithm recursively sort the $A[i:j]$
+Use partial quick sort to find $k$-th smallest element in the unsorted array. The algorithm recursively sort the $A[lo:hi]$
 
 The average time complexity is
 \begin{align*}
@@ -331,12 +345,12 @@ def find_kth(self, A, B, k):
 
   m, n = len(A), len(B)
   if A[m/2] >= B[n/2]:
-    if k > m/2+n/2:
+    if k > m/2 + n/2:
       return self.find_kth(A, B[n/2+1:], k-n/2-1)  # exclude median
     else:
       return self.find_kth(A[:m/2], B, k)  # exclude median
   else:
-    return self.find_kth(B, A, k)
+    return self.find_kth(B, A, k)  # swap
 \end{python}
 \subsection{Applications}
 \runinhead{Wiggle Sort.} Given an unsorted array $A$, reorder it such that $A_0 < A_1 > A_2 < A_3$. Do it in $O(n)$ time and $O(1)$ space. 
@@ -347,6 +361,67 @@ Core clues:
 \item Three-way partitioning to split the data
 \item Re-mapping the index to do in-place partitioning
 \end{enumerate}
+
+\runinhead{Pre-processing} Sorting can be an important pre-processing step as to:
+\begin{enumerate}
+\item Satisfying the output order (e.g. if multiple results are possible, output the one that's smallest in terms of the natural order). 
+\end{enumerate}
+
+\begin{python}
+class Solution(object):
+  def wiggleSort(self, A):
+    n = len(A)
+    median_idx = self.find_kth(A, 0, n, n/2)
+    v = A[median_idx]
+    
+    idx = lambda i: (2*i+1)%(n|1)
+    lt = -1
+    hi = n
+    i = 0
+    while i < hi:
+      if A[idx(i)] > v:
+        lt += 1
+        A[idx(lt)], A[idx(i)] = A[idx(i)], A[idx(lt)]
+        i += 1
+      elif A[idx(i)] == v:
+        i += 1
+      else:
+        hi -= 1
+        A[idx(hi)], A[idx(i)] = A[idx(i)], A[idx(hi)]
+
+  def pivot(self, A, lo, hi, pidx=None):
+    lt = lo-1
+    gt = hi
+    if not pidx: pidx = lo
+
+    v = A[pidx]
+    i = lo
+    while i < gt:
+      if A[i] < v:
+        lt += 1
+        A[lt], A[i] = A[i], A[lt]
+        i += 1
+      elif A[i] == v:
+        i += 1
+      else:
+        gt -= 1
+        A[gt], A[i] = A[i], A[gt]
+
+    return lt, gt
+
+  def find_kth(self, A, lo, hi, k):
+    if lo >= hi: return
+
+    lt, gt = self.pivot(A, lo, hi)
+    
+    if lt < k < gt:
+      return k
+    if k <= lt:
+      return self.find_kth(A, lo, lt+1, k)
+    else:
+      return self.find_kth(A, gt, hi, k)
+\end{python}
+
 \section{Inversion}
 If $a_i > a_j$ but $i<j$, then this is considered as 1 Inversion. That is, for an element, the count of other elements that are \textit{larger} than the element but appear \textit{before} it. This is the default definition. 
 
@@ -499,11 +574,13 @@ class Solution(object):
 \subsection{Reconstruct Array from Inversion Count}\label{inversionReconstruct}
 Given a \textit{sorted} numbers with their associated inversion count (\# larger numbers before this element). $A[i].val$ is the value of the number, $A[i].inv$ is the inversion number. Reconstruct the original array $R$ that consists of each $A[i].val$.
 
-Brute force can be done in $O(n^2)$. Put the $A[i].val$ into $R$ at an index/slot s.t. the \# \textit{empty} slots before it equals to $A[i].inv$.
+Brute force can be done in $O(n^2)$. Put the $A[i].val$ into $R$ at slot s.t. the \# \textit{empty} slots before it equals to $A[i].inv$.
 
 \rih{BST}. Possible to use BST to maintain the empty slot indexes in the original array. Each node's rank indicates the count of empty indexes in its left subtree. But need to maintain the deletion.  
 
 \rih{Segment Tree}. Use a segment tree to maintain the size of empty slots. Each node has a $start$ and a $end$ s.t slot indexes $\in [start, end)$. Go down to find the target slot, go up to decrement the size of empty slots. 
+
+Caveat: need to sort the array in the preprocessing step. 
 
 Reconstruction of array cannot use BIT since there is no map of $prefixSum \rightarrow i$.
 \newpage
@@ -512,7 +589,7 @@ class Node(object):
   def __init__(self, lo, hi, cnt):
     self.lo = lo
     self.hi = hi
-    self.cnt = cnt
+    self.cnt = cnt  # size of empty slots
 
     self.left = None
     self.right = None
@@ -536,18 +613,18 @@ class SegmentTree(object):
     root.right = self.build((lo+hi)/2, hi)
     return root
 
-  def find_delete(self, root, val):
+  def find_delete(self, root, sz):
     """
     :return: index
     """
     root.cnt -= 1
     if not root.left:
       return root.lo
-    elif root.left.cnt >= val:
-      return self.find_delete(root.left, val)
+    elif root.left.cnt >= sz:
+      return self.find_delete(root.left, sz)
     else:
       return self.find_delete(root.right,
-                  val - root.left.cnt)
+                  sz - root.left.cnt)
 
 
 class Solution(object):
@@ -565,6 +642,9 @@ class Solution(object):
 
 
 if __name__ == "__main__":
+  # (val, inv)
   A = [(5, 0), (2, 1), (3, 1), (4, 1,), (1, 4)]
   assert Solution().reconstruct(A) == [5, 2, 3, 4, 1]
 \end{python}
+
+\runinhead{Duplicate.} What if the array contains duplicate elements? Use a \pyinline{Counter} to count the duplicate items already in the result. 
