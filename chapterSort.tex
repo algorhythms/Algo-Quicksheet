@@ -112,6 +112,12 @@ def pivot_3way(self, A, lo, hi):
     return lt, gt
 \end{python}
 \subsection{Merge Sort}
+\begin{figure}[!htp]
+\centering
+\subfloat{\includegraphics[scale=.80]{msort}}
+\caption{Merge Sort}
+\label{fig:msort}
+\end{figure}
 \runinhead{Normal merge} Normal merge sort with extra space
 \begin{python}
 def merge_sort(self, A):
@@ -192,6 +198,47 @@ def merge_sort(self, A):
   return A
 \end{python}
 The time complexity may be degenerated to $O(n^2)$. 
+\subsection{Do something while merging}
+During the merging, the left half and the right half are both sorted; therefore, we can carry out operations like:
+\begin{enumerate}
+\item inversion count 
+\item range sum count 
+\end{enumerate}
+
+\runinhead{Count of Range Sum.} Make an array $A$ of sums, where \pyinline{A[i] = sum(nums[:i])}; and then feed to merge sort. Since both the left half and the right half are sorted, we can diff $A$ in $O(n)$ time to find range sum. 
+
+\begin{python}
+def msort(A, lo, hi):
+  if hi - lo <= 1: return 0
+
+  mid = (lo + hi)/2
+  cnt = msort(A, lo, mid) + msort(A, mid, hi)
+
+  temp = []
+  i = j = r = mid
+  for l in xrange(lo, mid):
+    # range count
+    while i < hi and A[i] - A[l] <  LOWER: i += 1
+    while j < hi and A[j] - A[l] <= UPPER: j += 1
+    cnt += j - i
+
+    # normal merge 
+    while r < hi and A[r] < A[l]:
+      temp.append(A[r])
+      r += 1
+
+    temp.append(A[l])
+
+  while r < hi:  # dangling right
+    temp.append(A[r])
+    r += 1
+
+  A[lo:hi] = temp
+  return cnt
+\end{python}
+
+Here, the implementation of merge sort use: 1 for-loop for the left half and 2 while-loop for the right half.
+
 \section{Properties}
 \subsection{Stability}
 Definition: a stable sort preserves the \textbf{relative order of items with equal keys} (scenario: sorted by time then sorted by location). 
