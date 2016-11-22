@@ -78,27 +78,65 @@ Everything easy to convert the number even under 2's complement if thinking in t
 \section{Circuit}
 It is under 32-bit assumption, for Python, we need additional masking in the previous section. 
 \subsection{Full-adder}
-Handle carry: only 1 + 1 needs carry, thus \pyinline{a & b} determines carry. 
+\rih{Plus.} Handle carry: only 1 + 1 needs carry, thus \pyinline{a & b} determines carry. 
 \begin{python}
-function fullAdder(a, b):
+def plus(a, b):
   carry = (a & b) << 1
   out = a ^ b 
   if carry != 0:
-    return fullAdder(out, carry)
+    return plus(out, carry)
   else:
     return out
 \end{python}
-\subsection{Full-substractor}
-Handle borrow: only 0 - 1 needs borrow, thus \pyinline{\~a & b} determines borrow. 
+\rih{Half Adder}. One bit \pyinline{a, b}:
 \begin{python}
-function fullSubstractor(a, b):
+def half_add(a, b): 
+  carry = a & b
+  out   = a ^ b 
+  return out, carry 
+\end{python}
+\rih{Full Adder}. One bit \pyinline{a, b, cin}. \pyinline{out = a ^ b ^ cin}. and \pyinline{cout = a & b | cin & a ^ b}
+\begin{python}
+def full_add(a, b, cin): 
+  out, c1 = half_add(a, b)
+  out, c2 = half_add(out, cin)
+  cout    = c1 | c2  # ^ possible
+  return out, cout 
+\end{python}
+
+\subsection{Full-substractor}
+\rih{Substract.} Handle borrow: only 0 - 1 needs borrow, thus \pyinline{\~a & b} determines borrow. 
+\begin{python}
+def sub(a, b):
   borrow = (~a & b) << 1
   out = a ^ b 
   if borrow != 0:
-    return fullSubstractor(out, borrow)
+    return sub(out, borrow)
   else:
     return out
 \end{python}
+\rih{Half Substractor.} One bit \pyinline{a, b}:
+\begin{python}
+def half_sub(a, b):
+  borrow = (~a & b)
+  out = a ^ b
+  return out, borrow
+\end{python}
+Notice negation can be done in xor. 
+\begin{python}
+~a == 1 ^ a 
+\end{python}
+\rih{Full Substractor}. One bit \pyinline{a, b, bin}. \pyinline{out = a ^ b ^ bin}. 
+\begin{python}
+def full_sub(a, b, bin):
+  out, b1 = half_sub(a, b)
+  out, b2 = half_sub(out, bin)
+  bout = b1 | b2 
+  return out, bout 
+\end{python}
+
+\subsection{Multipler}
+
 
 \section{Single Number}
 \subsection{Three-time appearance} 
