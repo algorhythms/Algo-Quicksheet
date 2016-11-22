@@ -129,20 +129,22 @@ Clues:
 def LIS(self, A):
     n = len(A)
     MIN = [-1 for _ in xrange(n+1)]
-    
-    l = 1
-    for i in xrange(1, n):
-        if A[i] > A[MIN[l]]:
-            l += 1
-            MIN[l] = i
-        else:
-            j = self.bin_search(MIN, A, A[i], 1, l+1)
-            MIN[j] = i
+    k = 1
+    MIN[k] = A[0]  # store value
+    for v in A[1:]:
+        idx = bisect.bisect_left(MIN, v, 1, k+1)
+        MIN[idx] = v
+        k += 1 if idx == k+1 else 0
 
-    return l
+    return k
 \end{python}
 If need to return the LIS itself. 
 \begin{python}
+    n = len(A)
+    MIN = [-1 for _ in xrange(n+1)]
+    RET = [-1 for _ in xrange(n)]
+    l = 1
+    MIN[l] = 0  # store index
     for i in xrange(1, n):
         if A[i] > A[MIN[l]]:
             l += 1
