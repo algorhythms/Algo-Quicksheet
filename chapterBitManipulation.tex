@@ -30,7 +30,7 @@ $$
 \runinhead{Check 2's power}
 $$x\AND(x-1)$$
 
-\runinhead{Rightmost bit set.} To get the rightmost bit, with the help of 2's complement:
+\runinhead{Rightmost bit set. LSB} To get the rightmost bit, with the help of 2's complement:
 \begin{enumerate}
 \item Left extended with 1's:
 $$x \XOR (-x)$$
@@ -38,6 +38,13 @@ $$x \XOR (-x)$$
 $$x \AND (-x)$$
 \end{enumerate}
 
+\runinhead{MSB.} Find the most significant bit. 
+\begin{python}
+msb = 0
+while num >> msb:
+  msb += 1
+\end{python}
+If zero-indexed, the MSB is \pyinline{msb - 1}.
 \runinhead{Negation and index} We can use tilde notation for the index accessing a string or an array
 \begin{lstlisting}
 i  ~i  
@@ -56,6 +63,8 @@ To determine whether a string is palindrome:
 def is_palindrome(s):
   return all(s[i] == s[~i] for i in xrange(len(s)/2)) 
 \end{python}
+
+\runinhead{Divide by 2.} To divide a number by 2, it should be \pyinline{x >> 1} rather than \pyinline{x >> 2}. 
 
 \subsection{Python}
 Python int is larger than 32 bit. 

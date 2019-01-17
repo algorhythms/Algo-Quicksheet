@@ -449,14 +449,30 @@ F_{i, c}= \max\big(&&F_{i-1, c}, \\
 \end{eqnarray*}
 Advanced backpack problem\footnote{\href{http://github.com/tianyicui/pack}{Nine Lectures in Backpack Problem}.}. 
 
-\subsection{Sum}
-\runinhead{k sum.} Given $n$ distinct positive integers, integer $k$ ($k \leq n$) and a number target. Find $k$ numbers where sum is target. Calculate the number of solutions. Since we only need the number of solutions, thus it can be solved using dp. If we need to enumerate all possible answers, need to do dfs instead. 
+\subsection{Sum - 0/1 Knapsack.} 
+\runinhead{subset sum.} Given a list of numbers $A$, find a subset (i.e. subsequence, not slice) that sums to target $t$.
+
+Let $F_{i, v}$ be \#subset of $A[:i+1]$ (ending at $A_i$), can be sum to target $v$.
+
+You have two options: either select $A_i$ or not.
+ 
+$$
+F_{i, v} = F_{i-1, v-A_{i}} + F_{i-1, v}
+$$
+
+Time complexity: $O(nk)$.
+
+\runinhead{k sum.} Similar to subset sum, but restrict the length of subset of $k$.
+
+Given $n$ distinct positive integers, integer $k$ ($k \leq n$) and a number target. Find $k$ numbers which sums to target. Calculate the number of solutions. 
+
+Since we only need the number of solutions, thus it can be solved using dp. If we need to enumerate all possible answers, need to do dfs instead. 
 
 $$
 sum{j \choose i} = v
 $$
 
-Let $F_{i, j, v}$ means the \#ways of selecting $i$ elements from the first $j$ elements so that their sum equals to $v$. $j$ is the scanning pointer.
+Let $F_{i, j, v}$ be the \#ways of selecting $i$ elements from the first $j$ elements so that their sum equals to $v$. $j$ is the scanning pointer.
 
 You have two options: either select $A_{j-1}$ or not.
 $$
