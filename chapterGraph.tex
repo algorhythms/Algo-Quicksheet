@@ -8,6 +8,7 @@ V = defaultdict(list)
 
 \runinhead{Complexity.} Basic complexities:
 
+\begin{table}
 \begin{tabular}{lll}
 \hline\noalign{\smallskip}
 \textbf{Algorithm} & \textbf{Time}  & \textbf{Space}\\
@@ -15,8 +16,9 @@ V = defaultdict(list)
 dfs & $O(|E|)$ & $O(|V|), O(\text{longest path})$ \\
 bfs & $O(|E|)$ & $O(|V|)$ \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
-\caption{CAPTIONS}
 \end{tabular}
+\caption{CAPTIONS}
+\end{table}
 
 \runinhead{Graph \& Tree.} For a undirected graph to be a tree, it needs to satisfied two conditions:
 \begin{enumerate}
@@ -258,6 +260,33 @@ def dfs_topo(self, V, v, visited, pathset, ret):
   ret.appendleft(v)
   return True
 
+# code the visited 
+def dfs_topo(
+  self, 
+  G: Dict[int, List[int]], 
+  u: int, 
+  visited: Dict[int, int],
+  ret: deque,
+):
+  """
+  Topological sort
+  G = defaultdict(list)
+  visited = defaultdict(int) 
+  # 0 not visited, 1 visiteding, 2 visted
+
+  pre-condition: u is not visited (0)
+  """
+  visited[u] = 1
+  for nbr in G[u]:
+    if visited[nbr] == 1:
+      return False
+    if visited[nbr] == 0:
+      if not self.topo_dfs(G, nbr, visited, ret):
+        return False
+
+  visited[u] = 2
+  ret.appendleft(u)  # visit larger first
+  return True
 \end{python}
 The time complexity of topological sorting is $O(|E|+|V|)$ since it needs to goes to every edges and every vertices. 
 
@@ -271,7 +300,7 @@ Improvements:
 \begin{enumerate}
 \item Weighting: size-baladnced tree
 \item Path Compression.
-\end{enumerate}}
+\end{enumerate}
 \subsection{Algorithm}
 Weighted union-find with path compression.\\
 \rih{Core clues.}
@@ -282,13 +311,13 @@ Weighted union-find with path compression.\\
 \end{enumerate}
 \begin{figure}[]
 \centering
-\subfloat{\includegraphics[scale=.70]{uf}}
+\subfloat{\includegraphics[width=\linewidth]{uf}}
 \caption{Weighted quick-union traces}
 \label{fig:union_find}
 \end{figure}
 
 \begin{python}
-class UnionFind(object):
+class UnionFind(object):  # or DisjointSet
   def __init__(self):
     self.pi = {}  # item -> pi
     self.sz = {}  # root -> size
@@ -330,6 +359,35 @@ class UnionFind(object):
 \subsection{Complexity}
 $m$ union-find with $n$ objects: $O(n)+m O(\lg n)$
 
+\subsection{Simplified Union Find}
+Simplified code with unbalanced size. 
+\begin{python}
+class DisjointSet:
+    def __init__(self):
+        self.pi = {}
+
+    def union(self, x, y):
+        pi_x = self.find(x)
+        pi_y = self.find(y)
+        self.pi[pi_y] = pi_x
+
+    def find(self, x):
+        # LHS self.pi[x]
+        if x not in self.pi:
+            self.pi[x] = x
+        if self.pi[x] != x:
+            self.pi[x] = self.find(self.pi[x])
+        return self.pi[x]
+\end{python}
+
+Note, for the final counting of component. Need to do a final find on all nodes to
+update the ancestor.
+\begin{python}
+component_cnt = len(set(
+    ds.find(x)
+    for x in ds.pi.keys()
+))
+\end{python}
 
 \section{Axis Projection}
 Project the mat dimension from 2D to 1D, using \textit{orthogonal axis}.
@@ -345,7 +403,8 @@ $$
 
 Clues:
 \begin{enumerate}
-\item Project the 1's onto x-axis, binary search for the left bound and right bound of the bounding box.
+\item Project the 1's onto x-axis, binary search for the left bound and right bound of the bounding box. 
+\item We don't pre-project the axis beforehand, since it will take $O(mn)$ to collect the projected 1d array. Instead, we only project it during binary search when checking the mid item. Checking takes $O(m)$, searching takes $O(\log n)$. 
 \item Do the same for y-axis.
 \end{enumerate}
 
@@ -363,7 +422,7 @@ Minimum spanning tree.
 \begin{python}[mathescape]
 def kruskal(G):
   ret = []
-  uf = UnionFound()
+  uf = UnionFind()
   for v in G.V:
     uf.add(v)
 

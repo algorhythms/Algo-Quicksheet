@@ -7,6 +7,15 @@
 \runinhead{Jump.} Jump to skip ones the same as its parent to avoid duplication.
 
 \runinhead{Complexity.} $O(b^d)$, where $b$ is the branching factor and $d$ is the depth. 
+
+
+\section{Memoization}
+dfs can be memoized.
+\begin{python}
+@functools.lru_cache(maxsize=None)
+def dfs(self, *args):
+  pass
+\end{python}
 \section{Sequence}
 \runinhead{k sum.} Given $n$ unique integers, number $k$ and target. Find all possible $k$ integers where their sum is target. 
 
@@ -109,6 +118,69 @@ def dfs(self, word):
             # note word[l:l+1] and right default ''
 \end{python}
 
+\subsection{Split Array - Minimize Maximum Subarray Sum}
+Split the array into $m$ parts and minimize the max subarray sum.
+\runinhead{Core clues:}
+\begin{enumerate}
+\item Pivot an index
+\item Left side as a sum, right side dfs 
+\end{enumerate}
+
+\begin{python}
+def dfs(self, hi, m):
+    """
+    j break the nums[:hi] into left and right part
+    sums is the prefix sum (sums[i] == sum(nums[:i]))
+    """
+    if m == 1:
+        return self.sums[hi] - self.sums[0]
+
+    mini = float("inf")
+    for j in range(hi):
+        right = self.sums[hi] - self.sums[j]
+        left = self.dfs(j, m - 1)
+        # minimize the max
+        mini = min(mini, max(left, right))
+
+    return mini
+\end{python}
+
+
+\section{Cartesian Product}
+Each state can generate multiple combinations. Search through all the combinations.
+\subsection{Pyramid Transition Matrix.}
+\begin{python}
+"""
+ (H, I ..)
+   / \
+(D,E) (F, G)
+ / \ / \
+A   B   C
+"""
+def dfs(
+    self, 
+    T: Dict[Tuple[str, str], Set[str]], 
+    level: str,
+) -> bool:
+    """
+    T - Transition matrix
+    stores all the possible end states from state1 and state2
+    [s1, s2] -> set of end states 
+    """
+    if len(level) == 1:
+        return True
+
+    for nxt_level in itertools.product(
+        *[T[a, b] for a, b in zip(level, level[1:])]
+    ):
+        if self.dfs(T, nxt_level):
+            return True
+
+    return False
+
+\end{python}
+
+
 \section{Math}
 \subsection{Decomposition}
 \subsubsection{Factorize a number}\label{factorization}
@@ -147,7 +219,7 @@ def predicate(self, n, i):
   
 \end{python}
 \runinhead{Time complexity.} The search tree's size is $O(2^n)$ where $n$ is the number
-of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined：
+of prime factors. Choose $i$ prime factors to combine then, and keep the rest uncombined.
 
 
 $$\sum_i {n \choose i} = 2^n$$

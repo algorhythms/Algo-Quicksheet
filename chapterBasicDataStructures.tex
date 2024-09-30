@@ -15,20 +15,20 @@ Implementation (for both queue and stack):
 \begin{enumerate}
 \item Doubling: when full (100\%).
 \item Halfing: when one-quarter full (25\%). 
-\end{enumerate}}
-\end{enumerate}}
+\end{enumerate}
+\end{enumerate}
 Python Library:
 \begin{enumerate}
 \item \pythoninline{collections.deque} \footnote{The naming in Python collections is awkward: \href{http://stackoverflow.com/questions/18953681/naming-convention-in-collections-why-are-some-lowercase-and-others-capwords}{discussion}.}
 \item \pythoninline{list}
 \item \pythoninline{dict, OrderedDict, defaultdict}
-\end{enumerate}} 
+\end{enumerate}
 Java Library:
 \begin{enumerate}
 \item \javainline{java.util.Stack<E>}
 \item \javainline{java.util.LinkedList<E>}
 \item \javainline{java.util.HashMap<K, V>; java.util.TreeMap<K, V>}
-\end{enumerate}}
+\end{enumerate}
 
 \section{Stack}
 \subsection{Stack and Recursion}
@@ -54,9 +54,9 @@ The \textbf{relationship invariants} can be:
 \subsection{Applications}
 \runinhead{Largest Rectangle.} Find the largest rectangle in the matrix (histogram). Given $n$ non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram. 
 
-\begin{figure}[hbtp]
+\begin{figure}[]
 \centering
-\subfloat{\includegraphics[scale=2.00]{histogram_area}}
+\subfloat{\includegraphics[width=0.5\linewidth]{histogram_area}}
 \caption{Largest rectangle in histogram}
 \label{fig:histogram_area}
 \end{figure}
@@ -70,7 +70,7 @@ Core clues:
 \item Calculate the rectangle width by index diff
 \item Post-processing in the end
 \end{enumerate}
-\newpage
+
 Code:
 \begin{python}
 def largestRectangleArea(self, height):

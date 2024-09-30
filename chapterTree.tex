@@ -174,7 +174,7 @@ def bfs(self, s, V):
 , where $V$ is the vertices of graph $G$.
 
 
-\newpag
+\newpage
 \subsection{Morris Traversal} 
 Traversal with O(1) space. \footnote{\href{http://www.cnblogs.com/AnnieKim/archive/2013/06/15/MorrisTraversal.html}{ref}}
 Three ways of traversal: in-order, pre-order, post-order.
@@ -190,8 +190,6 @@ Core:
 \begin{enumerate}
 \item Threading from \textbf{in-order} predecessor to \pyinline{cur}.
 \item In-order consumes the \pyinline{cur} when going right, pre-order when going left, post-order consumes the left subtree path when going right. 
-\end{enumerate}
-
 \end{enumerate}
 \subsubsection{In-order}
 Assign the current node's in-order predecessor's right child to itself (threading). Two ptr \pyinline{cur}, \pyinline{pre}. 
@@ -212,7 +210,7 @@ Process:
 \caption{Morris in-order traversal}
 \label{fig:morrisInorder}
 \end{figure*}
-\newpag
+\newpage
 Code:
 \begin{python}
 def morris_inorder(self, root):
@@ -495,6 +493,8 @@ def predecessors(self, root, target, stk):
 
 \section{Binary Index Tree (BIT)}\label{BIT}
 \subsection{Introduction}
+A Fenwick tree or binary indexed tree is a data structure that can efficiently update elements and calculate prefix sums in a table of numbers.
+
 Compared to Segment Tree \ref{section:segmentTree}, BIT is shorter and more elegant. BIT can do most of things that Segment Tree can do and it is easier to code. BIT updates and queries $$i\rightarrow prefixSum$$ in $O(\log n)$ time; however, Segment Tree can but BIT cannot query $$prefixSum \rightarrow i$$
 \subsection{Implementation}
 Given an array $A$ of length $n $ starting from $1$. prefix sum $s[i]\triangleq A_1+...+A_i$. BIT uses binary to maintain the array of prefix sum for querying and updating. For $i$-th node in the BIT, 
@@ -771,11 +771,37 @@ class Trie:
 
         return True
 \end{python}
+\subsection{Simplified Trie}
+Simplified trie with dict as TrieNode
+\begin{python}
+root = {}
+ends = []
+for word in set(words):
+    cur = root
+    for c in word:
+        nxt = cur.get(c, {})
+        cur[c] = nxt
+        cur = nxt
+
+    ends.append((cur, len(word)))
+\end{python}
+\subsection{The Most Simplified Trie}
+\begin{python}
+# constructor 
+TrieNode = lambda: defaultdict(TrieNode) 
+
+# or
+class TrieNode:
+    def __init__(self):
+        self.children = defaultdict(TrieNode)
+        self.attr = None  # some attr with default values
+        self.word = None  # a word ends here, value or index
+\end{python}
 \subsection{Extensions}
 \runinhead{Search for multiple words} Search for combination of words e.g. ``unitedstates''. Add threads between tails and the root; thus enable the search for multi-word combinations. Figure - \ref{fig:trie2}
 \begin{figure}[!hbt]
 \centering
-\subfloat{\includegraphics[scale=.55]{trie2.png}}
+\subfloat{\includegraphics[width=\linewidth]{trie2.png}}
 \caption{Trie with threads from ending point to root}
 \label{fig:trie2}
 \end{figure}

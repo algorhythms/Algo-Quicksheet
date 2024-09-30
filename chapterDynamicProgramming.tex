@@ -90,7 +90,7 @@ F_{i. j} = \left\{ \begin{array}{rl}
        \end{array} \right.
 \end{eqnarray*}
 
-Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, the $gmax=\max\big(\{{F_{i,j}\}\big)$.
+Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, the $gmax=\max\big(\{{F_{i,j}\}}\big)$.
 \runinhead{Longest increasing subsequence}. Find the longest increasing subsequence of an array $A$.
 
 let $F_i$ be the LIS length ends at $A_i$. 
@@ -312,9 +312,8 @@ Let $F_i$ be all possible segmented words ends at \pyinline{s[i-1]}. $F_i$ is a 
 \begin{eqnarray*}
 F_{i} = \left\{ \begin{array}{rl}
   F_{i}+[w] &\mbox{// $\forall w\in dict\cdot$} \\
-  & \mbox{ if \pyinline{s[i-len(w):i]==w} $\wedge\ \exists
-F_{i-len(w)$ } \\
-  F_{i}} &\mbox{// otherwise}
+  & \mbox{ if \pyinline{s[i-len(w):i]==w} $\wedge\ \exists F_{i-len(w)}$} \\
+  F_{i} &\mbox{// otherwise}
        \end{array} \right.
 \end{eqnarray*}
 
@@ -478,7 +477,7 @@ You have two options: either select $A_{j-1}$ or not.
 $$
 F_{i, j, v} = F_{i-1, j-1, v-A_{j-1}} + F_{i, j-1, v}
 $$
-Time complexity: O(n^2 k)
+Time complexity: $O(n^2 k)$
 \section{Local and Global Extremes}
 \subsection{Long and short stocks}
 \subsubsection{At most $k$ transactions}
