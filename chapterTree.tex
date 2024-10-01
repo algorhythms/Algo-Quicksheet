@@ -99,7 +99,7 @@ def find_LCA(n1, n2):
         return find_LCA(n2, n1)  # swap
         
     # move to the same depth 
-    for _ in xrange(d2-d1):
+    for _ in range(d2-d1):
         n2 = n2.parent  
 
     while n1 and not n1 == n2:  
@@ -149,14 +149,14 @@ level, pi, last = self.bfs(last, V)
 
 def bfs(self, s, V):
     # bfs
-    visited = [False for _ in xrange(len(V))]
-    pi = [-1 for _ in xrange(len(V))]
+    visited = [False for _ in range(len(V))]
+    pi = [-1 for _ in range(len(V))]
     last = s
     level = 0
     q = [s]
     while q:
         l = len(q)
-        for i in xrange(l):
+        for i in range(l):
             cur = q[i]
             last = cur
             visited[cur] = True
@@ -535,7 +535,7 @@ class BIT(object):
         BIT uses index starting from 1
         0 is the dummy root 
         """
-        self.N = [0 for _ in xrange(n+1)]
+        self.N = [0 for _ in range(n+1)]
 
     def lowbit(self, i):
         return i & -i

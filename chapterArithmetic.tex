@@ -5,7 +5,7 @@
 \rih{Plus One.} Given a non-negative number represented as an array of digits, plus one to the number.
 \begin{python}
 def plusOne(self, digits):
-    for i in xrange(len(digits)-1, -1, -1):
+    for i in range(len(digits)-1, -1, -1):
         digits[i] += 1
         if digits[i] < 10:
             return digits

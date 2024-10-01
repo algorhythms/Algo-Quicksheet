@@ -21,7 +21,7 @@ def grow(self, s, count_map, pi, cur, ret):
   for k in count_map.keys():
     if k != pi and count_map[k] > 0:
       # jump the parent
-      for i in xrange(1, count_map[k]/2+1):
+      for i in range(1, count_map[k]/2+1):
         count_map[k] -= i*2
         self.grow(s, count_map, k, k*i+cur+k*i, ret)
         count_map[k] += i*2
@@ -55,7 +55,7 @@ Clues:
 Table-building code:
 \begin{python}
 # construct T
-T = [0 for _ in xrange(len(needle)+1)]
+T = [0 for _ in range(len(needle)+1)]
 T[0] = -1
 T[1] = 0
 

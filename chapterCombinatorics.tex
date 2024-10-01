@@ -144,7 +144,7 @@ def getPermutation(self, n, k):
     A = range(1, n+1)
     k %= math.factorial(n)
     ret = []
-    for i in xrange(n-1, -1, -1):
+    for i in range(n-1, -1, -1):
         idx, k = divmod(k, math.factorial(i))
         ret.append(A.pop(idx))
 

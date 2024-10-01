@@ -78,7 +78,7 @@ def largestRectangleArea(self, height):
     gmax = -sys.maxint-1
     stk = []  # store the idx, non-decreasing stack
 
-    for i in xrange(n):
+    for i in range(n):
         while stk and height[stk[-1]] > height[i]:
             last = stk.pop()
             if stk:  # calculate area when popping

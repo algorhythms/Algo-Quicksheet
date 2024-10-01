@@ -216,7 +216,7 @@ def msort(A, lo, hi):
 
   temp = []
   i = j = r = mid
-  for l in xrange(lo, mid):
+  for l in range(lo, mid):
     # range count
     while i < hi and A[i] - A[l] <  LOWER: i += 1
     while j < hi and A[j] - A[l] <= UPPER: j += 1
@@ -505,7 +505,7 @@ Therefore the Merge-and-count key is \pyinline{ret += len(A1) - i1}
 def merge(A1, A2, A):
   i1 = i2 =0
   ret = 0
-  for i in xrange(len(A)):
+  for i in range(len(A)):
     if i1 == len(A1):
       A[i] = A2[i2]
       i2 += 1

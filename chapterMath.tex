@@ -65,11 +65,11 @@ def countPrimes(n):
     """
     if n < 3: return 0
     is_prime = [False if i%2 == 0 else True 
-                for i in xrange(n)]
+                for i in range(n)]
     is_prime[0], is_prime[1] = False, False
-    for i in xrange(3, int(math.sqrt(n))+1, 2):
+    for i in range(3, int(math.sqrt(n))+1, 2):
         if is_prime[i]:
-            for j in xrange(i*i, n, 2*i):
+            for j in range(i*i, n, 2*i):
                 is_prime[j] = False
 
     return is_prime.count(True)
@@ -200,7 +200,7 @@ Alternatively, we can use bit manipulation based on the power of 4 in the binary
 \begin{python}
 def gen():
     i = 1
-    for _ in xrange(n):
+    for _ in range(n):
         yield i
         if i * 10 <= n:
             i *= 10  # * 10
