@@ -109,7 +109,7 @@ In code, notice the \pyinline{else}.
 \begin{python}
 F[i] = max(
     F[j] + 1 if A[i] > A[j] else 1
-    for j in xrange(i)
+    for j in range(i)
 )
 \end{python}
 
@@ -342,13 +342,13 @@ P_{i. j} = P_{i-1, j+1}\ \wedge\ s[i] = s[j-1]
 The code for palindrome dp is error-prone due to indexing. Notice that $i \in [0, n), j \in [i, n+1)$.
 \begin{python}
 n = len(s)
-pa = [[False for _ in xrange(n+1)] for _ in xrange(n)]
-for i in xrange(n):
+pa = [[False for _ in range(n+1)] for _ in range(n)]
+for i in range(n):
     pa[i][i] = True
     pa[i][i+1] = True
 
-for i in xrange(n-2, -1, -1):
-    for j in xrange(i+2, n+1):
+for i in range(n-2, -1, -1):
+    for j in range(i+2, n+1):
         pa[i][j] = pa[i+1][j-1] and s[i] == s[j-1]
 \end{python}
 \runinhead{Minimum palindrome cut.} Given a string s, partition s such that every substring of the partition is a palindrome. Return the minimum cuts needed for a palindrome partitioning of s.
@@ -365,24 +365,24 @@ C_{i} = \left\{ \begin{array}{rl}
 def minCut(self, s):
   n = len(s)
 
-  P = [[False for _ in xrange(n+1)] for _ in xrange(n+1)]
-  for i in xrange(n+1):  # len 0
+  P = [[False for _ in range(n+1)] for _ in range(n+1)]
+  for i in range(n+1):  # len 0
     P[i][i] = True
-  for i in xrange(n):  # len 1
+  for i in range(n):  # len 1
     P[i][i+1] = True
 
-  for i in xrange(n, -1, -1):  # len 2 and above
-    for j in xrange(i+2, n+1):
+  for i in range(n, -1, -1):  # len 2 and above
+    for j in range(i+2, n+1):
       P[i][j] = P[i+1][j-1] and s[i] == s[j-1]
 
-  C = [i for i in xrange(n+1)]  # max is all cut
-  for i in xrange(n+1):
+  C = [i for i in range(n+1)]  # max is all cut
+  for i in range(n+1):
     if P[0][i]:
       C[i] = 0
     else:
       C[i] = min(
           C[j] + 1
-          for j in xrange(i)
+          for j in range(i)
           if P[j][i]
       )
 

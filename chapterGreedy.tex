@@ -49,7 +49,7 @@ def rearrangeString(self, s, k):
   ret = []
   while h:
     cur = []
-    for _ in xrange(k):
+    for _ in range(k):
       if not h: 
         return "".join(ret) if len(ret) == len(s) else ""
 

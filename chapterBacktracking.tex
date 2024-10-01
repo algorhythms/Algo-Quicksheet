@@ -89,7 +89,7 @@ def backtrack(self, s, cur_lvl, ret):
     if not s:
         ret.append(list(cur_lvl))
 
-    for i in xrange(1, len(s)+1):
+    for i in range(1, len(s)+1):
         if self.predicate(s[:i]):
             cur_lvl.append(s[:i])
             self.backtrack(s[i:], cur_lvl, ret)
@@ -111,7 +111,7 @@ def dfs(self, word):
     if not word:
         yield ""
 
-    for l in xrange(len(word)+1):
+    for l in range(len(word)+1):
         left_num = str(l) if l else ""
         for right in self.dfs(word[l+1:]):
             yield left_num + word[l:l+1] + right
@@ -207,7 +207,7 @@ def dfs(self, cur, ret):
 
   n = cur.pop()
   start = cur[-1] if cur else 2
-  for i in xrange(start, int(sqrt(n))+1):
+  for i in range(start, int(sqrt(n))+1):
     if self.predicate(n, i):
       cur.append(i)
       cur.append(n/i)
@@ -257,7 +257,7 @@ def dfs(self, num, target, pos,
     if cur_val == target:
       ret.append(cur_str)
   else:
-    for i in xrange(pos, len(num)):
+    for i in range(pos, len(num)):
       if i != pos and num[pos] == '0':
         continue
         

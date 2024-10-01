@@ -15,7 +15,7 @@ for (int i = 0; i < N; i++) {
 \begin{python}
 def shuffle(A):
   n = len(A)
-  for i in xrange(n):
+  for i in range(n):
     j = random.randrange(n)
     A[i], A[j] = A[j], A[i]
 \end{python}
@@ -42,7 +42,7 @@ public void shuffle(Object[] a) {
 \begin{python}
 def shuffle(A):
   n = len(A)
-  for i in xrange(n):
+  for i in range(n):
     j = random.randrange(i, n)
     A[i], A[j] = A[j], A[i]
 \end{python}
@@ -59,7 +59,7 @@ Find the index of maximum number in an array with a probability of $\frac{1}{\#m
 \begin{python}
 def random_max(A):
     maxa, maxa_idx, k = A[0], 0, 1
-    for i in xrange(1, len(A)):
+    for i in range(1, len(A)):
         if maxa < A[i]:
             maxa, maxa_idx, k = A[i], i, 1
         elif maxa == A[i]:
@@ -92,7 +92,7 @@ Sample $k$ from $A$, where the length of $A$ is either very large or unknown or 
 def reservoir_sample(A, sz):
   R = A[:sz]  # sz for size
   
-  for i in xrange(sz, len(A)):
+  for i in range(sz, len(A)):
     rv = random.randrange(0, i+1)
     if rv < sz: # rv for random variable
       R[rv] = A[i]

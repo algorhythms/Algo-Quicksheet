@@ -166,7 +166,7 @@ def rerange(self, A):
 
     neg = 0  # next negative
     pos = 0  # next positive
-    for i in xrange(n):
+    for i in range(n):
         # search for the next 
         while neg < n and A[neg] > 0: neg += 1
         while pos < n and A[pos] < 0: pos += 1

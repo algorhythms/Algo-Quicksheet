@@ -61,7 +61,7 @@ $$
 To determine whether a string is palindrome:
 \begin{python}
 def is_palindrome(s):
-  return all(s[i] == s[~i] for i in xrange(len(s)/2)) 
+  return all(s[i] == s[~i] for i in range(len(s)/2)) 
 \end{python}
 
 \runinhead{Divide by 2.} To divide a number by 2, it should be \pyinline{x >> 1} rather than \pyinline{x >> 2}. 

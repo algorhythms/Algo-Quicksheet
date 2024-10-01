@@ -48,7 +48,7 @@ def swim(self, idx):
 Core clue: bottom-up sink().
 \begin{python}
 def heapify(self):
-    for i in xrange(self.N/2, 0, -1):
+    for i in range(self.N/2, 0, -1):
         self.sink(i);
 \end{python}
 \runinhead{Complexity.} Heapifying \textbf{a sorted array} is the worst case for heap construction, because the root of each subheap considered sinks all the way to the bottom. The worst case complexity $\sim 2N$. 
