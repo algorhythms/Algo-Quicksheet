@@ -6,7 +6,7 @@
 \item get the idx equal or just lower (floor)
 \item get the idx equal or just higher (ceil)
 \item \pyinline{bisect_left}
-\item \pyinline{bisect_right} 
+\item \pyinline{bisect_right} $\equiv$ \pyinline{bisect} 
 \end{enumerate}
 
 Note the subtle differences.
@@ -32,6 +32,25 @@ def bin_search(self, A, t, lo=0, hi=None):
 
     return lo-1
 \end{python}
+
+Using \pyinline{bisect_left} with multiple pre-checks to simply the find process.
+\begin{python}
+def find(A, v):
+  # A is sorted 
+  if not A:
+    return None
+  if v >= A[-1]:
+    return A[-1]
+  if v < A[0]:
+    return None
+    
+  idx = bisect_left(A, v)
+  if A[idx] == v:
+    return v
+  idx -= 1  # already checked before
+  return A[idx]
+\end{python}
+
 \subsection{idx equal or just higher}
 $A_{idx} \geq target$.
 \begin{python}
@@ -49,6 +68,8 @@ def bin_search(self, A, t, lo=0, hi=None):
 \subsection{bisect\_left}
 Return the index where to insert item x in list A. So if t already appears in the list,
 A.insert(t) will insert just before the \textit{leftmost} t already there.
+
+By insertion point \pyinline{i}, it means \pyinline{all(val <= x for val in A[lo:i])} for the left side and \pyinline{all(val > x for val in A[i:hi])} for the right side. \pyinline{A[i]} is the first element larger than x. 
 \runinhead{Core clues:}
 \begin{enumerate}
 \item Move \pyinline{lo} if $A_{mid} < t$

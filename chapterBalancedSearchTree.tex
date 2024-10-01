@@ -10,14 +10,14 @@ Insertion into a 3-node at bottom:
 \end{enumerate}
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.8]{23insert1}}
+\subfloat{\includegraphics[width=\linewidth]{23insert1}}
 \caption{Insertion 1}
 \label{fig:LABEL}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.8]{23insert2}}
+\subfloat{\includegraphics[width=0.8\linewidth]{23insert2}}
 \caption{insert 2}
 \label{fig:LABEL}
 \end{figure}
@@ -26,7 +26,7 @@ Insertion into a 3-node at bottom:
 Summary of splitting the tree. 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.65]{23splitting}}
+\subfloat{\includegraphics[width=\linewidth]{23splitting}}
 \caption{Splitting temporary 4-ndoe summary}
 \label{fig:splitting}
 \end{figure}
@@ -38,7 +38,7 @@ When inserting a new key into a 2-3 tree, under which one of the following scena
 \subsection{Properties}
 Red-black tree is an implementation of 2-3 tree using \textbf{leaning-left red link}. \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=1.1]{rbtree11}}
+\subfloat{\includegraphics[width=\linewidth]{rbtree11}}
 \caption{RB-tree and 2-3 tree}
 \label{fig:LABEL}
 \end{figure}
@@ -54,14 +54,14 @@ The height of the RB-tree is at most $2\lg N$ where alternating red and black li
 \end{enumerate}
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=1.20]{rbrotate}}
+\subfloat{\includegraphics[width=\linewidth]{rbrotate}}
 \caption{Rotate left/right}
 \label{fig:LABEL}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=1.20]{rbflip}}
+\subfloat{\includegraphics[width=\linewidth]{rbflip}}
 \caption{Flip colors}
 \label{fig:LABEL}
 \end{figure}
@@ -96,7 +96,7 @@ Node put(Node h, Key key, Value val) {
 Rotate left, rotate right, then flip colors.
 
 \runinhead{Illustration of cases.} Insert into a single 2-node: Figure-\ref{fig:rb_2}. Insert into a single 3-node: Figure-\ref{fig:rb_3}
-\begin{figure}[t]
+\begin{figure}[hbtp]
 \begin{tabular}{cc}
   \includegraphics[height = 1.7in]{rb_left} &
   \includegraphics[height = 1.7in]{rb_right}\\
@@ -105,8 +105,8 @@ Rotate left, rotate right, then flip colors.
 \label{fig:rb_2}
 \end{figure}
 
-\begin{figure}[t]
-        \centerline{\includegraphics[height = 2.8in]{rb_3_left_right_btw}}
+\begin{figure}[hbtp]
+        \centerline{\includegraphics[width=\linewidth]{rb_3_left_right_btw}}
         \caption{(a) larger than 3-node (b) smaller than 3-node (c) between 3-node.}
     \label{fig:rb_3}
 \end{figure}
@@ -115,23 +115,25 @@ Rotate left, rotate right, then flip colors.
 
 \section{B-Tree}
 B-tree is the generalization of 2-3 tree. 
-\begin{figure}[hbtp]
+\begin{figure*}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.50]{b-tree}}
+\subfloat{\includegraphics[width=\linewidth]{b-tree}}
 \caption{B-Tree}
 \label{fig:b-tree}
-\end{figure}
+\end{figure*}
 \subsection{Basics}
 Half-full principle: 
 
+\begin{table}
 \begin{tabular}{lll}
 \hline\noalign{\smallskip}
 \textbf{Attrs} & \textbf{Non-leaf} & \textbf{Leaf} \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
-Ptrs & \lceil\frac{n+1}{2}\rceil & \lfloor\frac{n+1}{2}\rfloor \\
-\noalign{\smallskip}\hline\noalign{
-\caption{Nodes at least half-full}
+Ptrs & $\lceil\frac{n+1}{2}\rceil$ & $\lfloor\frac{n+1}{2}\rfloor$ \\
+\noalign{\smallskip}\hline\noalign{\smallskip}
 \end{tabular}
+\caption{Nodes at least half-full}
+\end{table}
 
 \subsection{Operations}
 \subsubsection{Insertion}
@@ -165,7 +167,7 @@ RB-Tree is preferred since shorter implementation code.
 Also known as max tree (or min tree). The root is the maximum number in the array. The left subtree and right subtree are the max trees of the subarray divided by the root number.
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.60]{Cartesian_tree}}
+\subfloat{\includegraphics[width=\linewidth]{Cartesian_tree}}
 \caption{Cartesian Tree}
 \label{fig:cartesianTree}
 \end{figure}
@@ -182,7 +184,7 @@ Given [2, 5, 6, 0, 3, 1], the max tree is
 Core clues:
 \begin{enumerate}
 \item Use stack to maintain a \textit{strictly decreasing} stack, similar to find the all nearest large elements.
-\itm Maintain the tree for currently scanning $A_i$ with the subarray $A[:i]$.
+\item Maintain the tree for currently scanning $A_i$ with the subarray $A[:i]$.
 \begin{enumerate}
 \item \rih{Left tree.} For each currently scanning node $A_i$, if ${stk}_{-1} \leq A_i$, then ${stk}_{-1}$ is the left subtree of $A_i$. Then pop the stack and iteratively look at ${stk}_{-1}$ again (previously ${stk}_{-2}$). Notice that the original left subtree of $A_i$ should become the right subtree of ${stk}_{-1} $, because the original left subtree appears later and satisfies the decreasing relationship.
 \item \rih{Right tree.} In this stack, ${stk}_{-1} < {stk}_{-2}$ and ${stk}_{-1}$ appears later than ${stk}_{-2}$; thus ${stk}_{-1}$ is the right subtree of ${stk}_{-2}$. The strictly decreasing relationship of stack will be processed when popping the stack. 
@@ -219,7 +221,7 @@ Usually, min tree is more common.
 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.80]{treap}}
+\subfloat{\includegraphics[width=\linewidth]{treap}}
 \caption{Treap. Each node x is labeled with x.key: x.priority.}
 \label{fig:treap}
 \end{figure}

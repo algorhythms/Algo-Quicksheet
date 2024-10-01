@@ -7,7 +7,7 @@ $A_{2i} \leq A_{i} \geq A_{2i+1}$.
 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[height=1.3in]{heap}}
+\subfloat{\includegraphics[width=\linewidth]{heap}}
 \caption{Heap}
 \label{fig:heap}
 \end{figure}
@@ -21,7 +21,7 @@ Basic operations:
 \item build()/ heapify() - bottom-up sink()
 \end{enumerate}
 \subsection{Sink (sift\_down)}
-Core clue: compare parent to the \textit{larger} child. 
+Core clue: compare parent to the \textit{larger} child (because we want to maintain the heap invariant). 
 \begin{python}
 def sink(self, idx):
     while 2*idx <= self.N:
@@ -34,7 +34,7 @@ def sink(self, idx):
         self.swap(idx, c)
         idx = c
 \end{python}
-
+We can return the \pyinline{idx} at the end to report the final index of the element. 
 \subsection{Swim (sift\_up)}
 Core clue: compare child to its parent. 
 \begin{python}
@@ -79,7 +79,7 @@ It is possible to have 3-heap. A 3-heap is an array representation (using 1-base
 The children of $a[k]$ are $a[3k-1]$, $a[3k]$, and $a[3k+1]$.
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.90]{heapRepr}}
+\subfloat{\includegraphics[width=\linewidth]{heapRepr}}
 \caption{Heap representation}
 \label{fig:heap} 
 \end{figure}

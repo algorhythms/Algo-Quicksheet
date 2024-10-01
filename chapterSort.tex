@@ -26,7 +26,7 @@ List of general algorithms:
 \subsection{Quick Sort}
 \subsubsection{Normal pivoting}\label{section:pivot}
 The key part of quick sort is pivoting:
-\newpage
+
 \begin{python}
 def pivot(self, A, lo, hi):
     """
@@ -34,9 +34,9 @@ def pivot(self, A, lo, hi):
     | p | closed set | open set |
     | closed set | p | open set |
     """
-    p = lo
-    closed = p
-    for i in xrange(lo, hi):
+    p = lo  # index 
+    closed = lo  # index
+    for i in range(lo + 1, hi):
         if A[i] < A[p]:
             closed += 1
             A[i], A[closed] = A[closed], A[i]
@@ -114,7 +114,7 @@ def pivot_3way(self, A, lo, hi):
 \subsection{Merge Sort}
 \begin{figure}[!htp]
 \centering
-\subfloat{\includegraphics[scale=.80]{msort}}
+\subfloat{\includegraphics[width=\linewidth]{msort}}
 \caption{Merge Sort}
 \label{fig:msort}
 \end{figure}
@@ -261,7 +261,7 @@ Algorithms:
 \textbf{Long-distance swap} operation is the key to find the unstable case during sorting. 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=.50]{stable_sort}}
+\subfloat{\includegraphics[width=\linewidth]{stable_sort}}
 \caption{Stale sort vs. unstable sort}
 \label{fig:trie} 
 \end{figure}
@@ -300,12 +300,13 @@ of order.
 
 \subsection{Sorting Summary}
 See Figure \ref{fig:sortSummary}.
-\begin{figure*}[hbtp]
+\begin{figure*}[h]
 \centering
-\subfloat{\includegraphics[scale=1.2]{sort_summary}}
+\subfloat{\includegraphics[width=\linewidth]{sort_summary}}
 \caption{Sort summary}
 \label{fig:sortSummary} 
 \end{figure*}
+
 \section{Partial Quicksort}
 \subsection{Find $k$ smallest}
 \runinhead{Heap-based solution.} $O(n \log k)$
@@ -322,7 +323,7 @@ heapq.nlargest(n, iterable[, key])
 heapq.nsmallest(n, iterable[, key])
 \end{python}
 
-\newpage
+
 \runinhead{Partial Quicksort}  Then the $A[:k]$ is sorted $k$ smallest. The algorithm recursively sort the $A[lo:hi]$
 
 The average time complexity is
@@ -352,8 +353,20 @@ The average time complexity is
 F(n) &= F(n/2) + O(n) \\
 &= O(n)
 \end{align*}
+Refresh the \pyinline{def pivot}:
+\begin{python}
+def pivot(self, A, lo, hi):
+    pivot = lo
+    closed = pivot  # closed == pivot, means no closed set
+    for i in range(lo + 1, hi):
+        if A[i] < A[pivot]:
+            closed += 1
+            A[closed], A[i] = A[i], A[closed]
 
-Find $k$-th with 2-way partitioning
+    A[closed], A[pivot] = A[pivot], A[closed]
+    return closed  # the pivot index
+\end{python}
+Find $k$-th with 2-way partitioning. Notice that only index changing while $k$ is the same.
 \begin{python}
 def find_kth(self, A, lo, hi, k):
     if lo >= hi: return
@@ -483,7 +496,7 @@ Therefore the Merge-and-count key is \pyinline{ret += len(A1) - i1}
 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[scale=1.20]{mergeAndSort.png}}
+\subfloat{\includegraphics[width=\linewidth]{mergeAndSort.png}}
 \caption{Merge and Count}
 \label{fig:mergeAndSort}
 \end{figure}
@@ -630,7 +643,7 @@ Brute force can be done in $O(n^2)$. Put the $A[i].val$ into $R$ at slot s.t. th
 Caveat: need to sort the array in the preprocessing step. 
 
 Reconstruction of array cannot use BIT since there is no map of $prefixSum \rightarrow i$.
-\newpage
+
 \begin{python}
 class Node(object):
   def __init__(self, lo, hi, cnt):
