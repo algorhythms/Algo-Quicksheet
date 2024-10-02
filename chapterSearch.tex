@@ -120,7 +120,7 @@ If the elements can be duplicated, need to detect and skip.
 def findMin(self, A):
     lo = 0
     hi = len(A)
-    mini = sys.maxint
+    mini = sys.maxsize
     while lo < hi:
         mid = (lo+hi)/2
         mini = min(mini, A[mid])

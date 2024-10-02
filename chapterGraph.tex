@@ -17,7 +17,7 @@ dfs & $O(|E|)$ & $O(|V|), O(\text{longest path})$ \\
 bfs & $O(|E|)$ & $O(|V|)$ \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
 \end{tabular}
-\caption{CAPTIONS}
+\caption{Time complexities}
 \end{table}
 
 \runinhead{Graph \& Tree.} For a undirected graph to be a tree, it needs to satisfied two conditions:
@@ -36,7 +36,7 @@ Answer: 3
 \end{python}
 \rih{Clue}:
 \begin{enumerate}
-\item Iterative dfs
+\item Iterative DFS
 \end{enumerate}
 \begin{python}
 class Solution(object):
@@ -69,13 +69,17 @@ class Solution(object):
         not visited[I][J] and grid[I][J] == "1"):
         self.dfs(grid, I, J, visited)
 \end{python}
-If the islands are constantly updating and the query for number of islands is called multiple times, need to use union-find (Section \ref{section:unionFind}) to reduce each query's complexity from $O(mn)$ to $O(\log mn)$.
+If the islands are constantly updating and the query for number of islands is called multiple times, need to use Union-Find (Section \ref{section:unionFind}) to reduce each query's complexity from $O(mn)$ to $O(\log mn)$.
+
+Without updating, DFS itself is enough.
 
 \section{BFS}
 \subsection{BFS with Abstract Level}
-Start bfs with a set of vertices in abstract level, not necessarily neighboring vertices.
+BFS goes through the vertices level by level in a queue. 
 
-Example: $-1$ obstacles, $0$ targets, calculate all other vertices' Manhattan distance to its nearest target:
+Distance can be arbitrarily defined. BFS can start with a set of vertices in abstract level of distance, not necessarily neighboring vertices.
+
+Example: $-1$ denotes obstacles, $0$ denotes targets, calculate all other vertices' Manhattan distance to its nearest target:
 $$
 \begin{bmatrix}
 \infty & -1 & 0 & \infty \\
@@ -85,7 +89,7 @@ $$
 \end{bmatrix}
 $$
 
-is calculated as:
+Then it is calculated as:
 $$
 \begin{bmatrix}
 3 & -1 & 0 & 1 \\
@@ -94,19 +98,23 @@ $$
 0 & -1 & 3 & 4 \\
 \end{bmatrix}
 $$
-\newpage
+
 \rih{Code:}
 \begin{python}
 self.dirs = ((-1, 0), (1, 0), (0, -1), (0, 1))
 
 def wallsAndGates(self, mat):
-  q = [(i, j) for i, row in enumerate(mat)
-     for j, val in enumerate(row) if val == 0]
-  for i, j in q:  # iterator
+  q = [
+    (i, j) 
+    for i, row in enumerate(mat)
+    for j, cell in enumerate(row) 
+    if cell == 0
+  ]
+  for i, j in q:
     for d in self.dirs:
       I, J = i+d[0], j+d[1]
-      if (0 <= I < m and  0 <= J < n and
-        mat[I][J] > mat[i][j]+1):
+      if 0 <= I < m and 0 <= J < n 
+        and mat[I][J] > mat[i][j]+1:  # test distance
         mat[I][J] = mat[i][j]+1
         q.append((I, J))
 \end{python}
@@ -114,12 +122,12 @@ def wallsAndGates(self, mat):
 
 \section{Detect Acyclic}
 \begin{enumerate}
-\item \pythoninline{marked} is reset after a dfs.
+\item \pythoninline{path} represent the current path, and it is reset after a dfs.
 \item \pythoninline{visited} should be updated only in the end of the dfs.
 \item For directed graph:
 \begin{enumerate}
 \item Should dfs for all neighbors except for vertices in \pythoninline{visited}, to avoid revisiting. For example, avoid revisiting A, B when start from C in the graph $C \rightarrow A \rightarrow B$.
-\item Excluding predecessor \pythoninline{pi} is erroneous in the case of $A \leftrightarrow B$
+\item Excluding predecessor \pythoninline{pi} is wrong considering the case of $A \leftrightarrow B$
 \end{enumerate}
 \item For undirected graph:
 \begin{enumerate}
@@ -132,17 +140,17 @@ def wallsAndGates(self, mat):
 Detect cycles (any) in directed graph.
 
 \begin{python}
-def dfs(self, V, v, visited, pathset):
-  if v in pathset:
+def dfs(self, V, v, visited, path):
+  if v in path:
     return False
 
-  pathset.add(v)
+  path.add(v)
   for nbr in V[v]:
     if nbr not in visited:
-      if not self.dfs(V, nbr, visited, pathset):
+      if not self.dfs(V, nbr, visited, path):
         return False
 
-  pathset.remove(v)
+  path.remove(v)
   visited.add(v)
   return True
 \end{python}
@@ -152,24 +160,24 @@ def dfs(self, V, v, visited, pathset):
 Detect cycles (any) in undirected graph.
 
 \begin{python}
-def dfs(self, V, v, pi, visited, pathset):
-  if v in pathset:
+def dfs(self, V, v, pi, visited, path):
+  if v in path:
     return False
 
-  pathset.add(v)
+  path.add(v)
   for nbr in V[v]:
     if nbr != pi:
-      if not self.dfs(V, nbr, v, visited, pathset):
+      if not self.dfs(V, nbr, v, visited, path):
         return False
 
-  pathset.remove(v)
+  path.remove(v)
   visited.add(v)
   return True
 \end{python}
 \section{Directed Graph}
-Use \pyinline{G  = defaultdict(dict)} to represent directed graph, so that later on the edge weight can be accessed as \pyinline{G[s][e]}.
+Use \pyinline{G  = defaultdict(dict)} to represent directed graph, so that later on the edge weight can be accessed as \pyinline{G[s][e]}. The \pyinline{s} start and \pyinline{e} end are the vertices, and \pyinline{G[s][e]} returns edge weight.
 
-\runinhead{dfs.} Dfs in directed graph:
+\runinhead{DFS.} DFS in directed graph:
 \begin{python}
 def dfs(self, G, s, e, path):
     if s not in G or e not in G:
@@ -188,12 +196,12 @@ def dfs(self, G, s, e, path):
 \end{python}
 
 \section{Paths}
-\subsection{Euler Path} 
-an Eulerian path is a path in a graph which visits every edge exactly once ($\forall e \in E$).
+\subsection{Euler Path - Every Edge Once} 
+An Eulerian path is a path in a graph which visits every edge exactly once ($\forall e \in E$). Vertices can be repeated.
 
 Hierholzer's algorithm to find an Euler path in a graph. The graph must be directed graph.
 
-\runinhead{Core clue.} The algorithm exhaustively visit all the edges during the dfs. 
+\runinhead{Core clue.} The algorithm exhaustively visit all the edges during the dfs. We must \textbf{remove} the edge after visting, otherwise circle.
 \begin{python}
 def findItinerary(self, tickets):
     G = defaultdict(list)
@@ -207,12 +215,35 @@ def findItinerary(self, tickets):
 
 def dfs(self, G, cur, ret):
     while G[cur]:
-        self.dfs(G, heapq.heappop(G[cur]), ret)
+        # need to remove the edge after visting
+        nbr = heapq.heappop(G[cur])
+        self.dfs(G, nbr, ret)
 
     ret.appendleft(cur)
 \end{python}
 
-\subsection{Hamiltonian Path} 
+Instead of using \pyinline{heapq}, using \pyinline{deque}.
+\begin{python}
+def findItinerary(self, tickets):
+    G = defaultdict(deque)
+    for s, e in tickets:
+        G[s].append(e)
+    
+    for s, l in G.items():
+        G[s] = deque(sorted(l))
+    
+    ret = deque()
+    self.dfs(G, "JFK", ret)
+    return list(ret)
+
+def dfs(self, G, cur, ret):
+    while G[cur]:
+        # need to remove the edge after visting
+        nbr = G[cur].popleft()
+        self.dfs(G, nbr, ret)
+\end{python}
+
+\subsection{Hamiltonian Path - Every Vertex Once} 
 
 A Hamiltonian path is a path in a graph which visits every vertex exactly once ($\forall v \in V$). This problem is proved to be NP.
 
@@ -221,16 +252,16 @@ For a graph $G=\{V, E\}$, if $A \rightarrow B $, then $A$ is before $B$ in the o
 \subsection{Algorithm}
 \rih{Core clues}:
 \begin{enumerate}
-\item \textbf{Dfs neighbors first}. If the neighbors of current node is  $\neg$visited, then dfs the neighbors
+\item \textbf{DFS neighbors first}. If the neighbors of current node is  $\neg$visited, then dfs the neighbors
 \item \textbf{Process current node}. After visiting all the neighbors, then visit the current node and push it to the result queue.
 
 \end{enumerate}
 Notice:
 \begin{enumerate}
 \item Need to check ascending order or descending order.
-\item Need to \textbf{detect cycle}; thus the dfs need to construct result queue and detect cycle simultaneously, by using two sets: $visited$ and $pathset$.
+\item Need to \textbf{detect cycle}; thus the dfs need to construct result queue and detect cycle simultaneously, by using two sets: $visited$ and $path$.
 \end{enumerate}
-\newpage
+
 \begin{python}
 from collections import deque
 
@@ -245,22 +276,23 @@ def topological_sort(self, V):
 
   return list(ret)
 
-def dfs_topo(self, V, v, visited, pathset, ret):
-  if v in pathset:
+# return whether the current path is acyclic
+def dfs_topo(self, V, v, visited, path, ret) -> bool:
+  if v in path:
     return False
 
-  pathset.add(v)
+  path.add(v)
   for nbr in V[v]:
     if nbr not in visited:
-      if not self.dfs_topo(V, nbr, visited, pathset, ret):
+      if not self.dfs_topo(V, nbr, visited, path, ret):
         return False
 
-  pathset.remove(v)
+  path.remove(v)
   visited.add(v)
   ret.appendleft(v)
   return True
 
-# code the visited 
+# encode the visited using 0, 1, 2
 def dfs_topo(
   self, 
   G: Dict[int, List[int]], 
@@ -272,7 +304,7 @@ def dfs_topo(
   Topological sort
   G = defaultdict(list)
   visited = defaultdict(int) 
-  # 0 not visited, 1 visiteding, 2 visted
+  # 0 not visited, 1 visiting, 2 visited
 
   pre-condition: u is not visited (0)
   """
@@ -296,6 +328,40 @@ The time complexity of topological sorting is $O(|E|+|V|)$ since it needs to goe
 \end{enumerate}
 
 \section{Union-Find}\label{section:unionFind}
+\subsection{Simplified Union Find}
+Simplified code with unbalanced size. Union-find and disjoint set are used interchangeably. Union-find emphasizes on algorithm while disjoint set emphasizes on data structure.
+
+\rih{Core clues:}
+\begin{enumerate}
+\item \textbf{$\pi$ array}:an array to store each item's predecessor pi. The predecessor are lazily updated to its ancestor. When \pyinline{x == pi[x]}, then \pyinline{x} is the ancestor (i.e. root).
+\end{enumerate}
+\begin{python}
+class DisjointSet:
+    def __init__(self):
+        self.pi = {}
+
+    def union(self, x, y):
+        pi_x = self.find(x)
+        pi_y = self.find(y)
+        self.pi[pi_y] = pi_x
+
+    def find(self, x):
+        if x not in self.pi:
+            self.pi[x] = x
+        elif self.pi[x] != x:
+            self.pi[x] = self.find(self.pi[x])
+        return self.pi[x]
+\end{python}
+
+Note, for the final counting of component. Need to do a final find on all nodes to
+update the ancestor.
+\begin{python}
+component_cnt = len(set(
+    ds.find(x)
+    for x in ds.pi.keys()
+))
+\end{python}
+
 Improvements:
 \begin{enumerate}
 \item Weighting: size-baladnced tree
@@ -303,9 +369,9 @@ Improvements:
 \end{enumerate}
 \subsection{Algorithm}
 Weighted union-find with path compression.\\
-\rih{Core clues.}
+\rih{Core clues:}
 \begin{enumerate}
-\item \textbf{$\pi$ array}:an array to store each item's predecessor pi. The predecessor are lazily updated to its ancestor. When \pyinline{x == pi[x]}, then \pyinline{x} is the ancestor (i.e. root).
+\item \textbf{$\pi$ array}: predecessor pi.
 \item \textbf{Size-balanced}: merge the tree according to the size to maintain balance.
 \item \textbf{Path compression}: Make the ptr in $\pi$ array to point to its root rather than its immediate parent.
 \end{enumerate}
@@ -359,36 +425,6 @@ class UnionFind(object):  # or DisjointSet
 \subsection{Complexity}
 $m$ union-find with $n$ objects: $O(n)+m O(\lg n)$
 
-\subsection{Simplified Union Find}
-Simplified code with unbalanced size. 
-\begin{python}
-class DisjointSet:
-    def __init__(self):
-        self.pi = {}
-
-    def union(self, x, y):
-        pi_x = self.find(x)
-        pi_y = self.find(y)
-        self.pi[pi_y] = pi_x
-
-    def find(self, x):
-        # LHS self.pi[x]
-        if x not in self.pi:
-            self.pi[x] = x
-        if self.pi[x] != x:
-            self.pi[x] = self.find(self.pi[x])
-        return self.pi[x]
-\end{python}
-
-Note, for the final counting of component. Need to do a final find on all nodes to
-update the ancestor.
-\begin{python}
-component_cnt = len(set(
-    ds.find(x)
-    for x in ds.pi.keys()
-))
-\end{python}
-
 \section{Axis Projection}
 Project the mat dimension from 2D to 1D, using \textit{orthogonal axis}.
 
@@ -401,7 +437,7 @@ $$
 \end{bmatrix}
 $$
 
-Clues:
+\rih{Clues:}
 \begin{enumerate}
 \item Project the 1's onto x-axis, binary search for the left bound and right bound of the bounding box. 
 \item We don't pre-project the axis beforehand, since it will take $O(mn)$ to collect the projected 1d array. Instead, we only project it during binary search when checking the mid item. Checking takes $O(m)$, searching takes $O(\log n)$. 

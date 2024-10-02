@@ -19,7 +19,7 @@ Implementation (for both queue and stack):
 \end{enumerate}
 Python Library:
 \begin{enumerate}
-\item \pythoninline{collections.deque} \footnote{The naming in Python collections is awkward: \href{http://stackoverflow.com/questions/18953681/naming-convention-in-collections-why-are-some-lowercase-and-others-capwords}{discussion}.}
+\item \pythoninline{collections.deque} \footnote{The lowercase and uppercase naming in Python collections are awkward: \href{http://stackoverflow.com/questions/18953681/naming-convention-in-collections-why-are-some-lowercase-and-others-capwords}{discussion}.}
 \item \pythoninline{list}
 \item \pythoninline{dict, OrderedDict, defaultdict}
 \end{enumerate}
@@ -29,6 +29,32 @@ Java Library:
 \item \javainline{java.util.LinkedList<E>}
 \item \javainline{java.util.HashMap<K, V>; java.util.TreeMap<K, V>}
 \end{enumerate}
+
+\section{Python Library}
+\begin{python}
+from collections import defaultdict
+counter = defaultdict(int)
+G = defaultdict(list)  # graph of v -> neighbors
+G = defaultdict(dict)  # G[s][e] -> weight
+
+
+from collections import deque
+path = deque()
+path.appendleft("a")
+path.append("b")
+path.popleft()
+path.pop()
+path = deque(sorted(path))
+
+
+import heapq
+l = []  # list 
+heapq.heappush(l, "a")
+heapq.heappop(l)
+heapq.heapify(l)
+heapq.heappushpop(l, "b")
+heapq.nsmallest(3, l)
+\end{python}
 
 \section{Stack}
 \subsection{Stack and Recursion}
@@ -40,7 +66,7 @@ How a compiler implements a function:
 
 Recursive function: function calls itself. It can always be implemented by using an explicit stack to remove recursion. 
 
-Stack can convert recursive \textbf{dfs} to iterative. 
+Stack can convert recursive DFS to iterative. 
 
 \subsection{Usage}
 The core philosophy of using stack is to maintain a relationship invariant among stack element. 
@@ -51,51 +77,7 @@ The \textbf{relationship invariants} can be:
 \item non-desc/ non-asc
 \end{enumerate}
 
-\subsection{Applications}
-\runinhead{Largest Rectangle.} Find the largest rectangle in the matrix (histogram). Given $n$ non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram. 
-
-\begin{figure}[]
-\centering
-\subfloat{\includegraphics[width=0.5\linewidth]{histogram_area}}
-\caption{Largest rectangle in histogram}
-\label{fig:histogram_area}
-\end{figure}
-
-Keep a stack storing the bars in non-decreasing, then calculate the area by popping out the stack to get the currently lowest bar which determines the height of the rectangle.
-\\
-Core clues:
-\begin{enumerate}
-\item \textbf{Invariant}: Maintain the non-decreasing stack, using INDEX.
-\item Popping triggers the calculation of area
-\item Calculate the rectangle width by index diff
-\item Post-processing in the end
-\end{enumerate}
-
-Code:
-\begin{python}
-def largestRectangleArea(self, height):
-    n = len(height)
-    gmax = -sys.maxint-1
-    stk = []  # store the idx, non-decreasing stack
-
-    for i in range(n):
-        while stk and height[stk[-1]] > height[i]:
-            last = stk.pop()
-            if stk:  # calculate area when popping
-                area = height[last]*(i-(stk[-1]+1))
-            else:
-                area = height[last]*i
-            gmax = max(gmax, area)
-
-        stk.append(i)
-
-    # after array scan, process the dangling stack
-    i = n
-    ...
-
-    return gmax
-\end{python}
-
+\subsection{Unpaired Parentheses}
 \runinhead{Longest Valid Parentheses.} 
 Given a string containing just the characters `(' and `)', find the length of the longest valid (well-formed) parentheses substring. Core clues:
 \begin{enumerate}
@@ -120,16 +102,17 @@ def longestValidParentheses(self, s):
   return maxa
 
 \end{python}
-\subsection{All nearest smaller values}\label{allNearestSmaller}
-\textbf{Nearest smaller}. Left neighbor of a value $v$ to be the value that occurs prior to $v$, is smaller than $v$, and is closer in position to $v$ than any other smaller value.
+
+\subsection{Nearest smaller value}\label{allNearestSmaller}
+\textbf{Nearest smaller value for each}. Left neighbor of a value $v$ to be the value that occurs prior to $v$, is smaller than $v$, and is closer in position to $v$ than any other smaller value.
 
 For each position in a sequence of numbers, search among the \textit{previous} positions for the last position that contains a smaller value. 
 
-Core clues:
+\rih{Core clues:}
 \begin{enumerate}
-\item Nearest $\equiv$ spactial locality.
+\item Nearest $\equiv$ spatial locality.
 \item \textbf{Invariant}: Maintain a \textit{strictly increasing} stack.  
-\item If all nearest \textit{larger} values, maintain a \textit{strictly decreasing} stack.  
+\item If the question asks for all nearest \textit{larger} values, maintain a \textit{strictly decreasing} stack.  
 \end{enumerate}
 
 \begin{python}
@@ -137,7 +120,8 @@ def allNearestSmaller(self, A):
     P = [-1 for _ in A]
     stk = []
     for i, v in enumerate(A):
-        while stk and A[stk[-1]] >= v: stk.pop()
+        while stk and A[stk[-1]] >= v:
+            stk.pop()
 
         if stk:
             P[i] = stk[-1]
@@ -147,6 +131,57 @@ def allNearestSmaller(self, A):
         stk.append(i)  # store the idx or val
 
     return P
+\end{python}
+
+
+\subsection{Non-Decreasing Stack}
+\runinhead{Largest Rectangle.} Find the largest rectangle in the matrix (histogram). Given $n$ non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram. 
+
+\begin{figure}[]
+\centering
+\subfloat{\includegraphics[width=0.5\linewidth]{histogram_area}}
+\caption{Largest rectangle in histogram\\ $i \ra$ height 2, $cur \ra$ height 6, 5, 1}
+\label{fig:histogram_area}
+\end{figure}
+
+Keep a stack storing the bars in non-decreasing, then calculate the area by popping out the stack to get the currently lowest bar which determines the height of the rectangle.
+\\
+\rih{Core clues:}
+\begin{enumerate}
+\item \textbf{Invariant}: Maintain the non-decreasing stack, using INDEX.
+\item Popping triggers the calculation of area
+\item Calculate the rectangle width by index diff
+\item Post-processing in the end
+\end{enumerate}
+
+Code:
+\begin{python}
+def largestRectangleArea(self, heights):
+    n = len(heights)
+    gmax = -sys.maxsize-1
+    stk = []  # store the idx, non-decreasing stack
+
+    for i in range(n):
+        while stk and height[stk[-1]] > height[i]:
+            cur = stk.pop()
+            # calculate area when popping
+            if stk:
+                # lower bound stk[-1] + 1
+                # higher bound i 
+                l = i-(stk[-1]+1)
+            else:
+            	l = i
+	
+            area = height[cur]*l
+            gmax = max(gmax, area)
+
+        stk.append(i)
+
+    # after array scan, process the dangling stack
+    i = n
+    ...
+
+    return gmax
 \end{python}
 
 \section{Map}
