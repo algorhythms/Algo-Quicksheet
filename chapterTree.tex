@@ -3,48 +3,55 @@
 \section{Binary Tree}
 \subsection{Basic Operations}
 \runinhead{Get parent ref.} To get a parent reference (implicitly), \textit{return the Node} of the current recursion function to its parent to maintain the path. Sample code:
-\begin{java}
-Node deleteMin(Node x) {
-    if (x.left == null) return x.right;
-    x.left = deleteMin(x.left);
-    return x;
-}
-\end{java}
+\begin{python}
+# delete minimum node in the BST
+def delete_min(x: Node) -> Node:
+    if not x.left:
+        return x.right
+    x.left = delete_min(x.left)
+    return x
+\end{python}
 
 \runinhead{Max depth.} DFS solution
 \begin{python}
-def fathom(self, root, depth):
-    if not root: return depth
-    else: return max(self.fathom(root.left, depth+1), 
-                     self.fathom(root.right, depth+1))
+def probe(self, cur, depth):
+    if not root:
+        return depth
+    else:
+        return max(
+            self.probe(cur.left, depth+1), 
+            self.probe(cur.right, depth+1),
+      )
 \end{python}
 
 \runinhead{Min depth.} Definition of min depth, lowest depth of leaf node. 
 
-Notice, that the additional checking is necessary.
+Notice, that the additional checks are necessary of missing either right or left child.
 \begin{python}
-def fathom(self, root, depth):
-    if not root: 
+def probe(self, cur, depth):
+    if not cur: 
         return depth
-    elif root.right and not root.left: 
-        return self.fathom(root.right, depth+1)
-    elif root.left and not root.right: 
-        return self.fathom(root.left, depth+1)
+    elif cur.right and not cur.left: 
+        return self.probe(cur.right, depth+1)
+    elif cur.left and not cur.right: 
+        return self.probe(cur.left, depth+1)
     else: 
-        return min(self.fathom(root.left, depth+1), 
-                   self.fathom(root.right, depth+1))
+        return min(
+            self.probe(root.left, depth+1), 
+            self.probe(root.right, depth+1),
+        )
 \end{python}
 
 \runinhead{Height.} The height of a node is the number of edges from the node to the deepest leaf.
 
 \begin{python}
-def dfs(self, node):
-    if not node:
+def dfs(self, cur):
+    if not cur:
         return -1  # leaves index start from 0
 
     height = 1 + max(
-        self.dfs(node.left), 
-        self.dfs(node.right)
+        self.dfs(cur.left), 
+        self.dfs(cur.right),
     )
     
     # do something
@@ -52,51 +59,63 @@ def dfs(self, node):
     return height
 \end{python}
 
-Application: leaf by leaf traversal. 
+Application: leaf by leaf traversal by height. 
 \begin{python}
-def dfs(self, node, leaves):
-    if not node:
+def dfs(self, cur, leaves):
+    if not cur:
         return -1  # leaves index start from 0
 
     height = 1 + max(
-        self.dfs(node.left, leaves), 
-        self.dfs(node.right, leaves)
+        self.dfs(cur.left, leaves), 
+        self.dfs(cur.right, leaves),
     )
     if height >= len(leaves):
         leaves.append([])  # grow
 
-    leaves[height].append(node.val)
+    leaves[height].append(cur.val)
     return height
 \end{python}
 \runinhead{Construct path from root to a target.} To search a node in binary tree (not necessarily BST), use dfs:
 \begin{python}
-def dfs(self, root, t, path, found):
-    # post-call check
-    if not root: return        
-    if found[0]: return 
+def dfs(self, cur, target, path, found: List[bool]):
+    # post function call check
+    if not cur:
+      return        
+    if found[0]:
+      return 
 
-    path.append(root)
-    if root == t:
+    path.append(cur)
+    if cur == target:
         found[0] = True
 
-    self.dfs(root.left, t, path, found)
-    self.dfs(root.right, t, path, found)
+    self.dfs(cur.left, target, path, found)
+    self.dfs(cur.right, target, path, found)
     if not found[0]:
         path.pop()  # 1 pop() corresponds to 1 append()
 \end{python}
 The \pyinline{found} is a wrapper for boolean to keep it referenced by all calling stack. 
 
-\runinhead{Lowest common ancestor.} Method 1: In BST, the searching is straightforward. In normal binary tree, construct the path from root to $node_1$ and $node_2$ respectively, and \textbf{diff} the two paths. Time complexity: $O(\lg n)$, space complexity: $O(\lg n)$. 
+\runinhead{Lowest common ancestor.} In BST, the searching is straightforward. 
+\begin{python}
+def find_lca(self, cur, p, q):
+    if p.val > cur.val and q.val > cur.val:
+        return self.find_lca(cur.right, p, q)
+    if p.val < cur.val and q.val < cur.val:
+        return self.find_lca(cur.left, p, q)
+    return cur
+\end{python}
+
+Method 1: In normal binary tree, construct the path from root to $node_1$ and $node_2$ respectively, and \textbf{diff} the two paths. Time complexity: $O(\lg n)$, space complexity: $O(\lg n)$. 
 
 Method 2: If the parent pointer is provided, it is possible to reduce the space complexity to $O(1)$, by using two pointers: 
 \begin{python}
-def find_LCA(n1, n2):
+def find_lca(n1, n2):
     if not n1 or not n2:
         return None 
         
     d1, d2 = depth(n1), depth(n2)
     if d2 < d1:
-        return find_LCA(n2, n1)  # swap
+        return find_lca(n2, n1)  # swap
         
     # move to the same depth 
     for _ in range(d2-d1):
@@ -109,10 +128,13 @@ def find_LCA(n1, n2):
     return n1
 \end{python}
 
-\runinhead{Find all paths.} Find all paths from root to leafs. For every currently visiting node, add itself to path; search left, search right and pop itself. Record current result when reaching the leaf.
+\runinhead{Find all paths.} Find all paths from root to leafs. 
+
+For every currently visiting node, add itself to path; search left, search right and pop itself. Record current result when reaching the leaf.
 \begin{python}
 def dfs(self, cur, path, ret):
-    if not cur: return
+    if not cur:
+        return
 
     path.append(cur)
     if not cur.left and not cur.right:
@@ -120,7 +142,7 @@ def dfs(self, cur, path, ret):
 
     self.dfs(cur.left, path, ret)
     self.dfs(cur.right, path, ret)
-    path.pop()
+    path.pop()  # 1 append 1 pop
 \end{python}
 
 \runinhead{Leftmost node.} Find the leftmost node. 
@@ -129,9 +151,12 @@ def leftmost(self, cur, l):
     """
     :param l: offset from center 0, negative means left side. 
     """
-    if not cur: return l
-    return min(self.leftmost(cur.left, l-1), 
-               self.leftmost(cur.right, l+1))
+    if not cur:
+        return l
+    return min(
+        self.leftmost(cur.left, l-1), 
+        self.leftmost(cur.right, l+1),
+    )
 \end{python}
 
 Rightmost node can be similarly found.
@@ -173,8 +198,6 @@ def bfs(self, s, V):
 
 , where $V$ is the vertices of graph $G$.
 
-
-\newpage
 \subsection{Morris Traversal} 
 Traversal with O(1) space. \footnote{\href{http://www.cnblogs.com/AnnieKim/archive/2013/06/15/MorrisTraversal.html}{ref}}
 Three ways of traversal: in-order, pre-order, post-order.
@@ -676,7 +699,6 @@ class SegmentTree(object):
 \end{python}
 The above code abstracts out segment tree function using \pyinline{lambda}. For a concrete example, see Count Segment Tree \ref{inversionReconstruct}. 
 
-\newpage
 \section{Trie}
 \subsection{Basic}
 Trie is aka radix tree, prefix tree. 

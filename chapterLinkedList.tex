@@ -31,14 +31,18 @@ def reverseList(self, head):
     dummy.next = head
 
     pre = dummy
-    cur = pre.next
+    cur = head  # ... = dummy.next, not preferred
     while pre and cur:
+        assert pre.next == cur
         nxt = cur.next
-        # left to right eval for multi-assignment7
+        # op
         cur.next = pre
-        pre, cur = cur, nxt
-
-    dummy.next.next = None  # original head
+        
+        pre = cur
+        cur = nxt
+	
+	# original head pointing to dummy
+    head.next = None  # dummy.next.next = ..., not preferred
     return pre  # new head
 \end{python}
 Notice: the evaluation order for the swapping the nodes and links. 
