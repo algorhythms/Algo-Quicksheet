@@ -3,34 +3,38 @@
 \runinhead{Container With Most Water.} Given coordinate $(i, a_i)$, find two lines, which together with x-axis forms a container, such that the container contains the most water.
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[width=\linewidth]{Container-With-Most-Water.jpg}}
+\subfloat{\includegraphics[width=0.8\linewidth]{Container-With-Most-Water.jpg}}
 \caption{Container with Most Water}
 \label{fig:Container-With-Most-Water}
 \end{figure}
-Core clues:
+
+When calculate water area, the water height $h$ is constrained by $\min(h_{left}, h_{right})$. Core clues:
 \begin{enumerate}
 \item \textbf{Two pointers}: $start$, $back$ at two ends. Calculate the current area
 \item \textbf{Move one}: Move the shorter (lower height) pointer. 
 \end{enumerate}
 
+Why does this greedy algorithm work? When searching further, we always search the best one.  When searching the most-water container with length $l$, we always reach the maximum area. When shrinking the water length by 1, we always reach the higher height. 
+
+If we don't drop the lower side, we will always be constrained by the lower side. 
 \section{Circular Array}
 This section describes common patterns for solving problems with circular arrays.
 
 Normally, we should solve the linear problem and circular problem very differently.
 
 \subsection{Circular max sum}
-Linear problem can be solved linear with dp algorithm for maximum subarray sum - Section \ref{dpSequence}. 
+Linear (acyclic) problem can be solved linear with dp algorithm for maximum subarray sum - Section \ref{dpSequence}. 
 
 The circular sum should use dp. 
 
-Problem description: Given an integer array, find a continuous rotate subarray where the sum of numbers is the biggest. Return the index of the first number and the index of the last number. 
+Problem description: Given an integer array containing both positive and negative, find a continuous rotate subarray where the sum of numbers is the largest. Return the index of the first number and the index of the last number. 
 \runinhead{Core clues:}
 \begin{enumerate}
 \item \textbf{State definitions}: 
 
-Construct left max sum $L_i$ for max sum over the $[0..i]$ with subarray starting at 0 (\textit{forward} starting from the left side). 
+\rih{Max subarray sum from index 0}. Construct left max sum $L_i$ for max sum over the $[0..i]$ with subarray starting at 0 (\textit{forward} starting from the left side). 
 
-Construct right max sum $R_i$ for max sum over the indexes $[i+1..n -1]$, with subarray ending at -1 (\textit{backward} starting from the right side). 
+\rih{Max subarray sum from index -1}. Construct right max sum $R_i$ for max sum over the indexes $[i+1..n -1]$, with subarray ending at -1 (\textit{backward} starting from the right side). 
 
 Notice, for the two max sums, the index ends AT or BEFORE $i$.
 
@@ -49,10 +53,13 @@ Maximum sum of non-adjacent cells in an array $A$. (House robbery problem)
 
 To solve circular non-adjacent array problem in linear way, we should consider 2 cases:
 \begin{enumerate}
-\item Not consider the $A[1]$
-\item Not consider the $A[-1]$ 
+\item Consider the $A_i$
+\item Not consider the $A_i$ 
 \end{enumerate}
-and solve them using linear maximum sum of non-adjacent cells separately  - Section \ref{dpSequence}. 
+and solve them using linear maximum sum of non-adjacent cells separately - Section \ref{dpSequence}. 
+\begin{align*}
+F_{i} = \max\big(F_{i-1}, F_{i-2}+A_{i-1}\big)
+\end{align*}
 \subsection{Binary search}
 Searching for an element in a circular sorted array. Half of the array is sorted while the other half is not.
 \begin{enumerate}
@@ -114,29 +121,30 @@ Given an array of integers and a number k, the majority number is the number tha
 
 \begin{python}
 
-def majorityNumber(self, nums, k):
+def majorityNumber(self, A, k):
     """
     Since majority elements appears more 
     than ceil(n/k) times, there are at 
     most k-1 majority number
     """
     cnt = defaultdict(int)
-    for num in nums:
-        if num in cnt:
-            cnt[num] += 1
+    for e in A:
+        if e in cnt:
+            cnt[e] += 1
         else:
             if len(cnt) < k-1:
-                cnt[num] += 1
+                cnt[e] += 1
             else:
                 for key in cnt.keys():
                     cnt[key] -= 1
-                    if cnt[key] == 0: del cnt[key]
+                    if cnt[key] == 0:
+                        del cnt[key]
     
     
     # filter, double-check
     for key in cnt.keys():
-        if (len(filter(lambda x: x == key, nums)) 
-            > len(nums)/k):
+        if len(filter(lambda x: x == key, A)) 
+            > len(A)/k:
             return key
 
     raise Exception
@@ -154,7 +162,7 @@ Output:
 \end{lstlisting}
 Core clues:
 \begin{enumerate}
-\item In 1-pass.
+\item How to do it in O(N).
 \item What (positive or negative) is expected for the current position.
 \item Where is the next positive and negative element.
 \end{enumerate}
@@ -184,7 +192,7 @@ def rerange(self, A):
 
 \section{Index Remapping}
 \subsection{Introduction}
-\runinhead{Virtual Index.} Analogy to physical machine and virtual machine, the underlying indexing $i$ for array $A$ is the physical index. We can create virtual indexing $i'$ for the same array $A$ to map $A_{i'}$ to the physical entry $A_{i}$.
+\runinhead{Virtual Index.} Similar to physical and virtual machine, the underlying indexing $i$ for an array $A$ is the physical index, while we can create virtual indexing $i'$ for the same array $A$ to map $A_{i'}$ to a physical entry $A_{i}$.
 \subsection{Example}
 \runinhead{Interleaving indexes} Given an array $A$ of length $n$, we want to mapping the virtual indexes to physical indexes such that $A_0$ maps to $A_1$, $A_1$ maps to $A_3$,..., $A_{\lfloor n/2\rfloor}$ maps to $A_0$, as followed: 
 \begin{figure}[hbtp]

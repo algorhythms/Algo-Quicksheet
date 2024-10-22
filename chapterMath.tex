@@ -19,16 +19,22 @@
 
 \begin{python}
 def gcd(a, b):
-    while b:
-        a, b = b, a%b
+    while b != 0:
+        a, b = b, a % b
 
     return a
 \end{python}
 
-Proof. Euclidean Algorithm. Proove the following recursive form:
+\rih{Proof}. Euclidean Algorithm. The Euclidean algorithm is based on the principle that the GCD of two numbers $a$ and $b$ is the same as the GCD of $b$ and $a\%b$ until $b$ becomes zero. Prove the following recursive form:
 $$
 gcd(a,b) = gcd(b, r)
 $$
+\begin{enumerate}
+\item \rih{Divisibility}: Let $g$ be the GCD of $a$ and $b$. By definition, $g$ divides both $a$ and $b$. From the equation $a=b\cdot q+r$, it follows that $g$ must also divide the remainder $r$, because any divisor of both $a$ and $b$ divides linear combination of them: $r = a - b \cdot q$. 
+\item \rih{Reduction}: If we replace $a$ with $b$ and $b$ with $r$, the GCD remains unchanged, and the problem size gets smaller (since $r<b$). 
+\item \rih{Termination}: The algorithm repeatedly reduces the size of the numbers by replacing the larger number with the remainder. Eventually, one of the numbers will become zero, and the GCD is the other number, since $gcd(a,0)=a$.
+\end{enumerate}
+
 \section{Prime Numbers}
 \subsection{Sieve of Eratosthenes}
 \subsubsection{Basics}
@@ -47,7 +53,48 @@ The main idea here is that every value for $p$ is prime, because we have already
 
 As a refinement, it is sufficient to mark the numbers in step 3 starting from $p^2$, because all the smaller multiples of $p$ will have already been marked at that point by the previous smaller prime factor other than $p$. From $p^2$, $p$ becomes the smaller prime factor of a composite number. This means that the algorithm is allowed to terminate in step 4 when $p^2$ is greater than n.
 
+For example, consider $p=5$. The first multiple of 5 that we need to mark is $5^2 = 25$, because: 
+\begin{enumerate}
+\item $5 \times 2 = 10$ has already been marked when processing $p = 2$.
+\item $5 \times 3 = 15$ has already been marked when processing $p = 3$ 
+\item $5 \times 4 = 20$ has already been marked when processing $p = 2$. 
+\end{enumerate}
+Therefore, we only need to start marking multiples from $p^2$, since all smaller multiples of $p$ have already been handled.
+
+\begin{python}
+def count_primes_sieve(N):
+    if N < 2:
+        return 0
+    # intialize all numbers prime candidates
+    primes = [True for _ in range(N+1)]
+    # 0 and 1 are not prime numbers
+    primes[0] = primes[1] = False
+
+    p = 2
+    while (p * p <= N):
+        if primes[p]:
+            for i in range(p * p, N+1, p):
+                primes[i] = False
+        p += 1
+
+    return sum(prime)
+\end{python}
+
+\rih{Time complexity}. Iterating \pyinline{p} is $O(N)$ and for all the prime number, each inner loop take $\frac{N}{p}$. Then it becomes 
+
+$$
+\sum_{p \leq N} \frac{N}{p} = N \sum_{p \leq N} \frac{1}{p}
+$$
+
+It looks like $O(N \log N)$ but $p$ are prime numbers, it becomes $O(N \log \log N)$. The \rih{Prime Number Theorem} tells us that the number of primes less than or equal to $N$ is approximate
+$$
+\frac{N}{\log N}
+$$
+
+
 Another refinement is to initialize list odd numbers only, (3, 5, ..., n), and count in increments of $2p$ in step 3, thus marking only odd multiples of $p$. This actually appears in the original algorithm. This can be generalized with wheel factorization, forming the initial list only from numbers coprime with the first few primes and not just from odds (i.e., numbers coprime with 2), and counting in the correspondingly adjusted increments so that only such multiples of $p$ are generated that are coprime with those small primes, in the first place.
+
+
 
 To summarized, the refinements include:
 \begin{enumerate}
@@ -55,24 +102,21 @@ To summarized, the refinements include:
 \item Preprocessing even numbers and then only process odd numbers; thus the increment becomes $2p$.
 \end{enumerate}
 
-\subsubsection{code}
 \begin{python}
-def countPrimes(n):
-    """
-    Find prime using Sieve's algorithm
-    :type n: int
-    :rtype: int
-    """
-    if n < 3: return 0
-    is_prime = [False if i%2 == 0 else True 
-                for i in range(n)]
-    is_prime[0], is_prime[1] = False, False
-    for i in range(3, int(math.sqrt(n))+1, 2):
-        if is_prime[i]:
+def count_primes(N):
+    if N < 3:
+        return 0
+    primes = [
+        False if i%2 == 0 else True 
+        for i in range(n)
+    ]
+    primes[0], primes[1] = False, False
+    for i in range(3, int(math.sqrt(N))+1, 2):
+        if primes[i]:
             for j in range(i*i, n, 2*i):
-                is_prime[j] = False
+                primes[j] = False
 
-    return is_prime.count(True)
+    return prime.count(True)
 \end{python}
 
 \subsection{Factorization}
@@ -192,11 +236,32 @@ To check whether a number of the power of 4, we can check whether it mod 3 equal
 &\equiv 1 \mod 3
 \end{align*}
 
-Alternatively, we can use bit manipulation based on the power of 4 in the binary form of \pyinline{repeat n 1 << 2}. 
+Alternatively, we can use bit manipulation based on the power of 4 in the binary form of \pyinline{repeat n 1 << 2}, and checks whether there is even number of 0's in binary form. 
 
 \section{Ord}
 \runinhead{Number in lexical order.} Given an integer n, return 1 - n in lexicographical order. For example, given 13, return: [1,10,11,12,13,2,3,4,5,6,7,8,9].
 
+Using DFS.
+\begin{python}
+def dfs(N, cur, ret):
+    ret.append(cur)
+    for d in range(10):
+        nxt = cur * 10 + d
+        if nxt <= N:
+            dfs(N, nxt, ret)
+        else:
+            break
+
+N = 105
+ret = []
+for i in range(1, 10):
+    if i <= N:
+        dfs(N, i, ret)
+    else:
+        break
+\end{python}
+
+Using iterative appraoch. 
 \begin{python}
 def gen():
     i = 1

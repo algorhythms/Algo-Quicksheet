@@ -2,19 +2,42 @@
 \section{Basics}
 \subsection{Considerations}
 \begin{enumerate}
-\item Does \textbf{order} matter?
-\item Are the objects \textbf{repeatable}?
+\item Does \textbf{order} matter? Does the \textbf{timing} of choice matter?
+\item Are the object draws \textbf{repeatable}?
 \item Are the objects partially \textbf{duplicated}?
 \end{enumerate}
-If order does not matter, you can pre-set the order. 
+If order does not matter or repeated objects, you can pre-set the order. 
 \subsection{Basic formula}
 \begin{eqnarray*}
-&& {n \choose k} = \frac{n!}{k!(n-k)!} \\
 && {n \choose k} = {n \choose n-k} \\
+&& {n \choose k} = \frac{n!}{k!(n-k)!} \\
 && {n\choose k} = {n-1\choose k} + {n-1 \choose k-1}
 \end{eqnarray*}
+The 1st equation is complimentary. Considering a binary choice $x_i \in {0, 1}$ indicating whether to choose an item \pyinline{e}. Choosing $k$ objects (assigning $1$) directly means not choosing $n-k$ objects (assigning $0$). 
+\begin{eqnarray*}
+X &&= \{x_0, x_1, ... x_{n-1}\} \\
+x_i &&\in {0, 1} \\
+\sum_i{x_i} &&= k \\
+\sum_i{1 - x_i} &&= n - k \\
+|X| &&= n
+\end{eqnarray*}
 
-\subsection{N objects, K ceils}
+
+The 2nd equation is deduping. Considering a set of objects $A = \{a, b, c, d, e\}$. $n = 5$. The number of total permutations is $5!$. If we want to pick $k=3$ objects: $list = [\alpha_0, \alpha_1, \alpha_2]$, but the order does not matter or element are repeatble, it becomes $set = \{\alpha_0, \alpha_1, \alpha_2\}$. It means $3!$ permutation $list$ is degraded to a single $set$. At the same time, the complimentary $list_{comp} = [\alpha_3, \alpha_4]$ is degraded to a single $set_{comp}$. For example, we are choosing $\{a, b, c\}$ and when the program is processing the permutation $abcde$ or $adbec$, we need to count duplicates for deduping. 
+\begin{eqnarray*}
+\mathbf{abc}de &&= \mathbf{bac}de \\
+\mathbf{abc}de && = \mathbf{abc}ed \\
+\mathbf{a}d\mathbf{b}e\mathbf{c} &&= \mathbf{b}d\mathbf{a}e\mathbf{c} \\
+\mathbf{a}d\mathbf{b}e\mathbf{c} && = \mathbf{a}e\mathbf{b}d\mathbf{c} \\
+ret &&= \frac{5!}{3! \cdot 2!}
+\end{eqnarray*}
+
+The 3rd equation is DP. Let $F_{n, k}$ be the number of combinations of choosing $k$ elements from $n$ elements. We can either pick the $n$-th item or not. 
+$$
+F_{n,k} = F_{n-1, k} + F_{n-1, k-1}
+$$
+
+\subsection{N objects, K ceils. Stars \& Bars}
 When $N=10, K=3$:
 $$
 x_1 + x_2 + x_3 = 10
@@ -36,11 +59,14 @@ $$
 
 ,where $r=k-1$. 
 \\
-Intuitively, the meaning is to choose $r$ objects from $n+r$ objects to become the $|$.
+\rih{Intuitively}, the meaning is to choose $r$ objects from $n+r$ objects to become the $|$.
 
 \runinhead{Unique paths.} Given a $m \times n$ matrix, starting from $(0, 0)$, ending at $(m-1, n-1)$, can only goes down or right. What is the number of unique paths?
 
-There are total 
+Let $F_{i, j}$ be the number of unique paths at \pyinline{[i][j]}. 
+$$
+F_{i, j} = F_{i-1, j} + F_{i, j-1}
+$$
 
 \subsection{N objects, K types} \label{N_objects_K_types}
 What is the number of permutation of $N$ objects with $K$ different types:
@@ -52,8 +78,8 @@ ret &= \frac{A_N^N}{\prod_{k=1}^K{A_{sz(k)}^{sz(k)}}} \\
 \subsection{Inclusion–Exclusion Principle}
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[width=\linewidth]{500px-Inclusion-exclusion}}
-\caption{Inclusion–exclusion principl}
+\subfloat{\includegraphics[width=0.8\linewidth]{500px-Inclusion-exclusion}}
+\caption{Inclusion–exclusion principle}
 \label{fig:500px-Inclusion-exclusion}
 \end{figure}
 \begin{eqnarray*}
@@ -63,33 +89,33 @@ Generally,
 $$
 \Biggl|\bigcup_{i=1}^n A_i\Biggr| = \sum_{k = 1}^{n} (-1)^{k+1} \left( \sum_{1 \leq i_{1} < \cdots < i_{k} \leq n} \left| A_{i_{1}} \cap \cdots \cap A_{i_{k}} \right| \right)
 $$
-\section{Combinations with Duplicated Objects}
-Determine the number of combinations of 10 letters (order does not matter) that can be formed from 3A, 4B, 5C. 
+\section{Combinations with Limited Repetitions}
+Determine the number of combinations of 10 letters (order does not matter) that can be formed from 12 letters of 3A, 4B, 5C, i.e. multisets $S=\{3.A, 4.B, 5.C\}$. 
 
 \subsection{Basic Solution}
-If there are no restrictions on the number of any of the letter, it is ${10+2 \choose 2}$; then we get the universal set, 
+$|S| = 12$. If there are unlimited the number of any of the letter, it is ${10+2 \choose 10}$ by stars and bars of $x1+x2+x3=10$; then we get the universal set, 
 $$
-|U|={10+2 \choose 2}
+|U|={10+2 \choose 10}={10+2 \choose 2}
 $$
 
-Let $P_A$ be the set that a 10-combination has more than 3A. $P_B$...4B. $P_C$...5C. 
+Let $P_A$ be the set that a 10-combination has \rih{more than} 3A. $P_B$...4B. $P_C$...5C. 
 
 The result is:
 \begin{align*}
 |3A \cap 4B \cap 5C| = & |U|\\
-& - sum(|P_i|\cdot \forall i) \\
-& + sum(|P_i \cap P_j|\cdot \forall i,j)\\
-& - sum(|P_i \cap P_j \cap P_k|\cdot \forall i,jk)
+& - \sum{(|P_i|\cdot \forall i)} \\
+& + \sum{(|P_i \cap P_j|\cdot \forall i,j)}\\
+& - \sum{(|P_i \cap P_j \cap P_k|\cdot \forall i,j,k)}
 \end{align*}
 
-To calculate $|P_i|$, take $|P_A|$ as an example. \textbf{Pre-set} 4A -- if we take any one of these 10-combinations in $P_A$ and remove 4A we are left with a 6-combination with unlimited on the numbers of letters; thus,
+To calculate $|P_i|$, take $|P_A|$ as an example. $P_A$ means at least 4A -- if we take any one of these 10-combinations in $P_A$ and remove 4A we are left with a 6-combination with unlimited on the numbers of letters, including $A$; thus,
 $$
 |P_A|={6+2 \choose 2}
 $$
 
 Similarly, we can get $P_B, P_C$.
 
-To calculate $|P_i \cap P_j|$, take $|P_A \cap P_B|$ as an example. \textbf{Pre-set} 4A and 5B; thus,
+To calculate $|P_i \cap P_j|$, take $|P_A \cap P_B|$ as an example for 4A and 5B; thus,
 $$
 |P_A \cap P_B| = {1+2 \choose 2}
 $$
@@ -97,7 +123,7 @@ $$
 Similarly, we can get other $|P_i \cap P_j|$.
 
 Similarly, we can get other $|P_i \cap P_j \cap P_k|$.
-\subsection{Algebra Solution}
+\subsection{Algebra Interpretation}
 The number of 10-combinations that can be made from 3A, 4B, 5C is found from the coefficient of $x^{10}$ in the expansion of:
 $$
 (1+x+x^2+x^3)(1+x+x^2+x^3+x^4)(1+x+x^2+x^3+x^4+x^5)
@@ -116,7 +142,28 @@ We expand the formula, although the  naive way of getting the coefficient of $x^
 \section{Permutation}
 
 \subsection{$k$-th permutation}
-Given $n$ and $k$, return the $k$-th permutation sequence. $k\in [1, n!]$. $O(nk)$ in time complexity is easy, can you do it in $O(n^2)$ or less?
+Given $n$ and $k$, return the $k$-th permutation sequence. $k\in [1, n!]$. $O(n!)$ in time complexity is easy.
+\begin{python}
+def getPermutation(n, k):
+    A = [i + 1 for i in range(n)]
+    ret = []
+    genPermutation(A, 0, [], ret)
+    ret.sort()  # requried 
+    return ret[k - 1]
+
+def genPermutation(A, idx, cur, ret):
+    if idx == len(A):
+        ret.append("".join(map(str, cur)))
+
+    for j in range(idx, len(A)):
+        A[idx], A[j] = A[j], A[idx]
+        cur.append(A[idx])
+        genPermutation(A, idx + 1, cur, ret)
+        A[j], A[idx] = A[idx], A[j]
+        cur.pop()
+\end{python}
+
+Can we do it in $O(nk)$ or less?
 
 Reversed Cantor Expansion
 
@@ -126,7 +173,7 @@ Core clues:
 
 Suppose for $n$ element, the $k$-th permutation is:
 
-\pyinline{ret = [a0, a1, a2, ..., an-1]}
+\pyinline{ret = [a0, a1, a2, ..., an-1]}. $A_i$ is different from $a_i$.
 \item \rih{Basic case.} Since \pyinline{[a1, a3, ..., an-1]} has $(n-1)!$ permutations,
 if $k < (n-1)!, a_0 = A_0$ (first element in array), else $a_0 = A_{k/(n-1)!}$
 
@@ -139,14 +186,16 @@ if $k < (n-1)!, a_0 = A_0$ (first element in array), else $a_0 = A_{k/(n-1)!}$
 \end{enumerate}
 \begin{python}
 def getPermutation(self, n, k):
-    k -= 1  # start from 0
+    k -= 1  # since k was 1-indexed
 
-    A = range(1, n+1)
-    k %= math.factorial(n)
+    A = [i + 1 for i in range(n)]
+    # k %= math.factorial(n)  # if k > n!
     ret = []
     for i in range(n-1, -1, -1):
-        idx, k = divmod(k, math.factorial(i))
-        ret.append(A.pop(idx))
+        idx = k // math.factorial(i) 
+        cur = A.pop(idx)
+        ret.append(cur)
+        k = k % math.factorial(i)
 
     return "".join(map(str, ret))
 \end{python}
@@ -175,15 +224,15 @@ $$
     \caption{Monotonic Paths}
   \label{fig:catalanProof}
 \end{figure}
-\item monotonic paths - $n$ right, $n$ up
+\item Total monotonic paths including both exceeding and not exceeding - from $2n$ choose $n$ right and $n$ up:
 $$
 {2n\choose n}
 $$
-\item flip at the line just above the diagonal line - $n-1$ right, $n+1$ up
+\item Find out how many combinations that exceeds the main diagonal. Flip all the exceeding lines at the line just above the diagonal line, we will see a rectangle of size $(n-1) * (n+1)$ has formed. Thus the total number of monotoic paths in the new rectange is - from $2n$ choose $n-1$ right and $n+1$ up:
 $$
 {n-1+n+1\choose n-1}
 $$
-\item thus, the number of path without \textit{exceedance} (i.e. passing the diagonal line) is: 
+\item Thus, the number of path without \textit{exceeding} (i.e. passing the diagonal line) is: 
 \begin{align*}
 C_n &= {2n\choose n} - {2n\choose n-1}\\ 
 &={2n\choose n} - {2n\choose n+1}
@@ -193,16 +242,16 @@ C_n &= {2n\choose n} - {2n\choose n-1}\\
 \subsection{Applications}
 The paths in Figure \ref{fig:catalanProof} can be abstracted to anything that at any time \#right $\geq$ \#up. 
 \runinhead{\#Parentheses.}Number of different ways of adding parentheses. At any time, \#\pyinline{(} $\geq$ \#\pyinline{)}.
-\runinhead{\#BSTs.}Number of different BSTs. Consider it as a set of same binary operators with their operands. Reduce this problem to \#Parentheses. 
+\runinhead{\#Full binary trees.}Number of different full bindary tree. A full binary tree is a tree in which every node has either 0 or 2 children. Consider it as a set of same binary operators with their operands. Reduce this problem to \#Parentheses. 
 \begin{figure}[hbtp]
 \centering
 \subfloat{\includegraphics[width=\linewidth]{Catalan_number_binary_tree_example}}
-\caption{\#BSTs. Circles are operators; crescents are operands.}
+\caption{\#Full bindary trees. Circles are operators; crescents are operands.}
 \label{fig:NumberOfBSTs}
 \end{figure}
 
 \section{Stirling Number}
-a Stirling number of the second kind (or Stirling partition number) is the number of ways to partition a set of n objects into k non-empty subsets and is denoted by $S(n,k)$ or  $\lbrace{n\atop k}\rbrace$.
+A Stirling number of the second kind (or Stirling partition number) is the number of ways to partition a set of n objects into k non-empty subsets and is denoted by $S(n,k)$ or  $\lbrace{n\atop k}\rbrace$.
 
 $$
 \left\{ {n \atop k}\right\} = \frac{1}{k!}\sum_{j=0}^{k} (-1)^{k-j} \binom{k}{j} j^n.

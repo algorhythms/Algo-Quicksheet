@@ -24,25 +24,64 @@ List of general algorithms:
 
 \section{Algorithms}
 \subsection{Quick Sort}
-\subsubsection{Normal pivoting}\label{section:pivot}
-The key part of quick sort is pivoting:
+\rih{Concise}. Concise but space inefficient: 
+\begin{python}
+def quicksort(self, A):
+    if len(A) <= 1:
+        return A
+    pivot = A[len(A) // 2]
+    left = [e for e in A if e < pivot]
+    middle = [e for e in A if e == pivot]
+    right = [e for e in A if e > pivot]
+    return quicksort(left) + middle + quicksort(right)
+\end{python}
+\rih{Pivoting}. Pivoting/Partitioning to be space efficient:
+\begin{python}
+def quicksort(self, A, lo, hi):
+    if lo >= hi:
+        return
+    p = pivot(A, lo, hi)
+    quicksort(A, lo, p-1)
+    quicksort(A, p+1, hi)
+\end{python}
 
+\subsubsection{Normal pivoting}\label{section:pivot}
+The key part of quick sort is pivoting. Using the last element as pivot:
 \begin{python}
 def pivot(self, A, lo, hi):
     """
     pivoting algorithm:
-    | p | closed set | open set |
-    | closed set | p | open set |
+    | left array | right array | p |
+    | left array | p | right array |
     """
-    p = lo  # index 
-    closed = lo  # index
+    p = hi
+    l = lo
+    for i in range(lo, hi - 1):
+        if A[i] < A[p]:
+            A[i], A[l] = A[l], A[i]
+            l += 1
+            
+    A[l], A[hi] = A[hi], A[l]
+    return l
+\end{python}
+
+Using the first element as pivot:
+\begin{python}
+def pivot(self, A, lo, hi):
+    """
+    pivoting algorithm:
+    | p | left array | right array |
+    | left array | p | right array |
+    """
+    p = lo
+    l = lo  # left array ending index
     for i in range(lo + 1, hi):
         if A[i] < A[p]:
-            closed += 1
-            A[i], A[closed] = A[closed], A[i]
+            l += 1
+            A[i], A[l] = A[l], A[i]
 
-    A[closed], A[p] = A[p], A[closed]
-    return closed
+    A[l], A[p] = A[p], A[l]
+    return l
 \end{python}
 
 Notice that this implementation goes $O(N^2)$ for arrays with all duplicates.
@@ -93,23 +132,26 @@ This problem is also known as \textit{Dutch national flag problem}.
 $$|..\leq..|..=..|..unseen..|..\geq..|$$
 \begin{python}
 def pivot_3way(self, A, lo, hi):
-    lt = lo-1  # pointing to end of array LT
-    gt = hi  # pointing to the end of array GT (reversed)
+    # pointing to end of left array LT
+    left = lo-1
+    # pointing to the end of array right GT (reversed)
+    right = hi
 
-    v = A[lo]
+    pivot = A[lo]
     i = lo  # scanning pointer
-    while i < gt:  # not n or hi
-        if A[i] < v:
-            lt += 1
-            A[lt], A[i] = A[i], A[lt]
+    while i < right:  # not n nor hi
+        if A[i] < pivot:
+            left += 1
+            A[left], A[i] = A[i], A[left]
             i += 1
-        elif A[i] == v:
+        elif A[i] == pivot:
             i += 1
         else:
-            gt -= 1
-            A[gt], A[i] = A[i], A[gt]
+            right -= 1
+            A[right], A[i] = A[i], A[right]
+            # i stays
 
-    return lt, gt
+    return left, right
 \end{python}
 \subsection{Merge Sort}
 \begin{figure}[!htp]
@@ -124,28 +166,28 @@ def merge_sort(self, A):
   if len(A) <= 1:
     return
 
-  mid = len(A)/2
+  mid = len(A)//2
   L, R = A[:mid], A[mid:]
   self.merge_sort(L)
   self.merge_sort(R)
 
-  i, j, k = 0, 0, 0
-  while i < len(L) and j < len(R):
-    if L[i] < R[j]:
-      A[k] = L[i]
-      i += 1
+  l, r, i = 0, 0, 0
+  while l < len(L) and r < len(R):
+    if L[l] < R[r]:
+      A[i] = L[l]
+      l += 1
     else:
-      A[k] = R[j]
-      j += 1
-    k += 1
+      A[i] = R[r]
+      r += 1
+    i += 1
 
-  if i < len(L):
-    A[k:] = L[i:]
-  if j < len(R):
-    A[k:] = R[j:]
+  if l < len(L):
+    A[i:] = L[l:]
+  if r < len(R):
+    A[i:] = R[r:]
 \end{python}
 
-\runinhead{Merge backward.} Merge two arrays in place of one of the arrays.  
+\runinhead{Merge backward.} Merge two arrays in the place of one of the arrays.  
 \begin{python}
 def merge(self, A, m, B, n):
   """
@@ -171,7 +213,7 @@ def merge(self, A, m, B, n):
   if j >= 0: A[:closed] = B[:j+1]
   # if i >= 0: A[:closed] = A[:i+1]
 \end{python}
-\runinhead{In-place merge}
+\runinhead{In-place \& Iterative merge.}
 In-place merge sort of array without recursive. The basic idea is to avoid the recursive call while using iterative solution.
 
 The algorithm first merge chunk of length of 2, 4, 8 ... until $2^k$ where $2^k$ is large than the length of the array.
@@ -205,13 +247,14 @@ During the merging, the left half and the right half are both sorted; therefore,
 \item range sum count 
 \end{enumerate}
 
-\runinhead{Count of Range Sum.} Make an array $A$ of sums, where \pyinline{A[i] = sum(nums[:i])}; and then feed to merge sort. Since both the left half and the right half are sorted, we can diff $A$ in $O(n)$ time to find range sum. 
+\runinhead{Count of Range Sum.} Given an integer array nums, return the number of range sums that lie in $[lower, upper]$ inclusively. Make an array $A$ of sums, where \pyinline{A[i]} is \pyinline{sum(nums[:i])}; and then feed to merge sort. Since both the left half and the right half are sorted, we can diff $A$ in $O(n)$ time to find range sum. 
 
 \begin{python}
 def msort(A, lo, hi):
-  if hi - lo <= 1: return 0
+  if lo + 1 >= hi:
+    return 0
 
-  mid = (lo + hi)/2
+  mid = (lo + hi)//2
   cnt = msort(A, lo, mid) + msort(A, mid, hi)
 
   temp = []
@@ -302,7 +345,7 @@ of order.
 See Figure \ref{fig:sortSummary}.
 \begin{figure*}[h]
 \centering
-\subfloat{\includegraphics[width=\linewidth]{sort_summary}}
+\subfloat{\includegraphics[width=0.8\linewidth]{sort_summary}}
 \caption{Sort summary}
 \label{fig:sortSummary} 
 \end{figure*}
@@ -336,11 +379,13 @@ F(n) = \left\{ \begin{array}{rl}
 Therefore, the complexity is $O(n+k \log k)$.
 \begin{python}
 def partial_qsort(self, A, lo, hi, k):
-    if lo >= hi: return
+    if lo >= hi:
+      return
 
     p = self.pivot(A, lo, hi)
     self.partial_qsort(A, lo, p, k)
-    if k <= p+1: return
+    if k <= p+1:
+      return
     self.partial_qsort(A, p+1, hi, k)
 \end{python}
 The partial quick sort will find the $k$ smallest number in sorted order. If the top $k$ elements are not required to be sorted, then use find $k$-th algorithm 
@@ -357,34 +402,42 @@ Refresh the \pyinline{def pivot}:
 \begin{python}
 def pivot(self, A, lo, hi):
     pivot = lo
-    closed = pivot  # closed == pivot, means no closed set
+    left = pivot  # left == pivot, means no left array
     for i in range(lo + 1, hi):
         if A[i] < A[pivot]:
-            closed += 1
-            A[closed], A[i] = A[i], A[closed]
+            left += 1
+            A[left], A[i] = A[i], A[left]
 
-    A[closed], A[pivot] = A[pivot], A[closed]
-    return closed  # the pivot index
+    A[left], A[pivot] = A[pivot], A[left]
+    return left  # the pivot index
 \end{python}
 Find $k$-th with 2-way partitioning. Notice that only index changing while $k$ is the same.
 \begin{python}
 def find_kth(self, A, lo, hi, k):
-    if lo >= hi: return
+    if lo >= hi:
+      return
     
     p = self.pivot(A, lo, hi)
-    if k == p: return p
-    if k < p:  return self.find_kth(A, lo, p, k)
-    else:      return self.find_kth(A, p+1, hi, k)
+    if k == p:
+      return p
+    elif k < p:
+      return self.find_kth(A, lo, p, k)
+    else:
+      return self.find_kth(A, p+1, hi, k)
 \end{python}
 Find $k$-th with 3-way partitioning. Pay attention to the indexing. $lt$, $gt$ means the last index of less-than portion and larger-than partion. 
 \begin{python}
 def find_kth(self, A, lo, hi, k):
-    if lo >= hi: return
+    if lo >= hi:
+      return
 
     lt, gt = self.pivot(A, lo, hi)
-    if lt < k < gt: return k
-    if k <= lt: return self.find_kth(A, lo, lt+1, k)
-    else:       return self.find_kth(A, gt, hi, k)
+    if lt < k < gt:
+      return k
+    elif k <= lt:
+      return self.find_kth(A, lo, lt+1, k)
+    else:
+      return self.find_kth(A, gt, hi, k)
 \end{python}
 
 Pivoting see section - \ref{section:pivot}.
