@@ -19,10 +19,17 @@ def shuffle(A):
     j = random.randrange(n)
     A[i], A[j] = A[j], A[i]
 \end{python}
-Consider 3 cards, the easiest proof that this algorithm does not produce a uniformly random permutation is that it generates $3^3=27$ possible plans (consider steps in plans, duplicated result included), but there are only 3! = 6 permutations. Since $27\%3 \neq 0$, there must be some permutation is that is picked too much, and some that is picked too little.
+Consider 3 cards, the easiest proof that this algorithm does not produce a uniformly random permutation is that it generates $3^3=27$ possible plans (consider steps in plans, duplicated result included), but there are only 3! = 6 permutations. Since $27\%6 \neq 0$, there must be some permutation is that is picked too much, and some that is picked too little. 
+
+In general, it generates $n^n$ possible plans, and
+$$
+n^n \% n! \neq 0
+$$ 
 \subsection{Knuth Shuffle}
 Knuth (aka Fisher-Yates) shuffling algorithm guarantees to rearrange the elements in uniformly random order. 
-\\
+
+\rih{Intuition}. Similar to drawing lots, the order of drawing lots does not affect the probability of a given outcome.
+
 Core clues:
 \begin{enumerate}
 \item choose index uniformly $\in [i, N)$.
@@ -52,12 +59,13 @@ def shuffle(A):
 $n!$ permutations. 
 
 \subsection{Random Maximum}
-Find the index of maximum number in an array with a probability of $\frac{1}{\#maxima}$.
+Find the index of maximum number in an array with a probability of $\frac{1}{\#maxima}$, instead of the first seen index.
 
 
 \runinhead{Code:}
 \begin{python}
 def random_max(A):
+    # k is the counter
     maxa, maxa_idx, k = A[0], 0, 1
     for i in range(1, len(A)):
         if maxa < A[i]:
@@ -70,8 +78,12 @@ def random_max(A):
     return maxa_idx
 
 \end{python}
- 
-\runinhead{Proof:} Prove via mathematical induction. 
+
+\rih{Intuition}. Consider the maximums array of length $L=k$, the \pyinline{current} $max$ has the probability $\frac{1}{k}$ of being selected. When moving to $L=k+1$, the \pyinline{current} $max$ has the probability $\frac{1}{k+1}$ of being selected, the \pyinline{previous} $max$ has the probility of $\frac{k}{k+1}$ to stay. Then the \pyinline{previous} $max$ has the new updated probability of being selected as:
+$$
+P(max_k) = \frac{1}{k} \cdot \frac{k}{k+1} = \frac{1}{k+1}
+$$
+\runinhead{Proof.} Prove via mathematical induction. 
 
 That is, assuming it works for any array of size $N$, prove it works for any array of size $N+1$.
 
@@ -83,24 +95,9 @@ If the new element is less than the max of the sub-array, return the result of t
 
 The only slightly tricky part is when the new element equals the max element of the sub-array. In this case, let the number of max elements in the sub-array be $k$. Then, by hypothesis, your algorithm selected one of them with probability $\frac{1}{k}$. By keeping that same element with probability $\frac{k}{k+1}$, you make the overall probability of selecting that same element equal $$\frac{1}{k} \cdot \frac{k}{k+1} = \frac{1}{k+1}$$, as desired. You also select the last element with the same probability.
 
-To complete the inductive proof, just verify the algorithm works on an array of size 1
+To complete the inductive proof, just verify the algorithm works on an array of size 1.
 
-\section{Sampling}
-\subsection{Reservoir Sampling}
-Sample $k$ from $A$, where the length of $A$ is either very large or unknown or dynamic. 
-\begin{python}
-def reservoir_sample(A, sz):
-  R = A[:sz]  # sz for size
-  
-  for i in range(sz, len(A)):
-    rv = random.randrange(0, i+1)
-    if rv < sz: # rv for random variable
-      R[rv] = A[i]
-\end{python}
-
-Until index $i$, with elements of length $i+1$ scanned, every element has a probability of $\frac{sz}{i+1}$ in the reservoir. 
-
-\runinhead{Random pick index.} Given an array of integers with possible duplicates, randomly output the index of a given target number.
+\runinhead{Random pick index.} Similar question - given an array of integers with possible duplicates, randomly output the index of a given target number.
 \begin{python}
 def pick(self, target):
     sz = 0
@@ -109,11 +106,30 @@ def pick(self, target):
         if val == target:
             sz += 1
             rv = random.randrange(0, sz)
-            if rv == 0:
+            if rv == 0:  # or any number < sz
                 ret = idx
 
     return ret
 \end{python}
+
+\section{Sampling}
+\subsection{Reservoir Sampling}
+Sample $k$ from $A$, where the length of $A$ is either very large or unknown or dynamic. 
+\begin{python}
+def reservoir_sample(A, k):
+  R = A[:k]  # k for size
+  
+  for i in range(k, len(A)):
+    # rv for random variable
+    rv = random.randrange(0, i+1)
+    if rv < k:
+      R[rv] = A[i]
+\end{python}
+\rih{Intuition}. 
+When processing index $i$ and $A_i$, we have the elements of length $i$ already been scanned. Every element $\in [A_0, A_1, ..., A_i]$ has a probability in the reservoir of:
+$$
+P_{select} = \frac{k}{i+1}
+$$
 
 \section{Distribution}
 \subsection{Geometric Distr}

@@ -1,11 +1,11 @@
 \chapter{Greedy}
 
 \section{Introduction}
-Philosophy: choose the best options at the current state without reverting the choice in the future. 
+Philosophy: choose the best options at the current state without backtracking/reverting the choice in the future. 
 
-A greedy algorithm is an algorithm that follows the problem solving heuristic of making the locally optimal choice at each stage with the hope of finding a global optimum.
+A greedy algorithm is an algorithm that follows the problem solving heuristic of making the \textbf{local optimal} choice at each stage with the hope of finding a global optimum.
 
-Greedy algorithm is a degenerated dp since the the past substructure is not remembered.
+Greedy algorithm is a degraded DP since the the past substructure is not remembered.
 
 \subsection{Proof}
 The proof technique for the correctness of the greedy method. 
@@ -14,8 +14,8 @@ Proof by contradiction, the solution of greedy algorithm is $\mat{G}$ and the op
 
 Two general technique it is impossible to have $\mat{O}\neq \mat{G}$:
 \begin{enumerate}
-\item Exchange method 
-\item Stays-head method 
+\item \rih{Exchange method}: Greedy-Choice Property. Any optimal solution can be transformed into the solution produced by the greedy algorithm without worsening its quality.  
+\item \rih{Stays-ahead method}: Optimal Substructure. the solution constructed by the greedy algorithm is consistently as good as or better than any other solution at every step or position
 \end{enumerate}
 
 \section{Extreme First}

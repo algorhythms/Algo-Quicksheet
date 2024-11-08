@@ -23,9 +23,6 @@ $$
 \end{enumerate}
 \begin{python}
 def merge(self, itvls):
-    if not itvls:
-        return []
-
     itvls.sort(key=lambda x: x.start)
     ret = [itvls[0]]
     for cur in itvls[1:]:
@@ -51,12 +48,12 @@ def insert(self, itvls, newItvl):
     s, e = newItvl.start, newItvl.end
     left = filter(lambda x: x.end < s, itvls)
     right = filter(lambda x: x.start > e, itvls)
-    if len(left)+len(right) != len(itvls):
+    if len(left) + len(right) != len(itvls):
         s = min(s, itvls[len(left)].start)
-        e = max(e, itvls[-len(right)-1].end)
+        e = max(e, itvls[~len(right)].end)
+        # itvls[-len(right)-1]
 
     return left + [Interval(s, e)] + right
-
 \end{python}
 
 \section{Event-driven algorithms}
@@ -76,7 +73,7 @@ intervals.
 \begin{enumerate}
 \item \textbf{Event}: Every new start of an interval is an event. Scan the sorted intervals (sort the interval by \textit{start}).
 \item \textbf{Heap meaning}: Heap stores the \textit{end} of the interval. 
-\item \textbf{Transition}: Put the ending time into heap, and pop the ending time earlier than the new start time from heap.
+\item \textbf{Transition}: Put the ending time into heap, and pop the ending time earlier than the new start time from heap. And we need min-heap to pop the early ones.
 \end{enumerate}
 \newpage
 \begin{python}
@@ -85,7 +82,7 @@ def max_overlapping(intervals):
     intervals.sort(key=lambda x: x.start)
     h_end = []
     for itvl in intervals:
-        heapq.heappush(end_heap, itvl.end)
+        heapq.heappush(h_end, itvl.end)
         
         while h_end and h_end[0] <= itvl.start:
             heapq.heappop(h_end)
