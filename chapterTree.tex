@@ -379,7 +379,7 @@ Leftmost node is the smallest node of the tree; rightmost node is the largest no
 Find such info takes $O(n\lg n)$ for all subtrees; and we can cache such info into the following data structure to achieve $O(n)$.
 
 \begin{python}
-class BSTInfo(object):
+class BSTInfo:
     def __init__(self, sz, lo, hi):
         self.sz = sz
         self.lo = lo
@@ -411,7 +411,7 @@ Clues:
 \end{enumerate}
 Codes:
 \begin{python}
-class Node(object):
+class Node:
   def __init__(self, val):
     """Records the left subtree size"""
     self.val = val
@@ -420,7 +420,7 @@ class Node(object):
     self.left, self.right = None, None
 
 
-class BST(object):
+class BST:
   def __init__(self):
     self.root = None
 
@@ -457,7 +457,7 @@ class BST(object):
       return self.rank(root.left, val)
 
 
-class Solution(object):
+class Solution:
   def countOfSmallerNumberII(self, A):
     tree = BST()
     ret = []
@@ -570,7 +570,7 @@ Time complexity, longest update is along the leftmost branch, which takes $O(\lo
 
 Code:
 \begin{python}
-class BIT(object):
+class BIT:
     def __init__(self, n):
         """
         BIT uses index starting from 1
@@ -643,13 +643,13 @@ DEFAULT = 0
 f = lambda x, y: x+y
 
 
-class Node(object):
+class Node:
     def __init__(self, start, end, val):
         self.lo, self.hi, self.val = lo, hi, val
         self.left, self.right = None, None
 
 
-class SegmentTree(object):
+class SegmentTree:
     def __init__(self, A):
         self.A = A
         self.root = self.build_tree(0, len(self.A))
@@ -734,14 +734,14 @@ node.
 \end{enumerate}
 Codes:
 \begin{python}
-class TrieNode(object):
+class TrieNode:
     def __init__(self, char):
         self.char = char
         self.word = None
         self.children = {}  # map from char to TrieNode
 
 
-class Trie(object):
+class Trie:
     def __init__(self):
         self.root = TrieNode(None)
 

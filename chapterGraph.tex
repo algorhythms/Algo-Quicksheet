@@ -41,7 +41,7 @@ Answer: 3
 \item Iterative DFS
 \end{enumerate}
 \begin{python}
-class Solution(object):
+class Solution:
   def __init__(self):
     self.dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
@@ -403,7 +403,7 @@ Weighted union-find with path compression.\\
 \end{figure}
 
 \begin{python}
-class UnionFind(object):  # or DisjointSet
+class UnionFind:  # or DisjointSet
   def __init__(self):
     self.pi = {}  # item -> pi
     self.sz = {}  # root -> size

@@ -130,7 +130,7 @@ Here we use the negation of the value as a trick to convert min-heap to max-heap
 \begin{python}
 import heapq
 
-class DualHeap(object):
+class DualHeap:
   def __init__(self):
     self.min_h = []
     self.max_h = []  # need to negate the value 
@@ -172,7 +172,7 @@ import heapq
 from collections import defaultdict
 
 
-class Value(object):
+class Value:
     def __init__(self, val):
         self.val = val
         self.deleted = False
@@ -190,7 +190,7 @@ class Value(object):
         return repr(self.val)
 
 
-class Heap(object):
+class Heap:
     def __init__(self):
         self.h = []
         self.len = 0
@@ -221,7 +221,7 @@ class Heap(object):
         return self.h[0]
 
 
-class DualHeap(object):
+class DualHeap:
     def __init__(self):
         self.min_h = Heap()  # represent right side
         self.max_h = Heap()  # represent left side

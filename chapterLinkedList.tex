@@ -66,14 +66,14 @@ Core clues:
 \item Operations on doubly linked list are case by case.  
 \end{enumerate}
 \begin{python}
-class Node(object):
+class Node:
     def __init__(self, key, val):
         self.key = key
         self.val = val
         self.pre, self.next = None, None
 
 
-class LRUCache(object):
+class LRUCache:
     def __init__(self, capacity):
         self.cap = capacity
         self.map = {}  # key to node

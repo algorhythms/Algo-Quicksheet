@@ -481,7 +481,7 @@ Core clues:
 \end{enumerate}
 
 \begin{python}
-class Solution(object):
+class Solution:
   def wiggleSort(self, A):
     n = len(A)
     median_idx = self.find_kth(A, 0, n, n/2)
@@ -628,7 +628,7 @@ Core clues:
 \item \pyinline{get(root, end) - get(root, a)} to get the inversion count of $a$.
 \end{enumerate}
 \begin{python}
-class SegmentTree(object):
+class SegmentTree:
   def __init__(self):
     self.root = None
 
@@ -663,7 +663,7 @@ class SegmentTree(object):
       )
 
 
-class Solution(object):
+class Solution:
   def _build_tree(self, A):
     st = SegmentTree()
     mini, maxa = min(A), max(A)
@@ -698,7 +698,7 @@ Caveat: need to sort the array in the preprocessing step.
 Reconstruction of array cannot use BIT since there is no map of $prefixSum \rightarrow i$.
 
 \begin{python}
-class Node(object):
+class Node:
   def __init__(self, lo, hi, cnt):
     self.lo = lo
     self.hi = hi
@@ -711,7 +711,7 @@ class Node(object):
     return repr("[%d,%d)" % (self.lo, self.hi))
 
 
-class SegmentTree(object):
+class SegmentTree:
   """empty space"""
   def __init__(self):
     self.root = None
@@ -740,7 +740,7 @@ class SegmentTree(object):
                   sz - root.left.cnt)
 
 
-class Solution(object):
+class Solution:
   def reconstruct(self, A):
     st = SegmentTree()
     n = len(A)

@@ -93,7 +93,7 @@ Python only has built in min-heap. To use max-heap, you can:
 
 The following code presents the wrapping method:
 \begin{python}
-class HeapValue(object):
+class HeapValue:
     def __init__(self, val):
         self.val = val
         self.deleted = False  # lazy delete 
