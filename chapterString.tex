@@ -8,23 +8,23 @@
 \\
 Clues:
 \begin{enumerate}
-\item dfs, grow the counter map of \pyinline{s}. 
+\item dfs, grow the char counters of \pyinline{s}. 
 \item jump parent char
 \end{enumerate}
 Code:
 \begin{python}
-def grow(self, s, count_map, pi, cur, ret):
+def grow(self, s, counters, pi, cur, ret):
   if len(cur) == len(s):
     ret.append(cur)
     return
 
-  for k in count_map.keys():
-    if k != pi and count_map[k] > 0:
-      # jump the parent
-      for i in range(1, count_map[k]/2+1):
-        count_map[k] -= i*2
-        self.grow(s, count_map, k, k*i+cur+k*i, ret)
-        count_map[k] += i*2
+  for k in counters.keys():
+    # jump the parent
+    if k != pi and counters[k] > 0:
+      for n in range(1, counters[k]/2+1):
+        counters[k] -= n*2
+        self.grow(s, counters, k, k*n+cur+k*n, ret)
+        counters[k] += n*2
 \end{python}
 
 Jump within the looping to avoid repetition. 
@@ -36,7 +36,7 @@ Partial match table (also known as "failure function"). After a failure matching
 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[width=0.8\linewidth]{kmp_table}}
+\subfloat{\includegraphics[width=0.6\linewidth]{kmp_table}}
 \caption{Prefix-suffix table}
 \label{fig:kmp_table}
 \end{figure}
@@ -78,7 +78,7 @@ while i < len(needle)+1:
 \subsection{Searching algorithm}
 \begin{figure}[]
 \centering
-\subfloat{\includegraphics[width=\linewidth]{kmp_presuffix}}
+\subfloat{\includegraphics[width=0.8\linewidth]{kmp_presuffix}}
 \caption{KMP example}
 \label{fig:kmp_presuffix}
 \end{figure}

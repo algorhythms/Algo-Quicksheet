@@ -128,6 +128,23 @@ def find_lca(n1, n2):
     return n1
 \end{python}
 
+Method 3: In normal bindary tree and O(1) space.
+\begin{python}
+def count(self, node, p, q):
+    if not node:
+        return 0
+
+    lcount = self.count(node.left, p, q)
+    rcount = self.count(node.right, p, q)
+    mcount = 1 if node in (p, q) else 0
+    ret = lcount + rcount + mcount
+    # lcount == 1 and rcount == 1 # 
+    # or lcount == 1 and mcount == 1 or ...
+    if ret == 2:
+        self.ans = node
+    return ret
+\end{python}
+
 \runinhead{Find all paths.} Find all paths from root to leafs. 
 
 For every currently visiting node, add itself to path; search left, search right and pop itself. Record current result when reaching the leaf.
@@ -161,20 +178,21 @@ def leftmost(self, cur, l):
 
 Rightmost node can be similarly found.
 
-\runinhead{Diameter of a tree (graph).} The diameter of a tree $\equiv$ longest path in the tree.
+\runinhead{Diameter of a tree (graph).} The diameter of a tree $\equiv$ longest path in the tree. Intuitily, we need to find one end of the edge, and then find the other end. 
 
 Core clues:
 \begin{enumerate}
-\item Start from any vertex, bfs to reach the farthest leaf.
-\item Start from this leaf node, bfs to reach the other farthest leaf. 
+\item \rih{Find one end of the edge.} Start from any vertex, bfs to reach the farthest leaf.
+\item \rih{Find the other end.} Start from this leaf node, bfs to reach the other farthest leaf. 
 \end{enumerate}
 \begin{python}
 _, _, last = self.bfs(0, V)
 level, pi, last = self.bfs(last, V)
 
-def bfs(self, s, V):
+def bfs(self, s, V) -> int, List[Vertex], Vertex:
     # bfs
     visited = [False for _ in range(len(V))]
+    # predecessor 
     pi = [-1 for _ in range(len(V))]
     last = s
     level = 0
@@ -201,7 +219,7 @@ def bfs(self, s, V):
 \subsection{Morris Traversal} 
 Traversal with O(1) space. \footnote{\href{http://www.cnblogs.com/AnnieKim/archive/2013/06/15/MorrisTraversal.html}{ref}}
 Three ways of traversal: in-order, pre-order, post-order.
-Time complexity $O(3n).$ - find \pyinline{pre} twice, \pyinline{cur} traverse once.
+Time complexity $O(3n).$ Find \pyinline{pre} twice, traverse \pyinline{cur} once.
 \begin{figure}[hbtp]
 \centering
 \subfloat{\includegraphics[height=1.2in]{morris_time}}
@@ -215,7 +233,7 @@ Core:
 \item In-order consumes the \pyinline{cur} when going right, pre-order when going left, post-order consumes the left subtree path when going right. 
 \end{enumerate}
 \subsubsection{In-order}
-Assign the current node's in-order predecessor's right child to itself (threading). Two ptr \pyinline{cur}, \pyinline{pre}. 
+Given the current node \pyinline{cur}, we know the next child node. But how does its predecessor knows \pyinline{cur}? Assign the current node's in-order predecessor's right child to itself (threading). Two ptr \pyinline{cur}, \pyinline{pre}. 
 
 Process:
 \begin{enumerate}
@@ -233,7 +251,7 @@ Process:
 \caption{Morris in-order traversal}
 \label{fig:morrisInorder}
 \end{figure*}
-\newpage
+
 Code:
 \begin{python}
 def morris_inorder(self, root):
@@ -242,17 +260,17 @@ def morris_inorder(self, root):
         if not cur.left:
             self.consume(cur)
             cur = cur.right
-        else:  6
+        else:  
             pre = cur.left
             while pre.right and pre.right != cur:
                 pre = pre.right
 
             if not pre.right:
-                 6  pre.right = cur
+                pre.right = cur
                 cur = cur.left
             else:
                 pre.right = None
-                self.consume(cur)
+                self.consume(cur)  # when pop the thread
                 cur = cur.right
 \end{python}
 \subsubsection{Pre-order}
@@ -282,7 +300,7 @@ def morris_preorder(self, root):
 
             if not pre.right:
                 pre.right = cur
-                self.consume(cur)
+                self.consume(cur)  # when set the thread
                 cur = cur.left
             else:
                 pre.right = None
@@ -361,7 +379,7 @@ Leftmost node is the smallest node of the tree; rightmost node is the largest no
 Find such info takes $O(n\lg n)$ for all subtrees; and we can cache such info into the following data structure to achieve $O(n)$.
 
 \begin{python}
-class BSTInfo(object):
+class BSTInfo:
     def __init__(self, sz, lo, hi):
         self.sz = sz
         self.lo = lo
@@ -393,7 +411,7 @@ Clues:
 \end{enumerate}
 Codes:
 \begin{python}
-class Node(object):
+class Node:
   def __init__(self, val):
     """Records the left subtree size"""
     self.val = val
@@ -402,7 +420,7 @@ class Node(object):
     self.left, self.right = None, None
 
 
-class BST(object):
+class BST:
   def __init__(self):
     self.root = None
 
@@ -439,7 +457,7 @@ class BST(object):
       return self.rank(root.left, val)
 
 
-class Solution(object):
+class Solution:
   def countOfSmallerNumberII(self, A):
     tree = BST()
     ret = []
@@ -552,7 +570,7 @@ Time complexity, longest update is along the leftmost branch, which takes $O(\lo
 
 Code:
 \begin{python}
-class BIT(object):
+class BIT:
     def __init__(self, n):
         """
         BIT uses index starting from 1
@@ -625,13 +643,13 @@ DEFAULT = 0
 f = lambda x, y: x+y
 
 
-class Node(object):
+class Node:
     def __init__(self, start, end, val):
         self.lo, self.hi, self.val = lo, hi, val
         self.left, self.right = None, None
 
 
-class SegmentTree(object):
+class SegmentTree:
     def __init__(self, A):
         self.A = A
         self.root = self.build_tree(0, len(self.A))
@@ -716,19 +734,18 @@ node.
 \end{enumerate}
 Codes:
 \begin{python}
-class TrieNode(object):
+class TrieNode:
     def __init__(self, char):
         self.char = char
         self.word = None
         self.children = {}  # map from char to TrieNode
 
 
-class Trie(object):
+class Trie:
     def __init__(self):
         self.root = TrieNode(None)
 
     def add(self, word):
-        word = word.lower()
         cur = self.root
         for c in word:
             if c not in cur.children:
@@ -739,10 +756,10 @@ class Trie(object):
 \end{python}
 
 \subsection{Advanced}
-Implicit storage of word in TrieNode: 
+Storage of words in TrieNode: 
 \begin{enumerate}
-\item Implicitly stores the current word. 
-\item Implicitly stores the current char. 
+\item Implicitly store the current word in the trie with a mark of \pyinline{is_ended}. 
+\item Store the current char. 
 \item When insert new word, do not override the existing TrieNode. A flag to indicate
 whether there is a word ending here.
 \end{enumerate}
@@ -751,7 +768,7 @@ Code:
 \begin{python}
 class TrieNode:
     def __init__(self):
-        """Implicit storage"""
+        # Implicit storage
         self.ended = False
         self.children = {}
 
@@ -820,7 +837,7 @@ class TrieNode:
         self.word = None  # a word ends here, value or index
 \end{python}
 \subsection{Extensions}
-\runinhead{Search for multiple words} Search for combination of words e.g. ``unitedstates''. Add threads between tails and the root; thus enable the search for multi-word combinations. Figure - \ref{fig:trie2}
+\runinhead{Search for multiple words} Search for combination of words e.g. ``unitedstates''.  When one word ended, start the search again from the root. One trick is to add threads between tails and the root; thus enable the search for multi-word combinations. 
 \begin{figure}[!hbt]
 \centering
 \subfloat{\includegraphics[width=\linewidth]{trie2.png}}

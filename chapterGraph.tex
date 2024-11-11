@@ -9,6 +9,7 @@ V = defaultdict(list)
 \runinhead{Complexity.} Basic complexities:
 
 \begin{table}
+
 \begin{tabular}{lll}
 \hline\noalign{\smallskip}
 \textbf{Algorithm} & \textbf{Time}  & \textbf{Space}\\
@@ -17,6 +18,7 @@ dfs & $O(|E|)$ & $O(|V|), O(\text{longest path})$ \\
 bfs & $O(|E|)$ & $O(|V|)$ \\
 \noalign{\smallskip}\hline\noalign{\smallskip}
 \end{tabular}
+
 \caption{Time complexities}
 \end{table}
 
@@ -39,14 +41,18 @@ Answer: 3
 \item Iterative DFS
 \end{enumerate}
 \begin{python}
-class Solution(object):
+class Solution:
   def __init__(self):
     self.dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
   def numIslands(self, grid):
     cnt = 0
-    visited = [[False for _ in range(n)]
-               for _ in range(m)]
+    m = len(grid)
+    n = len(grid[0])
+    visited = [
+      [False for _ in range(n)]
+      for _ in range(m)
+    ]
     for i in range(m):
       for j in range(n):
         if not visited[i][j] and grid[i][j] == "1":
@@ -65,8 +71,9 @@ class Solution(object):
     for dir in self.dirs:
       I = i+dir[0]
       J = j+dir[1]
-      if (0 <= I < m and 0 <= J < n and
-        not visited[I][J] and grid[I][J] == "1"):
+      if 0 <= I < m and 0 <= J < n
+        and not visited[I][J]
+        and grid[I][J] == "1":
         self.dfs(grid, I, J, visited)
 \end{python}
 If the islands are constantly updating and the query for number of islands is called multiple times, need to use Union-Find (Section \ref{section:unionFind}) to reduce each query's complexity from $O(mn)$ to $O(\log mn)$.
@@ -101,7 +108,7 @@ $$
 
 \rih{Code:}
 \begin{python}
-self.dirs = ((-1, 0), (1, 0), (0, -1), (0, 1))
+self.dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 def wallsAndGates(self, mat):
   q = [
@@ -122,17 +129,17 @@ def wallsAndGates(self, mat):
 
 \section{Detect Acyclic}
 \begin{enumerate}
-\item \pythoninline{path} represent the current path, and it is reset after a dfs.
+\item \pythoninline{path} represent the current path, and it is reset/pop after a dfs.
 \item \pythoninline{visited} should be updated only in the end of the dfs.
 \item For directed graph:
 \begin{enumerate}
-\item Should dfs for all neighbors except for vertices in \pythoninline{visited}, to avoid revisiting. For example, avoid revisiting A, B when start from C in the graph $C \rightarrow A \rightarrow B$.
+\item Should dfs for all neighbors except for vertices in \pythoninline{visited}, to avoid revisiting. For example, avoid revisiting A, B when start from C in the graph, and A, B have already been visited $C \rightarrow A \rightarrow B$.
 \item Excluding predecessor \pythoninline{pi} is wrong considering the case of $A \leftrightarrow B$
 \end{enumerate}
 \item For undirected graph:
 \begin{enumerate}
 \item Should dfs for all neighbors except for the predecessor \pythoninline{pi}. $A-B$.
-\item Excluding neighbors in \pythoninline{visited} is redundant, due to \pyinline{pi}.
+\item Excluding neighbors in \pythoninline{visited} is redundant, due to \pyinline{pi}. But it is okay to double check \pythoninline{visited}.
 \end{enumerate}
 \end{enumerate}
 
@@ -140,7 +147,7 @@ def wallsAndGates(self, mat):
 Detect cycles (any) in directed graph.
 
 \begin{python}
-def dfs(self, V, v, visited, path):
+def dfs(self, V, v, visited, path) -> bool:
   if v in path:
     return False
 
@@ -166,7 +173,7 @@ def dfs(self, V, v, pi, visited, path):
 
   path.add(v)
   for nbr in V[v]:
-    if nbr != pi:
+    if nbr != pi:  # nbr not in visited
       if not self.dfs(V, nbr, v, visited, path):
         return False
 
@@ -201,12 +208,16 @@ An Eulerian path is a path in a graph which visits every edge exactly once ($\fo
 
 Hierholzer's algorithm to find an Euler path in a graph. The graph must be directed graph.
 
-\runinhead{Core clue.} The algorithm exhaustively visit all the edges during the dfs. We must \textbf{remove} the edge after visting, otherwise circle.
+\runinhead{Core clue.}
+\begin{enumerate}
+\item The algorithm exhaustively visit all the edges during the dfs. 
+\item We must \textbf{remove} the edge after visting, otherwise circle.
+\item After dfs a vertex $v$'s all neighbors and path, \pyinline{appendleft} $v$. 
+\end{enumerate}
 \begin{python}
 def findItinerary(self, tickets):
     G = defaultdict(list)
-    for elt in tickets:
-        s, e = elt
+    for s, e in tickets:
         heapq.heappush(G[s], e)  # heap lexical order
 
     ret = deque()
@@ -222,7 +233,7 @@ def dfs(self, G, cur, ret):
     ret.appendleft(cur)
 \end{python}
 
-Instead of using \pyinline{heapq}, using \pyinline{deque}.
+Alternatively, instead of using \pyinline{heapq}, using \pyinline{deque}.
 \begin{python}
 def findItinerary(self, tickets):
     G = defaultdict(deque)
@@ -241,6 +252,8 @@ def dfs(self, G, cur, ret):
         # need to remove the edge after visting
         nbr = G[cur].popleft()
         self.dfs(G, nbr, ret)
+    
+    ret.appendleft(cur)
 \end{python}
 
 \subsection{Hamiltonian Path - Every Vertex Once} 
@@ -252,8 +265,8 @@ For a graph $G=\{V, E\}$, if $A \rightarrow B $, then $A$ is before $B$ in the o
 \subsection{Algorithm}
 \rih{Core clues}:
 \begin{enumerate}
-\item \textbf{DFS neighbors first}. If the neighbors of current node is  $\neg$visited, then dfs the neighbors
-\item \textbf{Process current node}. After visiting all the neighbors, then visit the current node and push it to the result queue.
+\item \textbf{DFS neighbors first}. For a given vertex $v$, if the neighbors of current node is  $\neg$visited, then dfs the neighbors
+\item \textbf{Process current node}. After visiting all the neighbors, then visit the current node $v$ and push it to the result queue \pyinline{appendleft}.
 
 \end{enumerate}
 Notice:
@@ -291,7 +304,9 @@ def dfs_topo(self, V, v, visited, path, ret) -> bool:
   visited.add(v)
   ret.appendleft(v)
   return True
-
+\end{python}
+Alternatively, we can encode \pyinline{path} into \pyinline{visited}. 
+\begin{python}
 # encode the visited using 0, 1, 2
 def dfs_topo(
   self, 
@@ -333,7 +348,9 @@ Simplified code with unbalanced size. Union-find and disjoint set are used inter
 
 \rih{Core clues:}
 \begin{enumerate}
-\item \textbf{$\pi$ array}:an array to store each item's predecessor pi. The predecessor are lazily updated to its ancestor. When \pyinline{x == pi[x]}, then \pyinline{x} is the ancestor (i.e. root).
+\item \textbf{$\pi$ array}:an array to store each item's predecessor pi. The predecessor are lazily updated to its ancestor. 
+\item When \pyinline{x == pi[x]}, then \pyinline{x} is the ancestor (i.e. root).
+\item Otherwise, \pyinline{pi[x] = find(pi[x])}
 \end{enumerate}
 \begin{python}
 class DisjointSet:
@@ -347,9 +364,12 @@ class DisjointSet:
 
     def find(self, x):
         if x not in self.pi:
-            self.pi[x] = x
-        elif self.pi[x] != x:
-            self.pi[x] = self.find(self.pi[x])
+          self.pi[x] = x
+          return x
+        
+        pi = self.pi[x]
+        if x != pi:
+          self.pi[x] = self.root(pi)
         return self.pi[x]
 \end{python}
 
@@ -383,7 +403,7 @@ Weighted union-find with path compression.\\
 \end{figure}
 
 \begin{python}
-class UnionFind(object):  # or DisjointSet
+class UnionFind:  # or DisjointSet
   def __init__(self):
     self.pi = {}  # item -> pi
     self.sz = {}  # root -> size
@@ -397,16 +417,16 @@ class UnionFind(object):  # or DisjointSet
       self.pi[x] = x
       self.sz[x] = 1
 
-  def root(self, x):
+  def find(self, x):
     """path compression"""
     pi = self.pi[x]
     if x != pi:
-      self.pi[x] = self.root(pi)
+      self.pi[x] = self.find(pi)
     return self.pi[x]
 
   def unionize(self, x, y):
-    pi1 = self.root(x)
-    pi2 = self.root(y)
+    pi1 = self.find(x)
+    pi2 = self.find(y)
 
     if pi1 != pi2:
       if self.sz[pi1] > self.sz[pi2]:
@@ -419,7 +439,7 @@ class UnionFind(object):  # or DisjointSet
   def isunion(self, x, y):
     if x not in self.pi or y not in self.pi:
       return False
-    return self.root(x) == self.root(y)
+    return self.find(x) == self.find(y)
 \end{python}
 
 \subsection{Complexity}

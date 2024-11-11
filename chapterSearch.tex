@@ -25,7 +25,7 @@ def bin_search(self, A, t, lo=0, hi=None):
     if hi is None: hi = len(A)
     
     while lo < hi:
-        mid = (lo+hi)/2
+        mid = (lo+hi) // 2
         if A[mid] == t:  return mid
         elif A[mid] < t: lo = mid+1
         else:            hi = mid
@@ -54,7 +54,7 @@ def find(A, v):
 \subsection{idx equal or just higher}
 $A_{idx} \geq target$.
 \begin{python}
-def bin_search(self, A, t, lo=0, hi=None):
+def bi_search(self, A, t, lo=0, hi=None):
     if hi is None: hi = len(A)
    
     while lo < hi:
@@ -117,7 +117,7 @@ def bisect_right(A, t, lo=0, hi=None):
 
 If the elements can be duplicated, need to detect and skip. 
 \begin{python}
-def findMin(self, A):
+def find_min(self, A):
     lo = 0
     hi = len(A)
     mini = sys.maxsize

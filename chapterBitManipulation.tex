@@ -13,7 +13,7 @@ MIN = 0x80000000
 MSK = 0xFFFFFFFF
 \end{python}
 \subsection{Operations}
-\runinhead{Mask.} 
+\runinhead{Basics} 
 \begin{enumerate}
 \item Masking to 1: to mask a single bit position, $bit\OR 1$
 \item Masking to 0: to mask a single bit position, $bit\AND 0$
@@ -27,27 +27,71 @@ $$
 -i = \NOT i+1
 $$
 
+Negative numbers: \pyinline{0b10000000} to \pyinline{0b11111111} (-128 to -1 in decimal). This process essentially "wraps around" the positive binary sequence to start from the most negative number. 
+
+\begin{python}
+{
+  # 4 overflow
+  3: 0b011,
+  2: 0b010,
+  1: 0b001,
+  0: 0b000,
+  #########
+ -1: 0b111, 
+ -2: 0b110,
+ -3: 0b101,
+ -4: 0b100,
+}
+\end{python}
+Since 0 takes a position in the binary representation:
+\begin{itemize}
+\item $\NOT0$ is $-1$
+\item $\NOT1$ is $-2$
+\item $\NOT3$ is $-4$.
+\end{itemize}
+
+
 \runinhead{Check 2's power}
+2's power is in the form of \pyinline{0b01000}.
 $$x\AND(x-1)$$
 
-\runinhead{Rightmost bit set. LSB} To get the rightmost bit, with the help of 2's complement:
-\begin{enumerate}
-\item Left extended with 1's:
-$$x \XOR (-x)$$
-\item Left extended with 0's:
-$$x \AND (-x)$$
-\end{enumerate}
+\runinhead{Rightmost bit set. LSB} To get the rightmost bit, with the help of 2's complement as followed:
+\begin{align*}
+x &= 0bijk1000 \\
+\NOT x &= 0bIJK0111 \\
+-x &= 0bIJK1000
+\end{align*}
+where $IJK$ represent bits that are the negation of $ijk$.
 
-\runinhead{MSB.} Find the most significant bit. 
+$$LSB = x \AND -x$$
+
+This above is left extended with 0's. To left extended with 1's. 
+
+$$
+LSB_{1extended} = \NOT (lsb - 1)
+$$
+
+\runinhead{Rightmost bit set. MSB.} Find the most significant bit. 
 \begin{python}
 msb = 0
 while num >> msb:
   msb += 1
+return msb  # index
 \end{python}
-If zero-indexed, the MSB is \pyinline{msb - 1}.
+If zero-indexed, the MSB is \pyinline{msb - 1}. 
+
+Alternatively,
+\begin{python}
+msb = 1
+while msb <= x:
+  msb <<= 1
+return msb >> 1
+\end{python}
+
 \runinhead{Negation and index} We can use tilde notation for the index accessing a string or an array
 \begin{lstlisting}
-i  ~i  
+i  ~i
+#####
 0  -1
 1  -2
 2  -3
@@ -74,14 +118,16 @@ If 32bit signed int, in python, we may need to mask the int:
 \item Left extended with 1's: \pyinline{\~(x ^ MSK)}
 \end{enumerate}
 
-, where \pyinline{MSK = 0xFFFFFFFF}
+, where \pyinline{MSK = 0xFFFFFFFF}, 8 F's for 32 bits. 
 
 \section{Radix}
-\runinhead{Convert to hexadecimal with 2's complement.} Very easy to convert positive number of hex, but need to pay more attention to negative number when thinking in the decimal representation. 
+\runinhead{Convert to hexadecimal, but with 2's complement.} Easy to convert positive number of hex, but need to pay more attention to negative number when thinking in the decimal representation. 
 
 Everything easy to convert the number even under 2's complement if thinking in the binary representation. 
+
+Core proccess:
 \begin{enumerate}
-\item current digit we need: \pyinline{num & 0xf}
+\item current digit we need: \pyinline{num & 0xF}
 \item next significant number: \pyinline{num >>= 4}
 \end{enumerate}
 \section{Circuit}
@@ -183,12 +229,13 @@ Consider each single bit separately. For the $j$-th bit in $num$, if $num_j=1$, 
 
 
 \subsection{Two Numbers} 
-Given an array of numbers nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.
+Given an array of numbers nums, in which exactly \textbf{two} elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.
 
 \begin{itemize}
 \item Easily get: $x = a \XOR b$.
 \item $a \neq b$; thus there are at least one 1-bit in $x$ is different.  
 \item Take an arbitrary 1 bit set in $x$, and such bit set can classify the elements in the array into two separate groups.
+\item Then do $a_i \XOR a_j$ in two groups respectively to find out $a$ and $b$ from each group.
 \end{itemize}
 
 \section{Bitwise operators}

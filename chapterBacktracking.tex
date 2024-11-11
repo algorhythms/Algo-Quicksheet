@@ -12,6 +12,8 @@
 \section{Memoization}
 dfs can be memoized.
 \begin{python}
+import functools
+
 @functools.lru_cache(maxsize=None)
 def dfs(self, *args):
   pass
@@ -27,14 +29,17 @@ Pay attention to the pruning condition.
 def dfs(self, A, i, k, cur, remain, ret):
     """self.dfs(A, 0, k, [], target, ret)"""
     if len(cur) == k and remain == 0:
-        ret.append(list(cur))
+        ret.append(list(cur))  # clone 
         return
 
-    if (i >= len(A) or len(cur) > k 
-        or len(A)-i+len(cur) < k):
+    if i >= len(A) or len(cur) > k 
+       or len(A) - i + len(cur) < k:
         return
-
+	
+	# not select 
     self.dfs(A, i+1, k, cur, remain, ret)
+    
+    # select
     cur.append(A[i])
     self.dfs(A, i+1, k, cur, remain-A[i], ret)
     cur.pop()
@@ -42,6 +47,13 @@ def dfs(self, A, i, k, cur, remain, ret):
 
 
 \section{String}
+In general, 
+\begin{itemize}
+\item Break down the sequence into \pyinline{left} and \pyinline{right} two parts. 
+\item Choose \pyinline{left} as terminal state, while DFS search the \pyinline{right}. 
+\item Combine \pyinline{left} and the search results from \pyinline{right}.
+\item Sometimes it is easier to search \pyinline{left} and choose \pyinline{right} as terminal state. 
+\end{itemize}
 \subsection{Palindrome}
 \subsubsection{Palindrome partition.} Given \pyinline{s = "aab"}, return: \\
 \pyinline{[["aa","b"], ["a","a","b"]]}
@@ -87,7 +99,7 @@ def backtrack(self, s, cur_lvl, ret):
     If s[:i] passes predicate, then backtrack s[i:]
     """
     if not s:
-        ret.append(list(cur_lvl))
+        ret.append(list(cur_lvl))  # clone
 
     for i in range(1, len(s)+1):
         if self.predicate(s[:i]):
@@ -122,10 +134,32 @@ def dfs(self, word):
 Split the array into $m$ parts and minimize the max subarray sum.
 \runinhead{Core clues:}
 \begin{enumerate}
-\item Pivot an index
-\item Left side as a sum, right side dfs 
+\item Take one subarray from left, and search the right side for the minimum max subarray. 
+\item To make process in the DFS, always make the left part a subarray, and DFS the right part. 
+\item Pivot an index to break the array into the left and right parts.
 \end{enumerate}
 
+Search right.
+\begin{python}
+def dfs(self, cur, m):
+    """
+    * p break the nums[cur:] into left and right part
+    * sums is the prefix sum (sums[i] == sum(nums[:i]))
+    """
+    if m == 1:
+        return self.sums[len(nums)] - self.sums[cur]
+
+    mini = float("inf")
+    for j in range(cur, lens(nums)):
+        left = self.sums[j + 1] - self.sums[0]
+        right = self.dfs(j + 1, m - 1)
+        # minimize the max
+        mini = min(mini, max(left, right))
+
+    return mini
+\end{python}
+
+Alternatively, search left. 
 \begin{python}
 def dfs(self, hi, m):
     """
@@ -164,7 +198,8 @@ def dfs(
 ) -> bool:
     """
     T - Transition matrix
-    stores all the possible end states from state1 and state2
+    stores all the possible end states from state1 
+    and state2
     [s1, s2] -> set of end states 
     """
     if len(level) == 1:
@@ -187,8 +222,9 @@ def dfs(
 \runinhead{Core clues:}
 \begin{enumerate}
 \item Expand the search tree \textbf{horizontally}.
+\item Take the last number on the stack, and factorize it recursively.
 \end{enumerate}
-\runinhead{Search tree:}
+\rih{Search tree:}
 \begin{python}
 Input: 16
 get factors of cur[-1]
@@ -199,23 +235,46 @@ get factors of cur[-1]
 
 [4, 4]
 \end{python}
+Take the last number from the list and factorize it.
+
 Code:
+
 \begin{python}
+ret = []  # collector
+
+def dfs(cur, remain, ret):
+  if remain == 1:
+    res.append(list(cur))
+    return
+        
+  start = 2 if not cur else cur[-1]
+  # if start = 2, it generates duplicate combinations
+  for factor in range(start, remain + 1):
+    if remain % factor == 0:
+      dfs(cur + [factor], remain // factor)
+
+dfs([], target, ret)
+\end{python}
+
+Using a single stack to conserve space, we need to maintain the stack \pyinline{cur}. 
+\begin{python}
+self.dfs([16], [])
+
 def dfs(self, cur, ret):
   if len(cur) > 1:
-    ret.append(list(cur))
+    ret.append(list(cur))  # clone 
 
   n = cur.pop()
   start = cur[-1] if cur else 2
   for i in range(start, int(sqrt(n))+1):
     if self.predicate(n, i):
       cur.append(i)
-      cur.append(n/i)
+      cur.append(n // i)
       self.dfs(cur, ret)
-      cur.pop()
+      cur.pop()  # pop the i here. pop n // i in dfs
             
 def predicate(self, n, i):
-  return n%i == 0
+  return n % i == 0
   
 \end{python}
 \runinhead{Time complexity.} The search tree's size is $O(2^n)$ where $n$ is the number
@@ -249,9 +308,15 @@ def addOperators(self, num, target):
   self.dfs(num, target, 0, "", 0, 0, ret)
   return ret
 
-def dfs(self, num, target, pos, 
-        cur_str, cur_val, 
-        mul, ret
+def dfs(
+    self, 
+    num, 
+    target, 
+    pos,  # scanning index 
+    cur_str,  # The current str builder 
+    cur_val,  # To reach the target 
+    mul,  # first operand for multiplication 
+    ret,
 ):
   if pos >= len(num):
     if cur_val == target:
@@ -264,17 +329,17 @@ def dfs(self, num, target, pos,
       nxt_val = int(num[pos:i+1])
       if not cur_str:  # 1st number
         self.dfs(num, target, i+1, 
-            "%d"%nxt_val, nxt_val,
+            f"nxt_val", nxt_val,
             nxt_val, ret)
       else:  # +, -, *
         self.dfs(num, target, i+1, 
-            cur_str+"+%d"%nxt_val, cur_val+nxt_val, 
+            f"{cur_str}+{nxt_val}", cur_val+nxt_val, 
             nxt_val, ret)
         self.dfs(num, target, i+1, 
-            cur_str+"-%d"%nxt_val, cur_val-nxt_val, 
+            f"{cur_str}-{nxt_val}", cur_val-nxt_val, 
             -nxt_val, ret)
         self.dfs(num, target, i+1, 
-    cur_str+"*%d"%nxt_val, cur_val-mul+mul*nxt_val, 
+    f"{cur_str}*{nxt_val}", cur_val-mul+mul*nxt_val, 
             mul*nxt_val, ret)
 \end{python}
 \subsection{Bidirection}
@@ -339,7 +404,7 @@ def minrm(self, s):
     rmcnt += left
     return rmcnt
 \end{python}
-To do backtracking: 
+To return all possible results, do backtracking: 
 \begin{python}
 def dfs(self, s, cur, left, pi, i, rmcnt, ret):
   """
@@ -365,7 +430,8 @@ def dfs(self, s, cur, left, pi, i, rmcnt, ret):
   else:
     if pi == s[i]:
       while i < len(s) and pi and pi == s[i]: 
-        i, rmcnt = i+1, rmcnt-1
+        i += 1
+        rmcnt -= 1
       self.dfs(s, cur, left, pi, i, rmcnt, ret)
     else:
       self.dfs(s, cur, left, s[i], i+1, rmcnt-1, ret)
@@ -383,7 +449,7 @@ Generate all valid BST with nodes from 1 to $n$.
 \end{enumerate}
 Code:
 \begin{python}
-def generate(self, start, end):
+def generate(self, start, end) -> List[TreeNode]:
   roots = []
   if start > end:
     roots.append(None)
@@ -395,7 +461,7 @@ def generate(self, start, end):
     
     for left_root in left_roots:
       for right_root in right_roots:
-        root = TreeNode(pivot)
+        root = TreeNode(pivot)  # new instance
         root.left = left_root
         root.right = right_root
 
