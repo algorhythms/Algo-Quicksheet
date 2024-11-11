@@ -25,7 +25,7 @@ def bin_search(self, A, t, lo=0, hi=None):
     if hi is None: hi = len(A)
     
     while lo < hi:
-        mid = (lo+hi)/2
+        mid = (lo+hi) // 2
         if A[mid] == t:  return mid
         elif A[mid] < t: lo = mid+1
         else:            hi = mid

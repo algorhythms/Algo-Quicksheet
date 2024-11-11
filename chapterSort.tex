@@ -65,7 +65,7 @@ def pivot(self, A, lo, hi):
     return l
 \end{python}
 
-Using the first element as pivot:
+Alternatively, Using the first element as pivot:
 \begin{python}
 def pivot(self, A, lo, hi):
     """
@@ -166,7 +166,7 @@ def merge_sort(self, A):
   if len(A) <= 1:
     return
 
-  mid = len(A)//2
+  mid = len(A) // 2
   L, R = A[:mid], A[mid:]
   self.merge_sort(L)
   self.merge_sort(R)
@@ -401,15 +401,15 @@ F(n) &= F(n/2) + O(n) \\
 Refresh the \pyinline{def pivot}:
 \begin{python}
 def pivot(self, A, lo, hi):
-    pivot = lo
-    left = pivot  # left == pivot, means no left array
-    for i in range(lo + 1, hi):
-        if A[i] < A[pivot]:
-            left += 1
-            A[left], A[i] = A[i], A[left]
-
-    A[left], A[pivot] = A[pivot], A[left]
-    return left  # the pivot index
+    p = hi
+    l = lo
+    for i in range(lo, hi - 1):
+        if A[i] < A[p]:
+            A[i], A[l] = A[l], A[i]
+            l += 1
+            
+    A[l], A[hi] = A[hi], A[l]
+    return l  # return the pivot index
 \end{python}
 Find $k$-th with 2-way partitioning. Notice that only index changing while $k$ is the same.
 \begin{python}
