@@ -37,6 +37,28 @@ $$
 F_{n,k} = F_{n-1, k} + F_{n-1, k-1}
 $$
 
+How to construct $nCr$ in code:
+\begin{python}
+nCr = [
+    [0 for _ in range(K)]  # not default to 1
+    for _ in range(N+1)
+]
+# nCr[0][x] must be 0 where x > 0
+
+nCr[0][0] = 1
+for n in range(1, N+1):
+    nCr[n][0] = 1
+    for r in range(1, K):
+        nCr[n][r] = nCr[n-1][r-1] + nCr[n-1][r]
+\end{python}
+
+Use built-in library: 
+\begin{python}
+math.comb(n, r)
+math.perm(n, r)
+math.factorial(n)
+\end{python}
+
 \subsection{N objects, K ceils. Stars \& Bars}
 When $N=10, K=3$:
 $$

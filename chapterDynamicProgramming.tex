@@ -115,7 +115,7 @@ F[i] = max(
 
 Alternative solution using binary search in $O(n \log n)$ - Section \ref{extremeValueProblem}.
 
-\runinhead{Maximum subarray sum.} Find the maximum subarray sum of $A$. 
+\runinhead{\hl{Maximum Subarray Sum}.} Find the maximum subarray sum of $A$. Kadance algorithm.  
 
 Let $F_i$  be the maximum subarray sum ending at $A_{i}$
 $$
@@ -125,6 +125,22 @@ $$
 Then the global $maxa$ is:
 $$
 maxa = \max(F_i\cdot \forall i)
+$$
+
+\runinhead{Maximum Subarray Gain.} Find the maximum subarray gain of $A$. A gain is defined as followed:
+\[
+gain(A_i) = 
+\begin{cases}
+  +1 & \text{if } A_i = t, \\
+  -1 & \text{if } A_i = k, \\
+   0 & \text{otherwise}.
+\end{cases}
+\]
+
+
+Let $F_i$  be the maximum subarray gain ending at $A_{i}$
+$$
+F_i = \max(F_{i-1}+gain(A_{i}), 0)
 $$
 
 
@@ -141,13 +157,17 @@ F_{i} = \max\big(F_{i-1}, F_{i-2}+A_{i-1}\big)
 Let $F_{i, j}$ be the minimum number
 of steps required to convert $A[:i]$ to $B[:j]$.
 \begin{eqnarray*}
-F_{i, j} = \left\{ \begin{array}{rl}
-  F_{i-1, j-1} &\mbox{// if $a[i]=b[j]$} \\
+F_{i, j} = 
+\left\{ 
+\begin{array}{rl}
+  F_{i-1, j-1} &\mbox{if $a[i]=b[j]$} \\
   \min\Big(F_{i, j-1}+1, &\mbox{// otherwise, insert}\\
   F_{i-1, j}+1, &\mbox{// delete}\\
   F_{i-1, j-1}+1\Big) &\mbox{// replace}\\
-       \end{array} \right.
+\end{array} 
+\right.
 \end{eqnarray*}
+
 \runinhead{H-index} Given an array of citations $A$ of a researcher, write a function to compute the researcher's h-index.
 
 Need some re-representation of information: 
@@ -393,6 +413,34 @@ def minCut(self, s):
 Two-state dp: `a' $\rightarrow$ `b' and  `b' $\rightarrow$ `a'. 1 cut into 2 segment.
 
 \runinhead{abc string.} Follow up for ab string. Three-state dp: $chr \neq a, chr \neq b, chr \neq c$. 2 cuts into 3 segments.
+
+\runinhead{ab subsequence.} Given a string $A$, a string pattern $B$ that is a subsequence of $A$.
+We define an operation as removing a character at an index $idx$ from A such that:
+\begin{enumerate}
+\item $idx$ is an element of $target$.
+\item pattern $B$ remains as a subsequence of $A$. 
+\end{enumerate}
+Find the maximal possible number of removals.
+
+\hl{Forward DP}. Let $F_{i,j}$ be the maximal operations at $A[:i]$ and $B[:j]$
+\[
+F_{i,j} = \max
+\begin{cases}
+F_{i-1,j} + 1 &\text{take $A_{i-1}$ as $i-1$ in $target$}\\
+F_{i-1,j} &\text{skip $A_{i-1}$ as $i-1$ not in $target$} \\
+F_{i-1,j-1}&\text{skip $B_{j-1}$ with $A_{i-1}$ if $A_{i-1} = B_{j-1}$}
+\end{cases}
+\]
+
+\hl{Backward DP}. Let $F_{i,j}$ be the maximal operations at $A[i:]$ and $B[j:]$
+\[
+F_{i,j} = \max
+\begin{cases}
+F_{i+1,j} + 1 &\text{take $A_i$ as $i$ in $target$}\\
+F_{i+1,j} &\text{skip $A_i$ as $i$ not in $target$} \\
+F_{i+1,j+1}&\text{skip $B_j$ with $A_i$ if $A_i = B_j$}
+\end{cases}
+\]
 
 \section{Divide \& Conquer}
 \subsection{Tree}

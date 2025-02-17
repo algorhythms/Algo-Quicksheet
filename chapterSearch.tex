@@ -58,7 +58,7 @@ def bi_search(self, A, t, lo=0, hi=None):
     if hi is None: hi = len(A)
    
     while lo < hi:
-        mid = (lo+hi)/2
+        mid = (lo+hi) // 2
         if A[mid] == t:  return mid
         elif A[mid] < t: lo = mid+1
         else:            hi = mid
@@ -81,9 +81,11 @@ def bisect_left(A, t, lo=0, hi=None):
     if hi is None: hi = len(A)
 
     while lo < hi:
-        mid = (lo+hi)/2
-        if A[mid] < t: lo = mid+1   
-        else:          hi = mid
+        mid = (lo+hi) // 2
+        if A[mid] < t:
+            lo = mid+1   
+        else:
+            hi = mid
 
     return lo
 \end{python}
@@ -100,11 +102,28 @@ def bisect_right(A, t, lo=0, hi=None):
     if hi is None: hi = len(A)
 
     while lo < hi:
-        mid = (lo+hi)/2
-        if A[mid] <= t: lo = mid+1
-        else:           hi = mid 
+        mid = (lo+hi) // 2
+        if A[mid] <= t: 
+            lo = mid+1
+        else:
+            hi = mid 
 
     return lo
+\end{python}
+\subsection{Generalized bisect}
+Find the smallest bound that satisfies some condition of $predicate$:
+\begin{python}
+def bisect_left(A, predicate, lo=0, hi=None):
+    if hi is None: hi = len(A)
+
+    while lo < hi:
+        mid = (lo+hi) // 2
+        if predicate(A[mid]):  # go left
+            hi = mid
+        else:  # go right
+            lo = mid + 1
+
+    return hi  # last found
 \end{python}
 \section{Applications}
 \subsection{Rotation}

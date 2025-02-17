@@ -6,6 +6,12 @@
 V = defaultdict(list)
 \end{python}
 
+Convert a \pyinline{parent} array to graph, \pyinline{parent[i]} is the parent of node \pyinline{i}. 
+\begin{python}
+G = defaultdict(list)
+for i, pi in enumerate(parent):
+    G[pi].append(i)
+\end{python}
 \runinhead{Complexity.} Basic complexities:
 
 \begin{table}
@@ -68,9 +74,9 @@ class Solution:
     n = len(grid[0])
     visited[i][j] = True
 
-    for dir in self.dirs:
-      I = i+dir[0]
-      J = j+dir[1]
+    for di, dj in self.dirs:
+      I = i+di
+      J = j+dj
       if 0 <= I < m and 0 <= J < n
         and not visited[I][J]
         and grid[I][J] == "1":
@@ -81,6 +87,38 @@ If the islands are constantly updating and the query for number of islands is ca
 Without updating, DFS itself is enough.
 
 \section{BFS}
+\subsection{BFS with Distance Array}
+Each time, a query will add an edge from vertex $u$ to $v$, and find the shortest path from the $origin$ to $target$ after each update. 
+
+\rih{Core clues}:
+\begin{enumerate}
+\item \pyinline{dist} is the distance from origin, not to destination.
+\item BFS updates the distance from the source of the newly added edge, not from the origin of the graph.
+\end{enumerate}
+\begin{python}
+def solve(self, G, dist, queries: List[Tuple])
+    ret = []
+    for u, v in queries:
+        G[u].append(v)
+        self.bfs(G, dist, u)  # from u
+        ret.append(dist[~0])
+    
+    return ret
+    
+def bfs(self, G, dist, s):
+    """
+    Known origin and end destination
+    """
+    q = deque()
+    q.append(s)
+    while q:
+        v = q.popleft()
+        for nbr in G[v]:
+            if dist[nbr] > dist[v] + 1:
+                # It and its descendants require update
+                dist[nbr] = dist[v] + 1
+                q.append(nbr)
+\end{python}
 \subsection{BFS with Abstract Level}
 BFS goes through the vertices level by level in a queue. 
 
@@ -147,14 +185,14 @@ def wallsAndGates(self, mat):
 Detect cycles (any) in directed graph.
 
 \begin{python}
-def dfs(self, V, v, visited, path) -> bool:
+def dfs(self, G, v, visited, path) -> bool:
   if v in path:
     return False
 
   path.add(v)
-  for nbr in V[v]:
+  for nbr in G[v]:
     if nbr not in visited:
-      if not self.dfs(V, nbr, visited, path):
+      if not self.dfs(G, nbr, visited, path):
         return False
 
   path.remove(v)
@@ -167,14 +205,14 @@ def dfs(self, V, v, visited, path) -> bool:
 Detect cycles (any) in undirected graph.
 
 \begin{python}
-def dfs(self, V, v, pi, visited, path):
+def dfs(self, G, v, pi, visited, path):
   if v in path:
     return False
 
   path.add(v)
-  for nbr in V[v]:
+  for nbr in G[v]:
     if nbr != pi:  # nbr not in visited
-      if not self.dfs(V, nbr, v, visited, path):
+      if not self.dfs(G, nbr, v, visited, path):
         return False
 
   path.remove(v)
@@ -267,12 +305,11 @@ For a graph $G=\{V, E\}$, if $A \rightarrow B $, then $A$ is before $B$ in the o
 \begin{enumerate}
 \item \textbf{DFS neighbors first}. For a given vertex $v$, if the neighbors of current node is  $\neg$visited, then dfs the neighbors
 \item \textbf{Process current node}. After visiting all the neighbors, then visit the current node $v$ and push it to the result queue \pyinline{appendleft}.
-
+\item \textbf{Acyclic}. Need to detect cycle using $path$; thus the dfs need to construct result queue $ret$ and detect cycle simultaneously - by using two sets: $visited$ and $path$.
 \end{enumerate}
 Notice:
 \begin{enumerate}
 \item Need to check ascending order or descending order.
-\item Need to \textbf{detect cycle}; thus the dfs need to construct result queue and detect cycle simultaneously, by using two sets: $visited$ and $path$.
 \end{enumerate}
 
 \begin{python}
@@ -291,7 +328,7 @@ def topological_sort(self, V):
 
 # return whether the current path is acyclic
 def dfs_topo(self, V, v, visited, path, ret) -> bool:
-  if v in path:
+  if v in path:  # cycle
     return False
 
   path.add(v)
@@ -340,7 +377,30 @@ The time complexity of topological sorting is $O(|E|+|V|)$ since it needs to goe
 \subsection{Applications}
 \begin{enumerate}
 \item Course scheduling problem with pre-requisite.
+\item In a tree, find the closest ancestor $y$ of $x$ s.t. sastisfying some predicate. 
 \end{enumerate}
+
+In a tree, find the closest ancestor $y$ of node $x$ that has the same value $s[x] = s[y]$ and set $x$ parent to $y$. 
+
+\rih{Core clues}:
+\begin{enumerate}
+\item Naively dfs updating the tree results in TLE of $O(N^2)$. Thus we need to do a topological dfs on the tree for $O(N)$.
+\item During topological dfs, the $path$ holds \rih{extra} information. The $path$ holds the map of a list of ancestors with a given value, with the last one as the closest. 
+\end{enumerate}
+\begin{python}
+def topo(self, G, cur, path: Dict[List], parents, s):
+    # topological dfs
+    val = s[cur]
+    if len(path[val]) > 0:
+        pi = path[val][~0]
+        parent[cur] = pi
+    
+    path[val].append(cur)
+    for v in G[cur]:
+        self.topo(G, v, path, parent, s)
+    path[val].pop()
+\end{python}
+
 
 \section{Union-Find}\label{section:unionFind}
 \subsection{Simplified Union Find}
@@ -353,7 +413,7 @@ Simplified code with unbalanced size. Union-find and disjoint set are used inter
 \item Otherwise, \pyinline{pi[x] = find(pi[x])}
 \end{enumerate}
 \begin{python}
-class DisjointSet:
+class UnionFind:
     def __init__(self):
         self.pi = {}
 
@@ -369,7 +429,8 @@ class DisjointSet:
         
         pi = self.pi[x]
         if x != pi:
-          self.pi[x] = self.root(pi)
+          root = self.find(pi)
+          self.pi[x] = root
         return self.pi[x]
 \end{python}
 
@@ -377,8 +438,8 @@ Note, for the final counting of component. Need to do a final find on all nodes 
 update the ancestor.
 \begin{python}
 component_cnt = len(set(
-    ds.find(x)
-    for x in ds.pi.keys()
+    uf.find(x)
+    for x in uf.pi.keys()
 ))
 \end{python}
 
@@ -421,17 +482,18 @@ class UnionFind:  # or DisjointSet
     """path compression"""
     pi = self.pi[x]
     if x != pi:
-      self.pi[x] = self.find(pi)
+      root = self.find(pi)
+      self.pi[x] = root
     return self.pi[x]
 
-  def unionize(self, x, y):
+  def union(self, x, y):
     pi1 = self.find(x)
     pi2 = self.find(y)
 
     if pi1 != pi2:
       if self.sz[pi1] > self.sz[pi2]:
         pi1, pi2 = pi2, pi1
-        # size balancing
+        # size balancing, remove the smaller one
       self.pi[pi1] = pi2
       self.sz[pi2] += self.sz[pi1]
       del self.sz[pi1]
@@ -466,12 +528,12 @@ $$
 
 Time complexity: $O(m\log n + n \log m)$, where $O(m), O(n)$ is for projection complexity.
 \section{MST}
-Minimum spanning tree.
+Minimum spanning tree. A minimum spanning tree (MST) is a subset of a graph's edges that connects all the vertices while minimizing the total edge weight.
 \subsection{Kruskal's algorithm}
 \textbf{Core clues:}
 \begin{enumerate}
 \item Vertices $v \in V$ are divided into different sets
-\item Extract min edges to unionize the sets
+\item \textbf{Greedily} use min edges to unionize the sets, by sorting the edge weights
 \item Terminates when $\forall v\in V$ are in the same set.
 \end{enumerate}
 \textbf{Code:}

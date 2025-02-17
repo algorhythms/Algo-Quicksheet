@@ -79,7 +79,7 @@ It is possible to have 3-heap. A 3-heap is an array representation (using 1-base
 The children of $a[k]$ are $a[3k-1]$, $a[3k]$, and $a[3k+1]$.
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[width=\linewidth]{heapRepr}}
+\subfloat{\includegraphics[width=0.9\linewidth]{heapRepr}}
 \caption{Heap representation}
 \label{fig:heap} 
 \end{figure}
@@ -121,6 +121,28 @@ PriorityQueue<Integer> pq = new PriorityQueue<>(
     (o1, o2) -> o2-o1
 );
 \end{java}
+\subsection{Stale-Checking Heap for Update}
+If introduceing \textbf{update} to the values in the heap, we can do stale checking as lazy validation.
+
+Consider the following: $freq_i$ represents the frequency of $A_i$ at step $i$. We want to keep track of the most frequent number at each step $i$. $A$ contains duplicagtes. $freq_i$ can be negative. 
+\begin{python}
+def most_frequent_num(self, A, freq):
+    counter = defaultdict(int)
+    h = []
+    ret = []
+    for n, cnt in zip(A, freq):
+        counter[n] += cnt
+        heapq.heappush(h, (-counter[n], n))
+        while True:
+            c, maxa = h[0]
+            if c != -counter[maxa]:  # stale check
+                heapq.heappop(h)
+            else:
+                ret.append(maxa)
+                break
+    
+    return ret
+\end{python}
 
 \section{Derivatives}
 \subsection{Heap of Linked Lists}

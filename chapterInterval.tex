@@ -60,22 +60,22 @@ def insert(self, itvls, newItvl):
 \subsection{Introduction}
 The core philosophy of event-driven algorithm:
 \begin{enumerate}
-\item \textbf{Event}: define \textit{event}; the event are sorted by time of appearance.
-\item \textbf{Heap}: define \textit{heap meaning}.
-\item \textbf{Transition}: define \textit{transition functions} among events impacting the.
-heap. 
+\item \textbf{Events}: define \textit{events}; the events are sorted by time of appearance.
+\item \textbf{Accumulator}: define \textit{accumulator} as the accumulated impacts of the event.
+\item \textbf{Transition}: define \textit{transition functions} among events impacting the accumulator.
 \end{enumerate} 
 
-\subsection{Questions}
-\runinhead{Maximal overlaps.} Given a list of number intervals, find max number of overlapping
-intervals. 
-\runinhead{Core clues:}
+\subsection{Line Sweeping}
+\runinhead{Maximal Overlaps}. Given a list of number intervals, find max number of overlapping
+intervals.
+
+\rih{Core clues:}
 \begin{enumerate}
-\item \textbf{Event}: Every new start of an interval is an event. Scan the sorted intervals (sort the interval by \textit{start}).
-\item \textbf{Heap meaning}: Heap stores the \textit{end} of the interval. 
+\item \textbf{Events}: Every new start of an interval is an event. Scan the sorted intervals (sort the interval by \textit{start}).
+\item \textbf{Accumulator}: the maximum number of overlap. As approximate by a heap, which stores the \textit{end} of the interval. 
 \item \textbf{Transition}: Put the ending time into heap, and pop the ending time earlier than the new start time from heap. And we need min-heap to pop the early ones.
 \end{enumerate}
-\newpage
+
 \begin{python}
 def max_overlapping(intervals):
     maxa = 0
@@ -92,3 +92,50 @@ def max_overlapping(intervals):
     return maxa
 \end{python}
 
+\runinhead{The horizontal line balancing above and below.} Given a 2D integer array $squares$. Each $squares_i = [x_i, y_i, l_i]$, representing the coordinates of the bottom-left point and the side length of a square parallel to the x-axis.
+
+Find the minimum y-coordinate value of a horizontal line such that the total area of the squares above the line equals to that below the line. Note: Squares may overlap. Overlapping areas should be counted multiple times.
+
+\rih{Core clues:}
+\begin{enumerate}
+\item \textbf{Events}: Every $y_i$ repreents a new square, with a begining and an end. 
+\item \textbf{Accumulator}: $F(y) = AreaBelow(y)$, by the horizontal line $y$. 
+\item \textbf{Transition}: The rate of change of $F(y)$ is $slope$. The $slope$ is the accumulated width at $y$, of all the squares under $y$. Each event contains a $\Delta slope$ that impacts the accumulated slope. More formally,
+\begin{align*}
+  \frac{\dd}{\dd y}F(y) &= slope(y) \\
+  slope(y) &= \sum_{\substack{\text{all squares }i \\ y_i \le y < y_i + l_i}} l_i \\ 
+  \frac{\dd}{\dd y}slope(y) &= \Delta slope_y \text{ from } events
+\end{align*}
+\end{enumerate}
+\begin{python}
+def separateSquares(self, squares):
+    """
+    Event driven. Line Sweep.
+    F(y) = AreaBelow(y)
+    dF/dy = slope, the rate of change of F(y)
+    F(y) is monotonically increasing 
+    """
+    events = []
+    total_area = 0
+    for x, y, l in squares:
+        # (y-coordiate, delta_slope)
+        events.append((y, l))
+        events.append((y+l, -l))
+        total_area += l*l
+    
+    events.sort()
+    target = total_area / 2
+
+    F = 0 
+    slope = 0
+    prev_y = events[0][0]
+    for y, d_slope in events:
+        F += (y - prev_y) * slope
+        if F >= target:
+            return y - (F - target) / slope
+
+        slope += d_slope
+        prev_y = y
+    
+    return prev_y
+\end{python}

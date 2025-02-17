@@ -1,3 +1,4 @@
+% !TEX root = algo-quicksheet.tex
 \chapter{Backtracking}
 \section{Introduction}
 \runinhead{Difference between backtracking and dfs.} \textit{Backtracking} is a more general purpose algorithm. \textit{Dfs} is a specific form of backtracking related to searching tree structures. 
@@ -18,6 +19,52 @@ import functools
 def dfs(self, *args):
   pass
 \end{python}
+\section{Permutations}
+\runinhead{Permutation.} Generate all permutaitons of a list $A$.
+\runinhead{Core Clues:}
+\begin{itemize}
+\item Advancing the index \pyinline{cur}
+\end{itemize}
+
+\begin{python}
+# itertools.permutations 
+
+def permutations(self, A, cur, ret):
+    # in-place
+    if cur == len(A):
+        ret.append(list(A))  # clone
+        return
+    
+    for i in range(cur, len(A)):
+        # swap
+        A[cur], A[i] = A[i], A[cur]
+        self.permutations(A, cur+1, ret)
+        # restore
+        A[i], A[cur] = A[cur], A[i]
+\end{python}
+
+\runinhead{Permutation and subsequence.} Return the number of all possible non-empty subsequences of letters we can permutate. For example \pyinline{input = "AAB"}. The possible sequences are $A, B, AA, AB, BA, AAB, ABA, BAA$.
+
+\runinhead{Core Clues:}
+\begin{itemize}
+\item All elements are interconnected as neighbors
+\item There is no advancing of index \pyinline{i}. This is more like DFS than backtracking.
+\end{itemize}
+\begin{python}
+def dfs(self, inputs, visited, cur, ret):
+    # add to result set as we build the subsequences
+    ret.add("".join(cur))
+
+    for i, v in enumerate(inputs):
+        # iterate all neighbors
+        if not visited[i]:
+            visited[i] = True
+            cur.append(v)
+            self.dfs(inputs, visited, cur, ret)
+            cur.pop()
+            visited[i] = False
+\end{python}
+
 \section{Sequence}
 \runinhead{k sum.} Given $n$ unique integers, number $k$ and target. Find all possible $k$ integers where their sum is target. 
 

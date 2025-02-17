@@ -36,6 +36,7 @@ from collections import defaultdict
 counter = defaultdict(int)
 G = defaultdict(list)  # graph of v -> neighbors
 G = defaultdict(dict)  # G[s][e] -> weight
+G = defaultdict(lambda: defaultdict(int))  # G[s][e] -> weight
 
 
 from collections import deque
