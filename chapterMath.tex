@@ -17,6 +17,24 @@
 \end{enumerate}
 \section{Divisor}
 \runinhead{gcd.} Greatest common divisor.
+$$
+gcd(a,b) = gcd(b, r)
+$$
+\begin{center}
+\begin{tikzpicture}[->, thick, >=stealth]
+
+% Nodes
+\node (a) at (0,2) {\(a\)};
+\node (b) at (2,2) {\(b\)};
+\node (mod) at (2,0) {\(a \% b\)};
+\node (b2) at (0,0) {\(b\)};
+
+% Arrows
+\draw (a) -- (mod);
+\draw (b) -- (b2);
+
+\end{tikzpicture}
+\end{center}
 
 \begin{python}
 # recursive abbr
@@ -43,7 +61,35 @@ $$
 \item \rih{Reduction}: If we replace $a$ with $b$ and $b$ with $r$, the GCD remains unchanged, and the problem size gets smaller (since $r<b$). 
 \item \rih{Termination}: The algorithm repeatedly reduces the size of the numbers by replacing the larger number with the remainder. Eventually, one of the numbers will become zero, and the GCD is the other number, since $gcd(a,0)=a$.
 \end{enumerate}
+\section{Power}
+\runinhead{power(x, n).} To calculate $x^n$. 
+\runinhead{Core Clues}:
+\begin{enumerate}
+\item $O(N)$ is trivial, need to do better than it
+\item Divide the problem by half
+\begin{align*}
+x^n &= (x^2)^{n/2} \\
+x^n &= x^{n/2} * x^{n/2} * x^{n \mod 2}
+\end{align*}
+\end{enumerate}
+\begin{python}
+def pow(self, x, n):
+    is_invert = False if n > 0 else True
 
+    n = abs(n)
+    ret = 1.0
+    while n > 0:
+        if n & 1 == 1:
+            ret *= x
+
+        n >>= 1
+        x *= x
+
+    if is_invert:
+        ret = 1.0 / ret
+
+    return ret
+\end{python}
 \section{Prime Numbers}
 \subsection{Sieve of Eratosthenes}
 \subsubsection{Basics}
@@ -133,6 +179,8 @@ Backtracking: Section-\ref{factorization}.
 
 \section{Median}
 \subsection{Basic DualHeap}
+\runinhead{Sliding Window Median.} Find the list of median in the sliding window. $\Ra$ Dual heap with lazy deletion.
+
 DualHeap to keep track the median when a method to find median is called multiple times.
 
 Here we use the negation of the value as a trick to convert min-heap to max-heap.
@@ -179,24 +227,12 @@ Clues:
 \begin{python}
 import heapq
 from collections import defaultdict
+from dataclasses import dataclass
 
-
+@dataclass
 class Value:
-    def __init__(self, val):
-        self.val = val
-        self.deleted = False
-
-    def __neg__(self):
-        """negate without creating new instance"""
-        self.val = -self.val
-        return self
-
-    def __cmp__(self, other):
-        assert isinstance(other, Value)
-        return self.val - other.val
-
-    def __repr__(self):
-        return repr(self.val)
+    val: int
+    deleted: bool
 
 
 class Heap:
@@ -248,16 +284,26 @@ To check whether a number of the power of 4, we can check whether it mod 3 equal
 Alternatively, we can use bit manipulation based on the power of 4 in the binary form of \pyinline{repeat n 1 << 2}, and checks whether there is even number of 0's in binary form. 
 
 \section{Ord}
-\runinhead{Number in lexical order.} Given an integer n, return 1 - n in lexicographical order. For example, given 13, return: [1,10,11,12,13,2,3,4,5,6,7,8,9].
+\runinhead{Number in lexical order.} Given an integer n, return 1 ~ n in lexicographical order. For example, given 13, return: [1,10,11,12,13,2,3,4,5,6,7,8,9].
+
+Enumerate to find the pattern:
+\begin{python}
+1	10	11	...	19
+2	21	22	...	29
+3	31	32	...	39
+4 ...
+.
+.
+\end{python}
 
 Using DFS.
 \begin{python}
-def dfs(N, cur, ret):
+def dfs(cur, ret, N):
     ret.append(cur)
     for d in range(10):
         nxt = cur * 10 + d
         if nxt <= N:
-            dfs(N, nxt, ret)
+            dfs(nxt, ret, N)
         else:
             break
 
@@ -265,12 +311,12 @@ N = 105
 ret = []
 for i in range(1, 10):
     if i <= N:
-        dfs(N, i, ret)
+        dfs(i, ret, N)
     else:
         break
 \end{python}
 
-Using iterative appraoch. 
+Optionally, using iterative appraoch. 
 \begin{python}
 def gen():
     i = 1
@@ -282,6 +328,6 @@ def gen():
             i += 1  # for current digit
         else:
             while i % 10 == 9 or i + 1 > n:
-                i /= 10
+                i //= 10
             i += 1
 \end{python}

@@ -3,16 +3,85 @@
 
 \section{Binary Search}
 \runinhead{Variants:}
+Find the insertion point
 \begin{enumerate}
-\item get the idx equal or just lower (floor)
-\item get the idx equal or just higher (ceil)
-\item \pyinline{bisect_left}
-\item \pyinline{bisect_right} $\equiv$ \pyinline{bisect} 
+\item \pyinline{bisect_left} leftmost element to insert the target
+\item \pyinline{bisect_right} rightmost element to insert the target
+\item Get the idx equal OR just lower (floor)
+\item Get the idx equal OR just higher (ceil)
+\end{enumerate}
+The above four have subtle differences.
+
+\begin{python}
+target = 5
+lst = [1, 3, 5, 7, 9]
+idx = [0, 1, 2, 3, 4]
+             ^  ^
+             |  |
+   bisect_left  bisect_right
+\end{python}
+
+\subsection{bisect\_left}
+Return the index where to insert item x in list A. So if t already appears in the list,
+A.insert(t) will insert just before the \textit{leftmost} t already there.
+
+By insertion point \pyinline{i}, it means \begin{python}
+all(val <= x for val in A[lo:i])
+\end{python} for the left side. 
+\begin{python}
+all(val > x for val in A[i:hi])
+\end{python} for the right side. \pyinline{A[i]} is the first element larger than x. 
+\runinhead{Core clues:}
+\begin{enumerate}
+\item Move \pyinline{lo} if \hl{$A_{mid} < t$}
+\item Move \pyinline{hi} if $A_{mid} \geq t$
 \end{enumerate}
 
-Note the subtle differences.
+\begin{python}
+def bisect_left(A, t, lo, hi):
+    while lo < hi:
+        mid = (lo+hi) // 2
+        if A[mid] < t:
+            lo = mid+1   
+        else:
+            hi = mid
 
-\subsection{idx equal or just lower}
+    return lo
+\end{python}
+
+\subsection{bisect\_right}
+Return the index where to insert item x in list A. So if t already appears in the list, A.insert(t) will insert just after the \textit{rightmost} x already there.
+\runinhead{Core clues:}
+\begin{enumerate}
+\item Move \pyinline{lo} if \hl{$A_{mid} \leq t$}
+\item Move \pyinline{hi} if $A_{mid} > t$
+\end{enumerate}
+\begin{python}
+def bisect_right(A, t, lo, hi):
+    while lo < hi:
+        mid = (lo+hi) // 2
+        if A[mid] <= t: 
+            lo = mid+1
+        else:
+            hi = mid 
+
+    return lo
+\end{python}
+\subsection{Generalized bisect}
+Find the smallest bound that satisfies some condition of $predicate$:
+\begin{python}
+def bisect_left(A, predicate, lo, hi):
+    while lo < hi:
+        mid = (lo+hi) // 2
+        if predicate(A[mid]):  # go right
+            lo = mid + 1
+        else:  # left
+            hi = mid
+
+    return lo
+\end{python}
+
+\subsection{idx equal OR just lower}
 Binary search, get the idx of the element equal to or just lower than the target. The returned idx is the $A_{idx} \leq target$. It is possible to return $-1$. It is different from the \pyinline{bisect_lect}.
 
 \runinhead{Core clues:}
@@ -22,14 +91,15 @@ Binary search, get the idx of the element equal to or just lower than the target
 \end{enumerate}
 $A_{idx} \leq target$.
 \begin{python}
-def bin_search(self, A, t, lo=0, hi=None):
-    if hi is None: hi = len(A)
-    
+def bi_search(self, A, t, lo, hi):
     while lo < hi:
         mid = (lo+hi) // 2
-        if A[mid] == t:  return mid
-        elif A[mid] < t: lo = mid+1
-        else:            hi = mid
+        if A[mid] == t:
+            return mid
+        elif A[mid] < t:
+            lo = mid+1
+        else:
+            hi = mid
 
     return lo-1
 \end{python}
@@ -52,80 +122,50 @@ def find(A, v):
   return A[idx]
 \end{python}
 
-\subsection{idx equal or just higher}
+\subsection{idx equal OR just higher}
 $A_{idx} \geq target$.
 \begin{python}
-def bi_search(self, A, t, lo=0, hi=None):
-    if hi is None: hi = len(A)
-   
+def bi_search(self, A, t, lo, hi):
     while lo < hi:
         mid = (lo+hi) // 2
-        if A[mid] == t:  return mid
-        elif A[mid] < t: lo = mid+1
-        else:            hi = mid
+        if A[mid] == t:
+            return mid
+        elif A[mid] < t:
+            lo = mid+1
+        else:
+            hi = mid
         
     return lo
 \end{python}
-\subsection{bisect\_left}
-Return the index where to insert item x in list A. So if t already appears in the list,
-A.insert(t) will insert just before the \textit{leftmost} t already there.
-
-By insertion point \pyinline{i}, it means \pyinline{all(val <= x for val in A[lo:i])} for the left side and \pyinline{all(val > x for val in A[i:hi])} for the right side. \pyinline{A[i]} is the first element larger than x. 
-\runinhead{Core clues:}
+\subsection{bisect}
+\subsubsection{Built-in Library}
+Assuming $A$ is already sorted. 
 \begin{enumerate}
-\item Move \pyinline{lo} if $A_{mid} < t$
-\item Move \pyinline{hi} if $A_{mid} \geq t$
+\item \pyinline{bisect.bisect_left(A, x)}: If $x$ is already present in $A$, the insertion point will be before (to the left of) any existing entries. The return value is suitable for use to \pyinline{list.insert()}.
+\item \pyinline{bisect.bisect_left(A, x)}: Similar to \pyinline{bisect_left()}, but returns an insertion point which comes after (to the right of) any existing entries of x in a. The return value is suitable for use to \pyinline{list.insert()}.
+\item \pyinline{lst.insert(i, x)}: Insert $x$ at position $i$, the existing $A_i$ is push towards the end
+\item \pyinline{bisect_left} only looks at \pyinline{__lt__}
+\item \pyinline{bisect_left} can have \pyinline{key}: \pyinline{bisect_left(A, x, lambda a: B[a])}
 \end{enumerate}
 
+\runinhead{Find bounds.} Given a sorted list $A$ and a target $q$, find the largest element less than or equal to $q$ and the smallest element greater than or equal to $q$. If no such element exists, return -1 for that bound.
 \begin{python}
-def bisect_left(A, t, lo=0, hi=None):
-    if hi is None: hi = len(A)
+def find_bounds(A, q):
+    idx = bisect.bisect_left(A, q)
+    if idx < len(A) and A[idx] == q:
+        lo = A[idx]
+    else:
+        lo = A[idx-1] if idx > 0 else -1
 
-    while lo < hi:
-        mid = (lo+hi) // 2
-        if A[mid] < t:
-            lo = mid+1   
-        else:
-            hi = mid
+    idx = bisect.bisect_right(A, q)
+    if idx > 0 and A[idx-1] == q:
+        hi = A[idx-1]
+    else:
+        hi = A[idx] if idx < len(A) else -1
 
-    return lo
+    return lo, hi
 \end{python}
 
-\subsection{bisect\_right}
-Return the index where to insert item x in list A. So if t already appears in the list, A.insert(t) will insert just after the \textit{rightmost} x already there.
-\runinhead{Core clues:}
-\begin{enumerate}
-\item Move \pyinline{lo} if $A_{mid} \leq t$
-\item Move \pyinline{hi} if $A_{mid} > t$
-\end{enumerate}
-\begin{python}
-def bisect_right(A, t, lo=0, hi=None):
-    if hi is None: hi = len(A)
-
-    while lo < hi:
-        mid = (lo+hi) // 2
-        if A[mid] <= t: 
-            lo = mid+1
-        else:
-            hi = mid 
-
-    return lo
-\end{python}
-\subsection{Generalized bisect}
-Find the smallest bound that satisfies some condition of $predicate$:
-\begin{python}
-def bisect_left(A, predicate, lo=0, hi=None):
-    if hi is None: hi = len(A)
-
-    while lo < hi:
-        mid = (lo+hi) // 2
-        if predicate(A[mid]):  # go left
-            hi = mid
-        else:  # go right
-            lo = mid + 1
-
-    return hi  # last found
-\end{python}
 \section{Applications}
 \subsection{Rotation}
 \runinhead{Find Minimum in Rotated Sorted Array.} Case by case analysis. Three cases to consider:
@@ -155,64 +195,119 @@ def find_min(self, A):
 
     return mini
 \end{python}
+\runinhead{Random Point in Area.} You are given an array of non-overlapping axis-aligned rectangles rects where $rects_i = [a_i, b_i, x_i, y_i]$ indicates the bottom-left corner and the top-right corner point. Design an algorithm to pick a random integer point inside the space covered by one of the given rectangles, including edges.
+\begin{enumerate}
+\item Probablistic select a point in the area space
+\item Need to identify which rectangle for the target area $\Ra$ prefix sum of the area
+\item Find the first prefix area sum larger than target area $\Ra$ \pyinline{bisect}
+\item Boundary problem: \pyinline{pref = [3, 7, 12]}, when $k=0$, we assign to the 1st rectangle, when $k=3$, we assign to the 2nd rectangle $\Ra$ \pyinline{bisect_right}
+\item Assign a point of the target rectangle for the target area 
+\end{enumerate}
+\begin{python}
+class Solution:
+  def __init__(self, rects):
+    self.rects = rects
+
+    self.pref = []  # prefix sums of area
+    subtotal = 0
+    for x1, y1, x2, y2 in rects:
+      subtotal += (x2 - x1 + 1) * (y2 - y1 + 1)
+      self.pref.append(subtotal)
+
+    self.total = subtotal
+
+  def pick(self):
+    k = random.randrange(self.total)
+    # not bisect_left
+    i = bisect.bisect_right(self.pref, k)
+
+    base = self.pref[i-1] if i - 1 >= 0 else 0
+    offset = k - base
+
+    x1, y1, x2, y2 = self.rects[i]
+    w = (x2 - x1 + 1)
+    x = x1 + (offset % w)
+    y = y1 + (offset // w)
+    return [x, y]
+\end{python}
+
 \section{Combinations}
 \subsection{Extreme-value problems}\label{extremeValueProblem}
-\runinhead{Longest increasing subsequence.} Array $A$.
+\runinhead{Longest increasing subsequence (LIS).} Array $A$.
 
 Clues:
 \begin{enumerate}
-\item \pyinline{MIN}: \textit{min} of index \textit{last} value of LIS of a particular \textit{\textbf{len}}.
+\item \pyinline{L}: The $min$ index \textit{last/tail} value of LIS of a particular \textit{\textbf{len}}.
 \item \pyinline{PI}: result table, store the $\pi$'s idx (predecessor); (optional, to build the LIS, no need if only needs to return the length of LIS)
-\item \pyinline{bin_search}: For each currently scanning index \pyinline{i}, if it smaller (i.e. $\neg$ increasing), to maintain the \pyinline{MIN}, binary search to find the position to update the min value. The \pyinline{bin_search} need to find the element $\geq$ to \pyinline{A[i]}.
+\item \pyinline{Binary search}: For each currently scanning index \pyinline{i}, if it smaller (i.e. $\neg$ increasing), to maintain the \pyinline{L}, binary search to find the position to update the min value. The \pyinline{bi_search} need to find the element $\geq$ to \pyinline{A[i]}.
 \end{enumerate}
-\newpage
 \begin{python}
 def LIS(self, A):
     n = len(A)
-    MIN = [-1 for _ in range(n+1)]
+    L = [-1 for _ in range(n+1)]
     k = 1
-    MIN[k] = A[0]  # store value
+    L[k] = A[0]  # store value
     for v in A[1:]:
-        idx = bisect.bisect_left(MIN, v, 1, k+1)
-        MIN[idx] = v
-        k += 1 if idx == k+1 else 0
+        j = bisect.bisect_left(L, v, 1, k+1)
+        L[j] = v
+        k += 1 if j == k+1 else 0
 
     return k
 \end{python}
-If need to return the LIS itself. 
+The bisect index range can be avoided by building \pyinline{L} dynamically. Let $L_i$ be the smallest index that a LIS of length $i+1$ ending at that index.
 \begin{python}
-    n = len(A)
-    MIN = [-1 for _ in range(n+1)]
-    RET = [-1 for _ in range(n)]
-    l = 1
-    MIN[l] = 0  # store index
-    for i in range(1, n):
-        if A[i] > A[MIN[l]]:
-            l += 1
-            MIN[l] = i
-
-            PI[i] = MIN[l-1]  # (PI)
+def LIS(self, A):
+    L = []
+    for i in range(len(A)):
+        j = bisect.bisect_left(
+            L, A[i], key=lambda e: A[e]
+        )
+        if j < len(L):
+            L[j] = i
         else:
-            j = self.bin_search(MIN, A, A[i], 1, l+1)
-            MIN[j] = i
+            L.append(i)
 
-            PI[i] = MIN[j-1] if j-1 >= 1 else -1  # (PI)
-
-    # build the LIS (RET)
-    cur = MIN[l]
-    ret = []
-    while True:
-        ret.append(A[cur])
-        if PI[cur] == -1: break
-        cur = PI[cur]
-
-    ret = ret[::-1]
-    print ret
+    return len(L)
 \end{python}
 
+If need to return the LIS itself, we need to maintain a predecessor array $\pi$.
+\begin{python}
+def LIS(self, A):
+    n = len(A)
+    L = []
+    pi = [-1] * n
+    for i in range(n):
+        j = bisect.bisect_left(
+            L, A[i], key=lambda e: A[e]
+        )
+        if j < len(L):
+            L[j] = i
+        else:
+            L.append(i)
+        
+        pi[i] = L[j-1] if j-1 >= 0 else -1
+
+    # build the LIS
+    ret = []
+    cur = L[-1]
+    while cur != -1:
+        ret.append(A[cur])
+        cur = pi[cur]
+
+    ret = ret[::-1]
+    return ret
+\end{python}
+
+Note that monotonic queue is not applicable here. Monotonic queue is used for sliding-window problems. The LIS problem is fundamentally different because it deals with a subsequence that is not necessarily contiguous, rather than a sliding window that is contiguous.
 \section{High dimensional search}
-\subsection{2D}
-\runinhead{2D search matrix I.} $m\times n$ mat. Integers in each row are sorted from left to right. The first integer of each row is greater than the last integer of the previous row.
+\subsection{2D Search}
+\runinhead{2D search matrix I.} Search a target in $m\times n$ mat. 
+
+The mat as the following properties: 
+\begin{enumerate}
+\item Integers in each \textit{row} are sorted from left to right. 
+\item The first integer of each row is greater than the last integer of the previous row.
+\end{enumerate}
 $$
 \begin{bmatrix}
 1 & 3 & 5 & 7 \\
@@ -226,8 +321,13 @@ Row column search: starting at top right corner: $O(m+n)$.
 Binary search: search rows and then search columns: $O(\log m + \log n)$.
 
 
-\runinhead{2D search matrix II.} $m\times n$ mat. Integers in each row are sorted from
-left to right. Integers in each column are sorted in ascending from top to bottom.
+\runinhead{2D search matrix II.} Search a target in $m\times n$ mat. 
+
+The mat as the following properties: 
+\begin{enumerate}
+\item Integers in each \textit{row} are sorted from left to right. 
+\item Integers in each \textit{column} are sorted in ascending from top to bottom.
+\end{enumerate}
 $$
 \begin{bmatrix}
 1&   4&  7& 11& 15 \\
@@ -241,5 +341,29 @@ $$
 Row column search: starting at top right corner: $O(m+n)$.
 
 Binary search: search rows and then search columns, but upper bound row and lower bound row: 
+$$
+O(m \log n)
+$$
+More formally 
+$$O\big(\min(m\log n, n\log m)\big)$$
+\subsection{Axis Projection}
+Project the mat dimension from 2D to 1D, using \textit{orthogonal axis}.
 
-$$O\big(\min(n\log m, m\log n)\big)$$
+\runinhead{Smallest bounding box.} Given the location $(x, y)$ of one of the 1's, return the area of the smallest bounding box that encloses 1's.
+$$
+\begin{bmatrix}
+0& 0& 1& 0 \\
+0& 1& 1& 0 \\
+0& 1& 0& 0 \\
+\end{bmatrix}
+$$
+
+\rih{Clues:}
+\begin{enumerate}
+\item Project the 1's onto x-axis, binary search for the left bound and right bound of the bounding box. 
+\item We don't pre-project the axis beforehand, since it will take $O(mn)$ to collect the projected 1d array. Instead, we only project it during binary search when checking the mid item. Checking takes $O(m)$, searching takes $O(\log n)$. 
+\item Do the same for y-axis.
+\end{enumerate}
+
+Time complexity: $O(m\log n + n \log m)$, where $O(m), O(n)$ is for projection complexity.
+

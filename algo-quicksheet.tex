@@ -30,6 +30,10 @@
 \usepackage{style/customized}
 \usepackage{listings}
 \usepackage{soul}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning,arrows}
+\usepackage{booktabs}
+\usetikzlibrary{patterns, positioning, arrows.meta} 
 \lstset{columns=fullflexible, commentstyle=\rm, basicstyle=\footnotesize} % remove columns=fullflexible for monospace
 
 \usepackage{titlesec}
@@ -51,6 +55,7 @@
 \usepackage{multirow}
 \usepackage[bottom]{footmisc}% places footnotes at page bottom
 \usepackage{comment}
+\usepackage{slashed}
 \synctex=1
 %\excludecomment{figure}
 \graphicspath{{figures/}}
@@ -98,14 +103,12 @@
 \include{chapterLinkedList}
 \include{chapterHeap}
 \include{chapterTree}
-\include{chapterBalancedSearchTree}
 
 % algorithm
 \include{chapterSort}
 \include{chapterSearch}
 \include{chapterArray}
 \include{chapterString}
-\include{chapterStream}
 \include{chapterMath}
 \include{chapterArithmetic}
 \include{chapterCombinatorics}
@@ -113,14 +116,16 @@
 \include{chapterBitManipulation}
 \include{chapterGreedy}
 \include{chapterBacktracking}
-\include{chapterDivideAndConquer}
 \include{chapterGraph}
 \include{chapterDynamicProgramming}
 \include{chapterInterval}
-\include{chapterGeneral}
+
 
 \backmatter%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
+\include{chapterBalancedSearchTree}
+\include{chapterGeneral}
+\include{chapterDivideAndConquer}
 \include{glossary}
 \include{acronym}
 \printindex

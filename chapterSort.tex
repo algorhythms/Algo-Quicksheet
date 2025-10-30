@@ -24,7 +24,7 @@ List of general algorithms:
 \end{enumerate}
 
 \section{Algorithms}
-\subsection{Quick Sort}
+\subsection{Binary / Quick Sort}
 \rih{Concise}. Concise but space inefficient: 
 \begin{python}
 def quicksort(self, A):
@@ -215,7 +215,7 @@ def merge(self, A, m, B, n):
   # if i >= 0: A[:closed] = A[:i+1]
 \end{python}
 \runinhead{In-place \& Iterative merge.}
-In-place merge sort of array without recursive. The basic idea is to avoid the recursive call while using iterative solution.
+In-place merge sort of array without recursion. The basic idea is to avoid the recursive call while using iterative solution.
 
 The algorithm first merge chunk of length of 2, 4, 8 ... until $2^k$ where $2^k$ is large than the length of the array.
 \begin{python}
@@ -241,7 +241,7 @@ def merge_sort(self, A):
   return A
 \end{python}
 The time complexity may be degenerated to $O(n^2)$. 
-\subsection{Do something while merging}
+\subsection{Do Something While Merging}
 During the merging, the left half and the right half are both sorted; therefore, we can carry out operations like:
 \begin{enumerate}
 \item inversion count 
@@ -282,6 +282,41 @@ def msort(A, lo, hi):
 \end{python}
 
 Here, the implementation of merge sort use: 1 for-loop for the left half and 2 while-loop for the right half.
+
+\subsection{Bridge Two Sorted Arrays}
+We want to bridge (not merge) two sorted arrays by remove a minimal number of elements from two arrays. 
+$$
+A[:i] + B[j:]
+$$
+For example:
+\begin{python}
+A = [1, 2, 3, 10]
+B = [1, 8, 9]
+
+ret = [1, 2, 3, 8, 9]
+\end{python}
+\rih{Core Clues:}
+\begin{enumerate}
+\item Search: We need to search the bridging indices on two arrays 
+\item Brute force: iterate both arrays, $O(N^2)$
+\item Binary search: iterate $A$ while biscet $B$, using \pyinline{bisect.bisect_right}, $O(N \lg{N})$
+\item Two pointers: since both $A$ and $B$ are sorted, moving the index $i$ in $A$ forward, the search of $j$ in $B$ can only be forward. $j$ cannot go backward. 
+\end{enumerate}
+
+\begin{python}
+def bridge(A, B):
+    # A[:i]
+    # B[j:]
+    ret = 0
+    j = 0  
+    for i in range(len(A)+1):
+        while i-1 >= 0 and j < len(B) and A[i-1] > B[j]:
+            j += 1
+
+        ret = max(ret, i + (len(B)-j))
+
+    return ret
+\end{python}
 
 \section{Properties}
 \subsection{Stability}
@@ -352,19 +387,26 @@ See Figure \ref{fig:sortSummary}.
 \end{figure*}
 
 \section{Partial Quicksort}
-\subsection{Find $k$ smallest}
+\subsection{Find $k$ smallest}\label{find-k-th}
 \runinhead{Heap-based solution.} $O(n \log k)$
 
 Version 1, construct heap with $n$ numbers, and take $k$: $O(n+k\log n)$, where $O(n)$ is for constructing heap. 
 
-Version 2. construct heap with $k$ numbers, and iterate $n$: $O(k+n\log k)$. 
+Version 2. construct heap with $k$ numbers, and iterate $n$: $O(n\log k)$. 
 
-The 2nd version is much master than 1st based on emperical analysis; additionally, it has smaller memory impact. 
+The 2nd version is much faster and more memory efficient. 
 
-In python there are:
+\begin{itemize}
+\item To find k-th \textit{smallest}, maintain a \textit{max}-heap of top k smallest number, with the top of the heap being the current k-th smallest. 
+\item To find k-th \textit{largest}, maintain a \textit{min}-heap of tok k largest number, with the top of the heap being the current k-th largest.
+\end{itemize}
+
+
+
+In python built-in there are:
 \begin{python}
-heapq.nlargest(n, iterable[, key])
-heapq.nsmallest(n, iterable[, key])
+heapq.nlargest(n, iterable, key=None)
+heapq.nsmallest(n, iterable, key=None)
 \end{python}
 
 
@@ -409,7 +451,7 @@ def pivot(self, A, lo, hi):
             A[i], A[l] = A[l], A[i]
             l += 1
             
-    A[l], A[hi] = A[hi], A[l]
+    A[l], A[p] = A[p], A[l]
     return l  # return the pivot index
 \end{python}
 Find $k$-th with 2-way partitioning. Notice that only index changing while $k$ is the same.
@@ -593,172 +635,3 @@ def merge_sort(a):
   ret = ret1+ret2+merge(a1, a2, a)  
   return ret
 \end{python}
-
-\subsection{Binary Index Tree \& Inversion Count}
-Given $A$, calculate each element's inversion number. 
-
-Construct a BIT (\ref{BIT}) with length $max(A)+1$. Let BIT maintains the index of values. Scan the element from left to right (or right to left depends on the definition of inversion number), and set the index equal val to 1. Use the prefix sum to get the inversion number.
-
-\pyinline{get(end) - get(a)} get the count of number that appears \textit{before} $a$ (i.e. already in the BIT) and also \textit{larger} than $a$. 
-
-Possible to extend to handle duplicate number. 
-\\
-Core clues:
-\begin{enumerate}
-\item BIT maintains \textbf{index of values} to count the number of at each value.
-\item \pyinline{get(end) - get(a)} to get the inversion count of $a$.
-\end{enumerate}
-\begin{python}
-def inversion(self, A):
-    bit = BIT(max(A)+1)
-    ret = []
-    for a in A:
-        bit.set(a, 1)  # += 1 if possible duplicate 
-        inversion = bit.get(max(A)+1) - bit.get(a)
-        ret.append(inversion)
-
-    return ret
-\end{python}
-
-\subsection{Segment Tree \& Inversion Count}\label{segmentTreeInversionCount}
-Compared to BIT, Segment Tree can process queries of both $idx \rightarrow sum$ and $sum \rightarrow idx$; while BIT can only process $idx \rightarrow sum$.
-
-Core clues:
-\begin{enumerate}
-\item Segment Tree maintains \textbf{index of values} to count the number of at each value.
-\item \pyinline{get(root, end) - get(root, a)} to get the inversion count of $a$.
-\end{enumerate}
-\begin{python}
-class SegmentTree:
-  def __init__(self):
-    self.root = None
-
-  def build(self, root, lo, hi):
-    if lo >= hi: return
-    if not root: root = Node(lo, hi)
-
-    root.left = self.build(root.left, lo, (lo+hi)/2)
-    if root.left: 
-      root.right = self.build(root.right, (lo+hi)/2, hi)
-
-    return root
-
-  def set(self, root, i, val):
-    if root.lo == i and root.hi-1 == root.lo:
-      root.cnt_this += val
-    elif i < (root.lo+root.hi)/2:
-      root.cnt_left += val
-      self.set(root.left, i, val)
-    else:
-      self.set(root.right, i, val)
-
-  def get(self, root, i):
-    if root.lo == i and root.hi-1 == root.lo:
-      return root.cnt_left
-    elif i < (root.lo+root.hi)/2:
-      return self.get(root.left, i)
-    else:
-      return (
-          root.cnt_left + root.cnt_this +
-          self.get(root.right, i)
-      )
-
-
-class Solution:
-  def _build_tree(self, A):
-    st = SegmentTree()
-    mini, maxa = min(A), max(A)
-    st.root = st.build(st.root, mini, maxa+2)  
-    # maxa+1 is the end dummy
-    return st
-
-  def countOfLargerElementsBeforeElement(self, A):
-    st = self._build_tree(A)
-    ret = []
-    end = max(A)+1
-    for a in A:
-      ret.append(
-          st.get(st.root, end) - st.get(st.root, a)
-      )
-      st.set(st.root, a, 1)
-
-    return ret
-\end{python}
-
-\subsection{Reconstruct Array from Inversion Count}\label{inversionReconstruct}
-Given a \textit{sorted} numbers with their associated inversion count (\# larger numbers before this element). $A[i].val$ is the value of the number, $A[i].inv$ is the inversion number. Reconstruct the original array $R$ that consists of each $A[i].val$.
-
-Brute force can be done in $O(n^2)$. Put the $A[i].val$ into $R$ at slot s.t. the \# \textit{empty} slots before it equals to $A[i].inv$.
-
-\rih{BST}. Possible to use BST to maintain the empty slot indexes in the original array. Each node's rank indicates the count of empty indexes in its left subtree. But need to maintain the deletion.  
-
-\rih{Segment Tree}. Use a segment tree to maintain the size of empty slots. Each node has a $start$ and a $end$ s.t slot indexes $\in [start, end)$. Go down to find the target slot, go up to decrement the size of empty slots. 
-
-Caveat: need to sort the array in the preprocessing step. 
-
-Reconstruction of array cannot use BIT since there is no map of $prefixSum \rightarrow i$.
-
-\begin{python}
-class Node:
-  def __init__(self, lo, hi, cnt):
-    self.lo = lo
-    self.hi = hi
-    self.cnt = cnt  # size of empty slots
-
-    self.left = None
-    self.right = None
-
-  def __repr__(self):
-    return repr("[%d,%d)" % (self.lo, self.hi))
-
-
-class SegmentTree:
-  """empty space"""
-  def __init__(self):
-    self.root = None
-
-  def build(self, lo, hi):
-    """a node can have right ONLY IF has left"""
-    if lo >= hi: return
-    if lo == hi-1: return Node(lo, hi, 1)
-
-    root = Node(lo, hi, hi-lo)
-    root.left = self.build(lo, (hi+lo)/2)
-    root.right = self.build((lo+hi)/2, hi)
-    return root
-
-  def find_delete(self, root, sz):
-    """
-    :return: index
-    """
-    root.cnt -= 1
-    if not root.left:
-      return root.lo
-    elif root.left.cnt >= sz:
-      return self.find_delete(root.left, sz)
-    else:
-      return self.find_delete(root.right,
-                  sz - root.left.cnt)
-
-
-class Solution:
-  def reconstruct(self, A):
-    st = SegmentTree()
-    n = len(A)
-    st.root = st.build(0, n)
-    A = sorted(A, key=lambda x: x[0])
-    ret = [0]*n
-    for a in A:
-      idx = st.find_delete(st.root, a[1]+1)
-      ret[idx] = a[0]
-
-    return ret
-
-
-if __name__ == "__main__":
-  # (val, inv)
-  A = [(5, 0), (2, 1), (3, 1), (4, 1,), (1, 4)]
-  assert Solution().reconstruct(A) == [5, 2, 3, 4, 1]
-\end{python}
-
-\runinhead{Duplicate.} What if the array contains duplicate elements? Use a \pyinline{Counter} to count the duplicate items already in the result. 

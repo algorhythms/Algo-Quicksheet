@@ -20,7 +20,7 @@ Three general sets of state definitions of the substructure.
 \begin{enumerate}
 \item ends \textit{at} index $i$ ($i$ \textbf{required})
 \item ends \textit{before} index $i$ ($i$ \textbf{excluded})
-\item ends \textit{at} or \textit{before} index $i$ ($i$ \textbf{optional})
+\item ends \textit{at} or \textit{before} i.e. \textit{up to} index $i$ ($i$ \textbf{optional})
 \end{enumerate}
 \subsection{Common programming practice}
 \runinhead{Dummy.} Use dummies to avoid using if-else conditional branch.
@@ -31,7 +31,7 @@ Three general sets of state definitions of the substructure.
 \end{enumerate}
 
 
-\runinhead{Space optimization.} To avoid MLE, we need to carry out space optimization. Let $o$ be other subscripts, $f$ be the transition function. 
+\runinhead{Space optimization - collapsed state.} To avoid MLE, we need to carry out space optimization. Let $o$ be other subscripts, $f$ be the transition function. 
 
 Firstly,
 $$
@@ -56,9 +56,9 @@ $$
 More generally, we can be $(i-b)\%a$ to reduce the space down to $a$.
 
 Notice:
-\begin{enumerate}
-\item Must iterate $o$ \textbf{backward} to un-updated value. 
-\end{enumerate}
+\begin{itemize}
+\item $F_{i, o}$ depends on $F_{i-1, o} \Ra$ must iterate $i$ \textbf{backward} to un-updated value. 
+\end{itemize}
 
 \runinhead{Backtrace array.} Normally dp returns the number of count/combinations. To reconstruct the result, store the parent index a backtrace array . 
 
@@ -68,55 +68,10 @@ $$
 
 
 \section{Sequence}\label{dpSequence}
+\subsection{Best Trailing Subarrays - Kadane's Algorithm}
+Kadane’s algorithm tracks the \textit{best} subarray ending AT each position.
 
-\subsection{Single-state dp}
-\runinhead{Longest common subsequence.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and $b[:j]$. 
-
-We have two situations: $a[i]=b[j]$ or not.
-\begin{eqnarray*}
-F_{i. j} = \left\{ \begin{array}{rl}
-  F_{i-1, j-1}+1 &\mbox{// if $a[i]=b[j]$} \\
-  \max\Big(F_{i-1, j}, &\mbox{// otherwise} \\
-  F_{i,j-1}\Big)
-       \end{array} \right.
-\end{eqnarray*}
-
-
-\runinhead{Longest common substring.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and
-$b[:j]$. We have two situations: $a[i]=b[j]$ or not.
-\begin{eqnarray*}
-F_{i. j} = \left\{ \begin{array}{rl}
-  F_{i-1, j-1}+1 &\mbox{// if $a[i]=b[j]$} \\
-  0 &\mbox{// otherwise}
-       \end{array} \right.
-\end{eqnarray*}
-
-Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, the $gmax=\max\big(\{{F_{i,j}\}}\big)$.
-\runinhead{Longest increasing subsequence}. Find the longest increasing subsequence of an array $A$.
-
-let $F_i$ be the LIS length ends at $A_i$. 
-\begin{eqnarray*}
-F_i = \max(F[j]+1 \cdot\forall j < i) \text{ // if $A_i>A_j$}
-\end{eqnarray*}
-
-Then the global $maxa$ is:
-$$
-maxa = \max(F_i\cdot \forall i)
-$$
-
-Time complexity: $O(n^2)$
-
-In code, notice the \pyinline{else}.
-\begin{python}
-F[i] = max(
-    F[j] + 1 if A[i] > A[j] else 1
-    for j in range(i)
-)
-\end{python}
-
-Alternative solution using binary search in $O(n \log n)$ - Section \ref{extremeValueProblem}.
-
-\runinhead{\hl{Maximum Subarray Sum}.} Find the maximum subarray sum of $A$. Kadance algorithm.  
+\runinhead{Maximum Subarray Sum.} Find the maximum subarray sum of $A$.  
 
 Let $F_i$  be the maximum subarray sum ending at $A_{i}$
 $$
@@ -127,6 +82,68 @@ Then the global $maxa$ is:
 $$
 maxa = \max(F_i\cdot \forall i)
 $$
+
+We can do index rewrite - let $F_i$ be the max subarray sum for $A[:i]$ up to $A_{i-1}$.
+$$
+F_i = \max(F_{i-1}+A_{i-1}, 0)
+$$
+
+\runinhead{Number of 1s-subarrays (1D).} Find the total number of 1s-subarrays. For example, for $A = [1, 0, 1, 1, 1]$, there are $7=1+1+2+3$ 1s-subarrays. 
+
+Let $F_j$ be number of 1s-subarrays ending AT $j-1$:
+\[
+F_j = 
+\begin{cases}
+   F_{j-1} + 1 & \text{if } A_{j-1} = 1, \\
+   0 & \text{otherwise}.
+\end{cases}
+\]
+The total number of 1s-subarrays is $\sum{F}$.
+
+\runinhead{Number of 1s-submatrix (2D).} For a 2-D matrix, find the total number of 1s-submatrices. Consider a 2-row matrix:
+$$
+\left[\begin{array}{ccccc}
+1 & 0 & 1 & 1 & 1 \\
+1 & 1 & 0 & 1 & 1
+\end{array}\right]
+$$
+Project 2D into 1D:
+$$
+\left[\begin{array}{ccccc}
+1 & 0 & 0 & 1 & 1 
+\end{array}\right]
+$$
+
+\[
+F_j = 
+\begin{cases}
+   F_{j-1} + 1 & \text{if } M_{lo:hi,j-1} = 1, \\
+   0 & \text{otherwise}.
+\end{cases}
+\]
+
+
+\begin{python}
+def num_submat(mat):
+    ret = 0
+    M = len(mat)
+    N = len(mat[0])
+    for lo in range(M):
+        # is all ones for mat[lo:hi][j]
+        is_ones_col = [True for j in range(N)] 
+        for hi in range(lo+1, M+1):
+            for j in range(N):
+                is_ones_col[j] &= mat[hi-1][j]
+                # mem saving
+
+            F = [0 for _ in range(N+1)]
+            for j in range(1, N+1):
+                F[j] = F[j-1] + 1 if is_ones_col[j-1] \
+                       else 0 
+                ret += F[j]
+    
+    return ret
+\end{python}
 
 \runinhead{Maximum Subarray Gain.} Find the maximum subarray gain of $A$. A gain is defined as followed:
 \[
@@ -141,56 +158,240 @@ gain(A_i) =
 
 Let $F_i$  be the maximum subarray gain ending at $A_{i}$
 $$
-F_i = \max(F_{i-1}+gain(A_{i}), 0)
+F_i = \max\Big(F_{i-1}+gain(A_{i}), 0\Big)
+$$
+\subsection{Single-state dp}
+\runinhead{Longest common subsequence (LCS).} Let $F_{i, j}$ be the LCS at string $A[:i+1]$ and $B[:j+1]$, up to $A_i$ and $B_j$. Note subsequence does not have to be continuous. 
+
+We have two situations: $A_i=B_j$ or not.
+
+\[
+F_{i, j} = 
+\begin{cases}
+  F_{i-1, j-1}+1 & \text{if } A_i=B_j, \\
+  \max\Big(F_{i-1, j}, F_{i,j-1}\Big) & \text{otherwise}.
+\end{cases}
+\]
+No need to set 0 since it is subsequence. 
+\begin{center}
+\begin{tikzpicture}[
+    scale=1.5,
+    every node/.style={draw, minimum size=1cm},
+    ->, >=Stealth
+  ]
+  % Draw nodes
+  \node (A) at (0,1) {};
+  \node (B) at (1,1) {};
+  \node (C) at (0,0) {};
+  \node (D) at (1,0) {};
+
+  % Draw arrows
+  \draw[->, ultra thick] (A) -- (D);
+  \draw[->, thick] (B) -- (D);
+  \draw[->, thick] (C) -- (D);
+\end{tikzpicture}
+\end{center}
+
+\begin{python}
+def lcs_edit(A, B):
+    """Return (=, -, +) git diff via classic LCS."""
+    M, N = len(A), len(B)
+    F = [
+        [0]*(M+1) 
+        for _ in range(N+1)
+    ]
+    for i in range(M):
+        for j in range(N):
+            if A[i] == B[j]:
+                F[i+1][j+1] = F[i][j] + 1  
+            else:
+                F[i+1][j+1] = max(F[i][j+1], F[i+1][j])
+\end{python}
+
+To reconstruct the edits of `+/-/=' with $A$ as the base string:
+\begin{enumerate}
+\item Forward reconstruct? Greedy? $aa\alpha\beta b$ vs. $ab\gamma \delta c$, cannot decide by looking ahead by 1 position; thus become a search problem
+\item Instead backward reconstruct since $F_{i, j}$ is defined up to $A_i, B_j$.
+\end{enumerate}
+\begin{python}
+def reconstruct(A, B, F):
+    M, N = len(A), len(B)
+    ret = []
+    # backward pass
+    i, j = M, N
+    while i or j:
+        if i and j and A[i-1] == B[j-1]:
+            ret.append(("=", a[i-1]))
+            i -= 1
+            j -= 1
+        elif j and (i == 0 or F[i][j-1] >= F[i-1][j]):
+            # B[:j-1] has longer LCS than A[:i-1]
+            ret.append(("+", B[j-1]))
+            j -= 1
+        else:
+            ret.append(("-", A[i-1]))
+            i -= 1
+    ret.reverse()
+    return ret
+\end{python}
+\runinhead{Longest common substring.} Let $F_{i, j}$ be the LCS at string $a[:i]$ and
+$b[:j]$. We have two situations: $a[i]=b[j]$ or not.
+\[
+F_{i, j} = 
+\begin{cases}
+  F_{i-1, j-1}+1 & \text{if } a[i]=b[j], \\
+  0 & \text{otherwise}.
+\end{cases}
+\]
+
+
+Because it is not necessary that $F_{i,j}\geq F_{i',j'}, \forall i,j\cdot i>i', j>j'$, as $F_{i,j}$ can be 0, thus  $gmax=\max\big(F\big)$.
+\runinhead{Longest increasing subsequence (LIS).} Find the longest increasing subsequence of an array $A$.
+
+let $F_i$ be the LIS length ends at $A_i$. 
+\begin{eqnarray*}
+F_i = \max(F_j+1, \forall j < i \cdot A_j<A_i)
+\end{eqnarray*}
+
+Then the global $maxa$ is:
+$$
+maxa = \max(F_i\cdot \forall i)
 $$
 
+Time complexity: $O(n^2)$
+
+How to improve time complexity? 
+
+Notice that $F_i$ is taking $\max$ over previous $F_j$, which makes $F_i > F_j$, although $F$ as a whole is not monotonic increasing. 
+
+To binary search to achieve $O(n \log n)$, we need to maintain monotonic states. $F$ records length, can we do the inverse - $V_i$ records some element/value of the LIS of some length $i$.
+
+Let $V_{j}$ be the smallest tail value of the LIS of length $j+1$. 
+$$
+V_j = \arg\min_k\{ F_k = j+1, \forall k < j\}
+$$
+
+$V$ is monotonic increasing, maintaining those minima is just monotone queue optimization of recurrence of $F$'s formula.
+
+\rih{Core Clues:}
+\begin{enumerate}
+\item \pyinline{V}: $V_j$ = min possible tail value of a subseq length $j+1$
+\item \pyinline{idx}: Index where each tail value is (index in $A$)
+\item \pyinline{pi}: predecessor indices for reconstruction
+\end{enumerate}
+
+\begin{python}
+def lis(A):
+    V = []
+    pi = [-1 for _ in A]  # defaultdict(lambda: -1)
+    for i in range(len(A)):
+        j = bisect.bisect_left(V, A[i], 
+            key=lambda e: A[e])
+
+        if j < len(L):
+            V[j] = i
+        else:
+            V.append(i)
+        
+        pi[i] = V[j-1] if j > 0 else -1
+
+    # rebuild
+    ret = []
+    cur = V[~0]
+    while cur != -1:
+        ret.append(A[cur])
+        cur = pi[cur]
+        
+    return ret[::-1]
+
+print(lis([10,9,2,5,3,7,101,18]))   # -> [2, 3, 7, 18]
+\end{python}
+
+Ref search section \ref{extremeValueProblem}.
 
 \runinhead{Maximum sum of non-adjacent cells.} Get the maximum sum of non-adjacent
 cells of an array $A$.
 
-Let $F_i$ be the maximum sum of non-adjacent cells for $A[:i]$. You have tow options:
+Let $F_i$ be the maximum sum of non-adjacent cells for $A[:i]$, up to $A_{i-1}$. You have tow options:
 choose $A_{i-1}$ or not.
 \begin{align*}
-F_{i} = \max\big(F_{i-1}, F_{i-2}+A_{i-1}\big)
+F_{i} = \max\big(
+&F_{i-1}, \\ 
+&F_{i-2}+A_{i-1}
+\big)
 \end{align*}
+
 \runinhead{Edit distance} Find the minimum number of steps required to convert words $A$ to $B$ using inserting, deleting, replacing. 
 
-Let $F_{i, j}$ be the minimum number
-of steps required to convert $A[:i]$ to $B[:j]$.
-\begin{eqnarray*}
-F_{i, j} = 
-\left\{ 
-\begin{array}{rl}
-  F_{i-1, j-1} &\mbox{if $a[i]=b[j]$} \\
-  \min\Big(F_{i, j-1}+1, &\mbox{// otherwise, insert}\\
-  F_{i-1, j}+1, &\mbox{// delete}\\
-  F_{i-1, j-1}+1\Big) &\mbox{// replace}\\
-\end{array} 
-\right.
-\end{eqnarray*}
+Let $F_{i, j}$ be the minimum number of steps required to convert $A[:i]$ to $B[:j]$.
+\begin{center}
+\begin{tikzpicture}[
+    scale=1.5,
+    every node/.style={draw, minimum size=1cm},
+    ->, >=Stealth
+  ]
+  % Draw nodes
+  \node (A) at (0,1) {};
+  \node (B) at (1,1) {};
+  \node (C) at (0,0) {};
+  \node (D) at (1,0) {};
 
-\runinhead{H-index} Given an array of citations $A$ of a researcher, write a function to compute the researcher's h-index.
+  % Draw arrows
+  \draw[->, thick] (A) -- (D);
+  \draw[->, thick] (B) -- (D);
+  \draw[->, thick] (C) -- (D);
+\end{tikzpicture}
+\end{center}
+\[
+    F_{i, j} =
+    \begin{cases}
+        F_{i-1, j-1} & \text{if } a[i] = b[j] \\[8pt]
+        \min \Big( 
+        F_{i, j-1} + 1 & \text{if insert} \\ 
+        F_{i-1, j} + 1 & \text{if delete} \\ 
+        F_{i-1, j-1} + 1 \Big) & \text{if replace}
+    \end{cases}
+\]
+
+\runinhead{H-index} Given an array of citations $A$ of a researcher, write a function to compute the researcher's h-index. Find the highest number $h$ such that the researcher has at least $h$ publications that have each been cited at least $h$ times.
 
 Need some re-representation of information: 
 \begin{enumerate}
-\item Let $C_i$ be the \#paper with $=i$ citations.
-\item Let $F_i$ be the \#paper with $\geq i$ citations.
+\item Relax the problem $\Ra$ exact $i$ citations: let $C_i$ be the \#paper with $=i$ citations.
+\item The original problem $\Ra \geq i$ citations: let $F_i$ be the \#paper with $\geq i$ citations.
 \end{enumerate}
 $$
 F_i = F_{i+1} + C_i
 $$
 
-DP takes $O(n)$. If it is sorted, use binary search to achieve $O(\lg n)$.
+Backward DP. DP takes $O(n)$. 
+\begin{python}
+def hIndex(A):
+    N = len(A)
+    C = [0 for _ in range(N+1)]
+    for e in A:
+        C[min(e, N)] += 1
+
+    F = [0 for _ in range(N+2)]
+    for i in range(N, -1, -1):
+        F[i] += F[i+1] + C[i]
+        if F[i] >= i:
+            return i
+
+    return 0
+\end{python}
+
+Given $F_i > F_{i+1}$, as $F$ is sorted, use binary search to achieve $O(\lg n)$.
 
 \runinhead{Interleaving String} Given $s, a, b$ find whether $s$ is formed by the interleaving
 of $a$ and $b$.
 
-Let $F_{i,j}$ be $s[:i+j]$ is interleaved from $a[:i], b[:j]$.
+Let $F_{i,j}$ be \pyinline{s[:i+j]} is interleaved from \pyinline{a[:i], b[:j]}, a boolean.
 
-We have to options to choose $s[i+j-1]$, either from $a[i-1]$ or from $b[j-1]$:
+We have to options to choose \pyinline{s[i+j-1]}, either from \pyinline{a[i-1]} or from \pyinline{b[j-1]}:
 \begin{align*}
-F_{i,j} &= \Big(F_{i-1, j} \wedge s[i+j-1] = a[i-1]\Big) \\
-& \vee \Big(F_{i,j-1} \wedge s[i+j-1] = b[j-1]\Big)
+F_{i,j} = &\Big(F_{i-1, j} \wedge s_{i+j-1} = a_{i-1}\Big) \\
+ \vee &\Big(F_{i,j-1} \wedge s_{i+j-1} = b_{j-1}\Big)
 \end{align*}
 
 \runinhead{Largest divisible subset.} Given a list of distinct positive integers $A$, find the largest subset $S$ such that every pair $(S_i, S_j)$ of elements in this
@@ -207,24 +408,77 @@ Let $\pi_i$ be the index of the previous element of $A_i$ in the divisible subse
 $$
 \pi_i = \arg\max_{j: j< i, A_i\%A_j=0}(1+F_j)
 $$
+\runinhead{Maximum Earnings From Taxi.} Given $n$, representing driving from point 1 to point n to make money by picking up passengers. Given $rides$, representing i-th passenger ride from point $start_i$ to point $end_i$ who is willing to give a $tip_i$ dollar tip. The reward is $tip_i + end_i - start_i$. Find the maximal reward. 
+
+\rih{Core clues:}
+\begin{enumerate}
+\item Going from 1 to $n$ $\Ra$ sort the passengers by $start$ or $end$ $\Ra$ sort through a dict
+\item Need to consider vacant $\Ra$ $F_i = max(F_i, F_{i-1})$.
+\item One pass from 1 to $n$
+\end{enumerate}
+Look-back DP.
+
+Let $F_i$ be the max reward at point $i$
+$$
+F_i = \max\Big(F_{i-1}, F_j + (tip_j + i - j)\cdot \forall j\Big)
+$$
+\begin{python}
+def maxTaxiEarnings(self, n, rides):
+  ends = defaultdict(list)
+  for s, e, tip in rides:
+    ends[e].append((s, tip))
+
+  F = [0 for _ in range(n+1)]
+
+  for i in range(1, n + 1):
+    F[i] = max(F[i], F[i-1])
+    if i in ends:
+      for s, tip in ends[i]:
+        F[i] = max(F[i], F[j] + tip + i - s)
+
+  return F[n]
+\end{python}
+
+Look-ahead DP.
+
+
+\begin{python}
+def maxTaxiEarnings(self, n, rides):
+  starts = defaultdict(list)
+  for s, e, tip in rides:
+    starts[s].append((e, tip))
+
+  F = [0 for _ in range(n + 1)]
+
+  for i in range(1, n + 1):
+    F[i] = max(F[i], F[i-1])
+    if i in starts:
+      for e, tip in starts[i]:
+        F[e] = max(F[e], F[i] + tip + e - i)
+
+  return F[n]
+\end{python}
+
+
+
 
 \subsection{Dual-state dp}
 \runinhead{Maximal product subarray.} Find the subarray within an array $A$ which has the largest product. 
 \begin{itemize}
-\item Let $small_i$ be the smallest product end with $A_i$. 
-\item Let $large_i$ be the largest product end with $A_i$.
+\item Maximal product $\Ra$ Let $L_i$ be the largest product end at $A_i$.
+\item Product can be negative $\Ra$ Let $S_i$ be the smallest product end at $A_i$. 
 \item The states can be negative. 
 \end{itemize}
 \begin{eqnarray*}
-&& small_i = \min\Big( A_i,\ small_{i-1}\cdot A_i,\ large_{i-1}\cdot A_i \Big)
+&& S_i = \min\Big( A_i,\ S_{i-1}\cdot A_i,\ L_{i-1}\cdot A_i \Big)
 \nonumber \\
-&& large_i = \max\Big( A_i,\ small_{i-1}\cdot A_i,\ large_{i-1}\cdot A_i \Big)
+&& L_i = \max\Big( A_i,\ S_{i-1}\cdot A_i,\ L_{i-1}\cdot A_i \Big)
 \end{eqnarray*}
 
 It can be optimized to use space $O(1)$. 
 
 \runinhead{Trapping Rain Water}
-Given n non-negative integers representing an elevation map where the width of each
+Given $n$ non-negative integers representing an elevation map where the width of each
 bar is 1, compute how much water it is able to trap after raining.
 \begin{figure}[]
     \centerline{\includegraphics[height = 1in]{rainwatertrap}}
@@ -232,11 +486,11 @@ bar is 1, compute how much water it is able to trap after raining.
   \label{fig:rainwatertrap}
 \end{figure}
 
-Let $maxL_i$ be the $\max_{i}(A[:i])$; let $maxR_i$ be the $\max_{i}(A[i:n])$. The dp of obtaining max is trivial. 
+Let $L_i$ be the $\max(A[:i])$; let $R_i$ be the $\max(A[i:])$. The dp of obtaining $L, R$ is trivial. 
 
 The the total volume $vol$:
 $$
-vol = \sum_i\max\big(0,\min(maxL_i, maxR_{i+1})-A[i]\big)
+vol = \sum_i\max\big(0,\min(L_i, R_{i+1})-A[i]\big)
 $$
 \runinhead{Zigzag subsequence.} Find the max length zigzag subsequence which goes up and down alternately within the array $A$.
 
@@ -244,17 +498,155 @@ Let $U_i$ be the max length of zigzag subsequence end at $A_i \wedge$ going up.
 
 Let $D_i$ be the max length of zigzag subsequence end at $A_i \wedge$ going down.
 \begin{align*}
-U_i &= \max(D_j+1 \cdot \forall j < i) \text{ // if $A_i > A_j$} \\ 
-D_i &= \max(U_j+1 \cdot \forall j < i) \text{ // if $A_i < A_j$} 
+U_i &= \max(D_j+1 \cdot \forall j < i \cdot \text{ if $A_i > A_j$})  \\ 
+D_i &= \max(U_j+1 \cdot \forall j < i \cdot \text{ if $A_i < A_j$})  
 \end{align*}
 
-Notice in python implementation, don't use list comprehension since two states are interleaved and interdependent. 
+Notice in python implementation, the two states are interleaved and interdependent. 
+\begin{python}
+def maxzigzag(self, A):
+    N = len(A)
+    U = [1 for _ in range(N)]
+    D = [1 for _ in range(N)]
+    gmax = 1
+    for i in range(1, N):
+        for j in range(i):
+            if A[i] > A[j]:
+                U[i] = max(U[i], D[j] + 1)
+            elif A[i] < A[j]:
+                D[i] = max(D[i], L[j] + 1)
+
+            gmax = max(gmax, U[i], D[i])
+
+    return gmax
+\end{python}
+Greedy compression. Let $D_i$ be the length of longest zigzag subsequence up to $A_I$, with last step downward. 
+\[
+D_i =
+  \begin{cases}
+   U_{i-1} + 1 &\text{if } A_{i} < A_{i-1}  \\
+   D_{i-1} & \text{otherwise}
+\end{cases}
+\]
+
+For $D_i$, we only need to check $A_{i-1} > A_{i}$ since otherwis $A_{i-3}, A_{i-2}, A_{i-1}...$ keeps going up.
+
+\[
+H_i =
+  \begin{cases}
+   H_{i-1} &\text{if upward trend continues}  \\
+   D_{i-1} + 1 &\text{otherwise, i.e. } A_i > A_{i-1}
+\end{cases}
+\]
+Note that 
+$$
+|H_i - D_i| \leq 1 \cdot \forall i
+$$
+\begin{center}
+\begin{tikzpicture}[->, >=stealth', auto, node distance=2cm, semithick]
+
+  % States
+  \node[state] (H) {H};
+  \node[state, below of=H] (D) {D};
+
+  % Self-loops
+  \path (H) edge[loop above] (H);
+  \path (D) edge[loop below] (D);
+
+  % Transitions between H and D
+  \path (H) edge[bend left=25] (D);
+  \path (D) edge[bend left=25] (H);
+
+\end{tikzpicture}
+
+\begin{tikzpicture}[
+    ->, >=Stealth, semithick,
+    neuron/.style={circle, draw, minimum size=18pt, inner sep=0pt}
+]
+
+%--- neurons ---
+\node[neuron] (Hi_1) at (0, 1.2) {$H_{i-1}$};
+\node[neuron] (Di_1) at (0,-1.2) {$D_{i-1}$};
+
+\node[neuron] (Hi)   at (3, 1.2) {$H_i$};
+\node[neuron] (Di)   at (3,-1.2) {$D_i$};
+
+%--- connections (fully connected 2x2) ---
+\draw (Hi_1) -- (Hi);   % H_{i-1} -> H_i
+\draw (Hi_1) -- (Di);   % H_{i-1} -> D_i
+\draw (Di_1) -- (Hi);   % D_{i-1} -> H_i
+\draw (Di_1) -- (Di);   % D_{i-1} -> D_i
+\end{tikzpicture}
+\end{center}
+
+\begin{python}
+def maxzigzag(self, A):
+    N = len(A)
+    U = [1 for _ in range(N)]
+    D = [1 for _ in range(N)]
+    for i in range(1, N):
+        D[i] = U[i-1] + 1 if A[i] < A[i-1] else D[i-1]
+        U[i] = D[i-1] + 1 if A[i] > A[i-1] else U[i-1]
+
+    return max(U[N-1], D[N-1])
+\end{python}
+\runinhead{Buy low sell high.} Given a stock price timeseries $A$, find the maximum profit, with at most $k$ transactions.
+Let $L_{i,j}$ be the global max ending at $A_i$ with $j$ transactions. Let $G_{i,j}$ be the global max ending at or before (i.e. up to) $A_i$ with $j$ transactions. Kadance-style.
+\begin{align*}
+\Delta &= A_i - A_{i-1} \\ 
+L_{i,j} &= \max(G_{i-1,j-1}+\Delta, L_{i-1,j}+\Delta) \\
+G_{i,j} &= \max(L_{i, j}, G_{i-1,j}) 
+\end{align*}
+\begin{python}
+def dp(A, k):
+    n = len(A)
+    L = [0 for _ in range(k+1)]  # local max
+    G = [0 for _ in range(k+1)]  # global max
+    ret = 0
+    for i in range(1, n):
+        delta = A[i] - A[i-1]
+        for j in range(k, 0, -1):
+            L[j] = max(G[j-1] + delta, L[j] + delta)
+            G[j] = max(L[j], G[j])
+            ret = max(ret, G[j])
+
+    return ret
+\end{python}
+\subsection{Synchronized States}
+\runinhead{Cherry pickup.} Given a $n \times n$ matrix $M$, 0 is a pass through block, 1 is a reward, -1 is block. Find the maximum reward going from $(0, 0)$ to $(\sim 0, \sim 0)$ and then back to $(0, 0)$. 
+
+\rih{Core clues:}
+\begin{enumerate}
+\item If the problem is relaxed to two passes in two parallel matrics, it is trivial. However, the reward can only take once. Thus union the reward, not add the rewards. 
+\item In forward path, we take $k$ steps from the start. In backward path, we take $k$ steps to reach the start. 
+\item Equivalently, from start to end and then back to start $\Ra$ treat them as start to end twice
+\end{enumerate}
+The basic transition for one pass
+$$
+F_{i,j} = \max(F_{i, j}, F_{i-1, j}, F_{i, j-1})
+$$
+Given $k$, we can use $i$ to determine $j$ as \fbox{$i+j=k$}. We only need to know the forward pass row index $i$ and backward $i'$. 
+
+\begin{align*}
+J_{i, i', k} &= \max(J_{i, i', k-1}, J_{i-1, i', k-1}, \\
+& J_{i, i'-1, k-1}, J_{i-1, i'-1, k-1}) \\ 
+& + reward(M_{i, j}, M_{i', j'})
+\end{align*}
+The $reward$ function is 
+\[
+reward(M_{i,j}, M_{i', j'}) = 
+\begin{cases}
+-\infty &\text{if } M_{i, j} = -1 \lor M_{i', j'} = -1 \\ 
+M_{i, j} + M_{i', j'} &\text{if } i \neq i' \\ 
+M_{i, j} &\text{if } i = i'
+\end{cases}
+\]
 \subsection{Automata}
 \runinhead{Decode ways.} `A' encodes 1, `B' 2, ..., `Z' 26, Given an encoded message containing digits $S$, determine the total number of ways to decode it.
 
 For example, given encoded message 12, it could be decoded as ``AB'' (1 2) or ``L'' (12). Thus, the number of ways decoding 12 is 2.
 
-Let $F_i$ be number of decode ways for $s[:i]$. 
+Let $F_i$ be number of decode ways for $s[:i]$, end at $s[i-1]$. 
 
 \begin{itemize}
 \item If $s_{i-1}$ is 0, we only have one way to decode: $10$ or $20$.
@@ -267,20 +659,21 @@ F_i = F_{i-1}+F_{i-2}
 $$
 \end{itemize}
 \begin{python}
-if s[i-1] != "0":
-    F[i] = F[i-1]
-    if 10 <= int(s[i-2]+s[i-1]) < 27:
-        F[i] += F[i-2]
-else:  # 0 is special
+if s[i-1] == "0":
     if s[i-2] in ("1", "2"):
         F[i] = F[i-2]
     else:
         return 0
+else:
+    F[i] = F[i-1]
+    # s[i-2:i]
+    if 10 <= int(s[i-2]+s[i-1]) < 27:
+        F[i] += F[i-2]
 \end{python}
-\runinhead{Regex}
+\runinhead{Regex.} TODO
 \section{Graph}
 \subsection{Binary Graph}
-\runinhead{Maximal square.} Find the largest rectangle in the matrix:
+\runinhead{Maximal square.} Find the largest square in the matrix:
 \begin{lstlisting}
 1 0 1 0 0
 1 0 1 1 1
@@ -296,22 +689,23 @@ corner).
 \caption{Expand the maximal square}
 \label{fig:squareMatrix}
 \end{figure}
-\begin{eqnarray*}
-F_{i, j} = \left\{ \begin{array}{rl}
-  \min\big(F_{i-1, j-1}, F_{i-1, j}, F_{i, j-1}\big)+1 &\mbox{// if $mat_{i j}=1$}
-\\
-  0 &\mbox{// otherwise}
-       \end{array} \right.
-\end{eqnarray*}
+
+\[
+F_{i,j} =
+  \begin{cases}
+  \min\bigl(F_{i-1,j-1},\, F_{i-1,j},\, F_{i,j-1}\bigr) + 1  & \text{if } \mathrm{mat}_{i,j}=1 \\
+   0 & \text{otherwise}
+\end{cases}
+\]
 \subsection{General Graph}
 \runinhead{Shortest path in graph containing negative weights.} Find the shortest path from $s$ to $t$. 
 
-Let $F_{n, v}$ be the shortest path from $v$ to $t$ with at most $n$ vertices. 
+Let $F_{n, v}$ be the shortest path from $v$ to $t$ with at most (up to) $n$ vertices. 
 
 Then we can two options:
 \begin{align*}
 F_{n, v} = \min\Big(& F_{n-1, v}, \\
-& \min_{u \in Nbr}(F_{n-1, w}+c_{uv})\Big)
+& \min_{u \in nbrs}(F_{n-1, u}+c_{uv})\Big)
 \end{align*}
 
 , where $c_{uv}$ is the weight cost on edge $(u, v)$, $Nbr$ is neighbors of $v$.
@@ -320,68 +714,75 @@ Notice that there should not be any negative cycle otherwise the path can be $-\
 \section{String}
 \runinhead{Word break.} Given a string $s$ and a dictionary of words $dict$, determine if $s$ can be segmented into a space-separated sequence of $dict$ words.
 
-Let $F_i$ be whether \pyinline{s[:i]} can be segmented. 
-\begin{eqnarray*}
-F_{i} = \left\{ \begin{array}{rl}
-  F_{i-len(w)} &\mbox{// if $\exists w\in dict$, \pyinline{s[i-len(w):i]==w}}\\
-  false &\mbox{// otherwise}
-       \end{array} \right.
-\end{eqnarray*}
-Return all such possible sentences. In original case, we use a bool array to record whether a dp could be segmented. Now we should use a vector for every dp to record how to construct that dp from another dp.
+Let $F_i$ be whether \pyinline{s[:i]} can be segmented, i.e. ending at $s_{i-1}$. 
+\[
+F_{i} =
+  \begin{cases}
+   F_{i-len(w)}  & \text{if } \exists w, w\in dict \land \pyinline{s[i-len(w):i] == w} \\
+   \text{false} & \text{otherwise}
+\end{cases}
+\]
+Return all such possible sentences. In original case, we use a bool array to record whether a dp could be segmented. Now we need use a vector for every dp to record how to construct that dp from another dp.
 
 Let $F_i$ be all possible segmented words ends at \pyinline{s[i-1]}. $F_i$ is a list. $\exists F_i$ means $F_i$ is not empty.
-\begin{eqnarray*}
-F_{i} = \left\{ \begin{array}{rl}
-  F_{i}+[w] &\mbox{// $\forall w\in dict\cdot$} \\
-  & \mbox{ if \pyinline{s[i-len(w):i]==w} $\wedge\ \exists F_{i-len(w)}$} \\
-  F_{i} &\mbox{// otherwise}
-       \end{array} \right.
-\end{eqnarray*}
+\[
+F_{i} =
+  \begin{cases}
+   F_{i}+[w]  & \forall w\in dict, \\
+   & \text{if } \pyinline{s[i-len(w):i]==w} \land \exists F_{i-len(w)} \\
+   F_i & \text{otherwise}
+\end{cases}
+\]
 
-Reconstruct the sentence from $F_i$. It is like building path for the tree. Using backtracking: 
+Reconstruct the sentence from $F_i$ with backtracking: 
 \begin{python}
-def build(self, dp, i, cur, ret):
+def build(self, F, i, cur, ret):
     if cur_index == 0:
-        ret.append(" ".join(list(cur)))
+        ret.append(" ".join(cur[::-1]))
         return
 
     # backtracking
-    for word in dp[i]:
-        cur.appendleft(word)
-        self.build(dp, i-len(word), cur, ret)
-        cur.popleft()
+    for word in F[i]:
+        cur.append(word)
+        self.build(F, i-len(word), cur, ret)
+        cur.pop()
 
 \end{python}
 
 \runinhead{Is palindrome.} Given a string $s$, use an array to determine whether $s[i:j]$ is palindrome.
 
-Let $P_{i,j}$  indicates whether $s[i:j]$ is palindrome. We have one condition - whether the head and the end letter are equal: 
+Let $F_{i,j}$  indicates whether $s[i:j]$ is palindrome. We have one condition - whether the head and the end letter are equal: 
 \begin{eqnarray*}
-P_{i. j} = P_{i-1, j+1}\ \wedge\ s[i] = s[j-1]
+F_{i, j} = F_{i-1, j+1}\ \wedge\ s[i] = s[j-1]
 \end{eqnarray*}
 
-The code for palindrome dp is error-prone due to indexing. Notice that $i \in [0, n), j \in [i, n+1)$.
+The code for palindrome dp is error-prone due to indexing. Notice that $i \in [0, n), j \in [i, n+1)$. 
+\begin{itemize}
+\item If $i$ depends on $i-1\Ra$ forward builidng.
+\item If $j$ depends on $j+1\Ra$ backward building.
+\end{itemize}
 \begin{python}
 n = len(s)
-pa = [[False for _ in range(n+1)] for _ in range(n)]
+F = [[False for _ in range(n+1)] for _ in range(n)]
 for i in range(n):
-    pa[i][i] = True
-    pa[i][i+1] = True
+    F[i][i] = True
+    F[i][i+1] = True
 
 for i in range(n-2, -1, -1):
     for j in range(i+2, n+1):
-        pa[i][j] = pa[i+1][j-1] and s[i] == s[j-1]
+        F[i][j] = F[i+1][j-1] and s[i] == s[j-1]
 \end{python}
 \runinhead{Minimum palindrome cut.} Given a string s, partition s such that every substring of the partition is a palindrome. Return the minimum cuts needed for a palindrome partitioning of s.
 
 Let $C_i$ be the min cut for $s[:i]$. We have \textit{1 more cut} from previous state to make $S[:i]$ palindrome. 
-\begin{eqnarray*}
-C_{i} = \left\{ \begin{array}{rl}
-  \min\big(C[k]+1 \cdot \forall k<i \big) &\mbox{// if $s[k:i]$ is palindrome}
-\\
-  0 &\mbox{// otherwise}
-       \end{array} \right.
-\end{eqnarray*}
+
+\[
+C_{i} =
+	\begin{cases}
+	\min\big(C_k+1 \cdot \forall k<i \big) & \text{if } s[k:i] \text{ is palindrome} \\
+	0 & \text{otherwise}
+	\end{cases}
+\]
 \begin{python}
 def minCut(self, s):
   n = len(s)
@@ -409,16 +810,48 @@ def minCut(self, s):
 
   return C[n]
 \end{python}
-\runinhead{ab string.} Change the char in a str only consists of `a' and `b' to non-decreasing order. Find the min number of char changes. 
+\runinhead{ab string.} Change the char in a str $A$ only consists of \pyinline{"a"} and \pyinline{"b"} to non-decreasing order. Find the min number of char changes. 
 
-Two-state dp: `a' $\rightarrow$ `b' and  `b' $\rightarrow$ `a'. 1 cut into 2 segment.
+Two-state dp: \pyinline{"a"} $\ra$ \pyinline{"b"} and  \pyinline{"b"} $\ra$ \pyinline{"a"}. 1 cut into 2 segments.
+
+Let $P_i$ be the number of violations (i.e. \pyinline{"b"}) in prefix $A[:i]$. Let $S_i$ be the number of violations (i.e. \pyinline{"a"}) in suffix $A[i:]$. 
+
+$$
+\min(P_i + S_i \cdot \forall i)
+$$
 
 \runinhead{abc string.} Follow up for ab string. Three-state dp: $chr \neq a, chr \neq b, chr \neq c$. 2 cuts into 3 segments.
+
+Define a cost function:
+\[
+\text{cost}(chr, x) =
+	\begin{cases}
+	0 & \text{if } chr = x, \\
+	1 & \text{if } chr \neq x
+	\end{cases}
+\]
+\begin{enumerate}
+\item Let $F_{i, 0}$ be the cost of changing $A[:i]$ into \pyinline{"a*"}, ending with \pyinline{"a"}. 
+\item Let $F_{i, 1}$ be the cost of changing $A[:i]$ into \pyinline{"a*b*"}, ending with \pyinline{"b"}. 
+\item Let $F_{i, 2}$ be the cost of changing $A[:i]$ into \pyinline{"a*b*c*"}, ending with \pyinline{"c"}. 
+\end{enumerate}
+The transition functions:
+\[
+\begin{aligned}
+F_{i, 0} &= F_{i, 0} + \text{cost}(A_{i-1}, a), \\
+F_{i, 1} &= \min\big(F_{i-1, 0}, \; F_{i-1, 1}\big) + \text{cost}(A_{i-1}, b), \\
+F_{i, 2} &= \min\big(F_{i-1, 1}, \; F_{i-1, 2}\big) + \text{cost}(A_{i-1}, c).
+\end{aligned}
+\]
+The result:
+$$
+\min(F_{~0, 0}, F_{~0, 1}, F_{~0, 2})
+$$
 
 \runinhead{ab subsequence.} Given a string $A$, a string pattern $B$ that is a subsequence of $A$.
 We define an operation as removing a character at an index $idx$ from A such that:
 \begin{enumerate}
-\item $idx$ is an element of $target$.
+\item $idx$ is an element of $removable$.
 \item pattern $B$ remains as a subsequence of $A$. 
 \end{enumerate}
 Find the maximal possible number of removals.
@@ -427,8 +860,8 @@ Find the maximal possible number of removals.
 \[
 F_{i,j} = \max
 \begin{cases}
-F_{i-1,j} + 1 &\text{take $A_{i-1}$ as $i-1$ in $target$}\\
-F_{i-1,j} &\text{skip $A_{i-1}$ as $i-1$ not in $target$} \\
+F_{i-1,j} + 1 &\text{take $A_{i-1}$ if $i-1$ in $removable$}\\
+F_{i-1,j} &\text{skip $A_{i-1}$ if $i-1$ not in $removable$} \\
 F_{i-1,j-1}&\text{skip $B_{j-1}$ with $A_{i-1}$ if $A_{i-1} = B_{j-1}$}
 \end{cases}
 \]
@@ -437,8 +870,8 @@ F_{i-1,j-1}&\text{skip $B_{j-1}$ with $A_{i-1}$ if $A_{i-1} = B_{j-1}$}
 \[
 F_{i,j} = \max
 \begin{cases}
-F_{i+1,j} + 1 &\text{take $A_i$ as $i$ in $target$}\\
-F_{i+1,j} &\text{skip $A_i$ as $i$ not in $target$} \\
+F_{i+1,j} + 1 &\text{take $A_i$ if $i$ in $removable$}\\
+F_{i+1,j} &\text{skip $A_i$ if $i$ not in $removable$} \\
 F_{i+1,j+1}&\text{skip $B_j$ with $A_i$ if $A_i = B_j$}
 \end{cases}
 \]
@@ -446,13 +879,13 @@ F_{i+1,j+1}&\text{skip $B_j$ with $A_i$ if $A_i = B_j$}
 \section{Divide \& Conquer}
 \subsection{Tree}
 \runinhead{Number of different BSTs.} It can be solved using Catalan number (Section \ref{section:catalanNumber}), but here goes the dp solution. 
-\begin{lstlisting}
+\begin{java}
    1         3     3      2      1
     \       /     /      / \      \
      3     2     1      1   3      2
     /     /       \                 \
    2     1         2                 3
-\end{lstlisting}
+\end{java}
 
 Let $F_i$ be the \#BSTs constructed from $i$ elements. The pattern of choosing one element as the root is: 
 \begin{align*}
@@ -465,24 +898,70 @@ F_i = \sum(F_{j}*F_{i-1-j} \cdot \forall j< i)
 \end{align*}
 
 \subsection{Array}
-\runinhead{Burst balloons.} Given $n$ balloons, indexed from 0 to $n-1$. Each balloon is painted with a number on it represented by array $A$. You are asked to burst all the balloons. If the you burst balloon i you will get \pythoninline{A[left] * A[i] * A[right]} coins. Here left and right are adjacent indices of i. After the burst, the left and right then becomes adjacent.
+\runinhead{Burst balloons.} Given $n$ balloons, indexed from 0 to $n-1$. Each balloon is painted with a number on it represented by array $A$. You are asked to burst all the balloons. If the you burst balloon i you will get \pythoninline{A[left] * A[i] * A[right]} reward. Here left and right are adjacent indices of i. After the burst, the left and right then becomes adjacent.
 
-Find the maximum coins you can collect by bursting the balloons wisely.
+Find the maximum reward you can collect by bursting the balloons wisely.
 
 \textbf{Core clues}:
 \begin{enumerate}
-\item Divide \& Conquer
-\item Boundary definition
-\item Reverse Thinking: think about $n$ balloons if $A_i$ is the last one to burst, what now? - Backward dp
+\item Simplify the problem: what if $A$ only contains on element? 
+\item Sub-problem: What is the reward of bursting \pyinline{A[i:j]} $\Ra$ Divide \& Conquer. Burst $A_k$ where $k \in [i, j)$. 
 \end{enumerate}
 Let $F_{i, j}$ be the max scores burst all over \pythoninline{A[i:j]}.
 
 \begin{align*}
-F_{i, j} = \max(F_{i,k} + A_{i-1}  A_k A_j + F_{k+1, j} \cdot \forall k)
+F_{i, j} = \max\Big(F_{i,k} + F_{k+1, j} + A_{i-1} \cdot A_k \cdot A_j \cdot \forall k \in [i, j)\Big)
 \end{align*}
-, where $k$ is the last one to burst. 
+, where $k$ is the one to burst. 
 
-Notice that $A_{i-1}, A_{j}$ go beyond $[i, j)$.
+Since $F_{i, j}$ derived from smaller $F_{i', j'}$, we need to expand the $F$ from smaller-length $F$.
+\begin{python}
+def burst(self, A):
+    A = DefaultList(A)
+    N = len(A)
+    F = [
+        [0 for _ in range(N+1)]
+        for _ in range(N+1)
+    ]
+    for l in range(1, N+1):
+        for i in range(N-l+1):
+            j = i + l
+            F[i][j] = max(
+                F[i][k] + F[k+1][j] + A[i-1]*A[k]*A[j]
+                for k in range(i, j)
+            )
+
+    return F[0][N]
+
+def burst(self, A):
+    A = DefaultList(A)
+    N = len(A)
+    F = [
+        [0 for _ in range(N+1)]
+        for _ in range(N+1)
+    ]
+    for i in range(N+1, -1, -1):
+        # j determines i's range
+        for j in range(i+1, N+1):
+            F[i][j] = max(
+                F[i][k] + F[k+1][j] + A[i-1]*A[k]*A[j]
+                for k in range(i, j)
+            )
+
+    return F[0][N]
+
+def get(A, i):
+    return A[i] if 0 <= i < len(A) else 1
+
+# alternatively 
+from collections import UserList
+
+class DefaultList(UserList):
+    def __getitem__(self, i):
+        if 0 <= i < len(self.data):
+            return self.data[i]
+        return 1    
+\end{python}
 
 \section{Knapsack}
 Knapsack problem is different from the sequence problem. It is a problem of \textbf{bag} rather than of sequence, since the order of element does not matter. 
@@ -583,7 +1062,7 @@ Find the maximum profit. You may complete as many transactions as you like with 
 
 Let $F_i$ be the max profit from day 0 to day $i$, selling stock at day $i$. (i.e. ended at)
 
-Let $M_i$ be the max profit from day 0 to day $i$. (i.e. ended at or brefore)
+Let $M_i$ be the max profit from day 0 to day $i$. (i.e. ended at or before)
 
 For $F_i$, at each day $i$, you have two options: 1) Sell the stock that has been held for multiple days. 2) Sell the stock held for 1 day.
 Notice the 1st option, it is equivalent to reverting the previous transaction, selling at day $i$ instead of day $i-1$.

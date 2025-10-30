@@ -18,11 +18,15 @@
 % Python style for highlighting
 \newcommand\pythonstyle{\lstset{
     language=Python,
-    basicstyle=\setstretch{0.8}\ttb,
-    morekeywords={super, assert, self, yield, as},  % Add keywords here
-    keywordstyle=\ttm\color{deepblue},
+    sensitive=true,
     columns=flexible,
-    literate={\_}{\ttb{\char`_}}1{-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1{\\}{\ttb{\char`\\}}1{\{}{\ttb{\char`\{}}1{\}}{\ttb{\char`\}}}1,
+    alsoletter={_},
+    basicstyle=\setstretch{0.8}\ttb,
+    morekeywords={super, assert, self, yield, as, True, False},  % Add keywords here
+    deletekeywords={is},
+    deletekeywords=[2]{min, max, next, sum},
+    keywordstyle=\ttm\color{deepblue},
+    literate={\_}{\ttb{\char`_}}1{-}{\ttb{-}}1{<}{\ttb{<}}1{>}{\ttb{>}}1{\\}{\ttb{\char`\\}}1{\{}{\ttb{\char`\{}}1{\}}{\ttb{\char`\}}}1{\\}{{\ttb\color{gray!20}{\char`\\}}}1,
     keepspaces=true,
     commentstyle=\ttm\color{lightgray},
     emph={},  % Custom highlighting

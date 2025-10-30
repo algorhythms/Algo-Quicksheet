@@ -25,14 +25,233 @@ def plusOne(self, digits):
 \item Add a list of big number with increasing significance
 \end{enumerate}
 Details see \href{https://github.com/algorhythms/LeetCode/blob/master/042%20Multiply%20Strings.py}{code}.
+\section{Calculator}
+\subsection{Parsing}
+\runinhead{Basic calculator.} Given a string s which represents an expression, evaluate this expression and return its value. 
+\begin{python}
+s = "3+2*2"
+s = " 3/2 "
+s = " 23+5 / 2 "
+\end{python}
+\runinhead{Core Clues:}
+\begin{enumerate}
+\item Parse the string char by char
+\item \hl{Lookback} number and lookback operator
+\item Sentiels: \pyinline{None}.
+\item Append \pyinline{"\0"} to flush
+\end{enumerate}
+\begin{python}
+def calculate(self, s: str) -> int:
+    stk = []
+    num = None
+    op = None
 
-\section{Polish Notations}
+    for c in s + '\0': # sentinel to flush the last number
+        if c == ' ':
+            continue
+
+        if c.isdigit():
+            num = (num if num else 0) * 10 + int(c)
+            continue
+            
+        # c is operator, assign c to op, process op first
+        if op == '+' or op is None:
+            stk.append(num)
+        elif op == '-':
+            stk.append(-num)
+        elif op == '*':
+            stk[-1] = stk[-1] * num
+        elif op == '/':
+            # truncate toward zero (not use // for negatives)
+            stk[-1] = int(stk[-1] / num)
+        else:
+            raise
+
+        num = None        
+        op = c
+
+    return sum(stk)
+\end{python}
+
+\runinhead{Add brackets ().}
+\begin{enumerate}
+\item Use the original function as a recursive function
+\item A \pyinline{"("} is a recurisve call stack, and A \pyinline{")"} is a return the current recurisve call. 
+\end{enumerate}
+\begin{python}
+def calculate(self, s: str) -> int:
+    s += '\0'
+    val, _ = self.parse(s, 0)
+    return val
+
+def parse(self, s, i: int) -> tuple[int, int]:
+    stk = []
+    num = None
+    op = None
+
+    while i < len(s):
+        c = s[i]
+        if c == ' ':
+            i += 1
+            continue
+
+        if c.isdigit():
+            num = (num if num else 0) * 10 + int(c)
+            i += 1
+            continue
+
+        if c == '(':
+            # Evaluate bracketed expression
+            subtotal, j = self.parse(s, i + 1)
+            num = subtotal
+            i = j
+            continue
+
+        # at this point c is an operator or ')'
+        # assign c to op
+        num = num if num else 0
+        if op == '+' or op is None:
+            stk.append(num)
+        elif op == '-':
+            stk.append(-num)
+        elif op == '*':
+            stk[-1] = stk[-1] * num
+        elif op == '/':
+            # Truncate toward zero
+            stk[-1] = int(stk[-1] / num)
+        else:
+            raise
+        num = None
+            
+        if c == ')':
+            # finish this level, skipping ')'
+            return sum(stk), i + 1
+        else:
+            op = c  # include '\0'
+            i += 1
+
+    return sum(stk), i
+\end{python}
+
+Alternatively, iterative Approach: note that the order inside the for-loop cannot change
+\begin{python}
+def calculate(self, s: str) -> int:
+    stk = []  # holds signed ints, plus (, the op just before (
+    num = None
+    op = None
+
+    for c in s + '\0':
+        if c == ' ':
+            continue
+
+        if c.isdigit():
+            num = (num if num else 0) * 10 + int(c)
+            continue
+
+        if c == '(':
+            # Save the operator before ( 
+            stk.append(op)  # +/-
+            stk.append('(')
+            op = None # reset 
+            continue
+		
+        # c is +/-/): flush
+        if num != None:
+            if op == '+' or op is None:
+                stk.append(num)
+            else:  # '-'
+                stk.append(-num)
+            num = None
+
+        if c == ')':
+            subtotal = 0
+            while stk and stk[-1] != '(':
+                subtotal += stk.pop()
+            stk.pop()  # remove (
+            
+            prev_op = stk.pop()  # op before (
+            if prev_op == '+' or prev_op is None:
+                stk.append(subtotal)
+            else:  # '-'
+                stk.append(-subtotal)
+            # op remains unchanged
+        else:  # only for +/-            
+            op = c
+
+    return sum(stk)
+\end{python}
+Adding \pyinline{"*/"}
+\begin{python}
+def calculate(self, s: str) -> int:
+    stk = []
+    num = None
+    op = None
+
+    for c in s + '\0':
+        if c == ' ':
+            continue
+
+        if c.isdigit():
+            num = (num if num else 0) * 10 + int(c)
+            continue
+
+        if c == '(':
+            stk.append(op)
+            stk.append('(')
+            op = None  # reset
+            continue
+
+        if num != None:
+            if op == '+' or op is None:
+                stk.append(num)
+            elif op == '-':
+                stk.append(-num)
+            elif op == '*':
+                stk[-1] = stk[-1] * num
+            else:  # '/'
+                stk[-1] = int(stk[-1] / num)
+            num = None
+
+        if c == ')':
+            subtotal = 0
+            while stk and stk[-1] != '(':
+                subtotal += stk.pop()
+            stk.pop()  # remove (
+            
+            prev_op = stk.pop()
+            if prev_op == '+' or prev_op is None:
+                stk.append(subtotal)
+            elif prev_op == '-':
+                stk.append(-subtotal)
+            elif prev_op == '*':
+                stk[-1] = stk[-1] * subtotal
+            else:  # '/'
+                stk[-1] = int(stk[-1] / subtotal)
+        else:
+            op = c
+
+    return sum(stk)
+\end{python}
+\section{Appendix - Polish Notations}
 Polish Notation is in-fix while Reverse Polish Notation is post-fix. 
 
 Reverse Polish notation (RPN) is a mathematical notation in which every operator follows all of its operands (i.e. operands are followed by operators). RPN should be treated as the orthogonal expression.  
 
 Polish notation (PN) is a mathematical notation in which every operator is followed by its operands. 
+\subsection{Evaluate post-fix expressions}\label{section:evaluationPostFix}
+Consider: 
 
+In-fix
+\begin{python}
+5 + ((1 + 2) * 4) - 3
+\end{python}
+
+Post-fix
+\begin{python}
+5 1 2 + 4 * + 3 - 
+\end{python}
+Straightforward: use a \textit{stack} to store the number. Iterate the input, push
+stack when hit numbers, pop stack when hit operators.
 \subsection{Convert in-fix to post-fix (RPN)}
 \pyinline{ret} stores the final result of reverse polish notation. \pyinline{stk} stores
 the temporary result in strictly increasing order. 
@@ -77,21 +296,6 @@ def infix2postfix(self, lst):
 
   return ret
 \end{python}
-
-\subsection{Evaluate post-fix expressions}\label{section:evaluationPostFix}
-Consider: 
-
-In-fix
-\begin{python}
-5 + ((1 + 2) * 4) - 3
-\end{python}
-
-Post-fix
-\begin{python}
-5 1 2 + 4 * + 3 - 
-\end{python}
-Straightforward: use a \textit{stack} to store the number. Iterate the input, push
-stack when hit numbers, pop stack when hit operators.
 
 \subsection{Convert in-fix to pre-fix (PN)}
 PN is the \textit{reverse} of RPN, thus, scan the expression from right to left; and \pyinline{stk} stores the temporary result in \textit{non-decreasing} order, except for brackets.

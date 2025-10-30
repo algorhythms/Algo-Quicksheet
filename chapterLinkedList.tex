@@ -58,6 +58,43 @@ In $O(n)$ without extra space:
 \end{enumerate}
 
 \section{Combinations}
+\subsection{Merge K Linked List}
+Given an array of k linked-lists lists, each linked-list is sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.
+\runinhead{Core Clues:}
+\begin{enumerate}
+\item Relax the problem: if only two lists, just compare and merge like merge sort 
+\item $k$ lists $\Ra$ Heap
+\begin{python}
+use heap
+
+
+-------------------
+    |  |  |  |  |  |
+    |  |  |  |  |  |
+    |  |  |  |  |  |
+    |  |  |  |  |  |
+\end{python}
+\end{enumerate}
+\begin{python}
+def mergeKLists(self, lists):
+  h = []
+  for node in lists:
+    if node:
+      heapq.heappush(h, (node.val, node))
+
+  dummy = ListNode(0)
+  current = dummy  # verbose name for return
+  while h:
+    val, mini = heapq.heappop(h)
+    current.next = mini
+    nxt = mini.next
+    if nxt:
+      heapq.heappush(h, (nxt.val, nxt))
+
+    current = current.next
+
+  return dummy.next
+\end{python}
 \subsection{LRU}
 Core clues:
 \begin{enumerate}
@@ -71,13 +108,14 @@ class Node:
     def __init__(self, key, val):
         self.key = key
         self.val = val
-        self.pre, self.next = None, None
+        self.pre = None 
+        self.next = None
 
 
 class LRUCache:
     def __init__(self, capacity):
         self.cap = capacity
-        self.map = {}  # key to node
+        self.map = {}  # key to Node(val)
         self.head = None
         self.tail = None
 
@@ -112,7 +150,8 @@ class LRUCache:
             return
 
         head = self.head
-        cur.next, cur.pre, head.pre = head, None, cur  # safe
+        cur.next, cur.pre = head, None
+        head.pre = cur
         self.head = cur
 
     def _pop(self):
@@ -137,7 +176,146 @@ class LRUCache:
             assert self.tail == cur
             self._pop()
         else:
-            pre.next, nxt.pre = nxt, pre  # safe
+            pre.next, nxt.pre = nxt, pre
 
         self._appendleft(cur)
+\end{python}
+
+Use \pyinline{OrderedDict}:
+\begin{python}
+from collections import OrderedDict
+
+class LRUCache:
+    def __init__(self, capacity: int) -> None:
+        self.capacity = capacity
+        self.kv = OrderedDict()  # key -> value
+
+    def get(self, key: int) -> int | None:
+        if key not in self.kv:
+            return None  # or raise KeyError
+        # Move to MRU position
+        self.kv.move_to_end(key, last=False)
+        return self.data[key]
+
+    def put(self, key: int, value: int) -> None:
+        # If key exists, update value and move to MRU
+        if key in self.kv:
+            self.kv.move_to_end(key, last=False)
+        self.kv[key] = value
+
+        # Evict LRU if over capacity
+        if len(self.kv) > self.capacity:
+            self.kv.popitem(last=True)   # pop LRU (right side)
+\end{python}
+
+\runinhead{First Unique Number in the stream.}
+
+Naive:
+\begin{python}
+class FirstUnique:
+  def __init__(self, A):
+    self.cnt = Counter()
+    self.q = deque()
+    for a in A:
+      self.add(a)
+
+  def showFirstUnique(self) -> int:
+    while self.q and self.cnt[self.q[0]] > 1:
+      # no need to dec counter
+      self.q.popleft()
+    return self.q[0] if self.q else -1
+
+  def add(self, value: int) -> None:
+    self.cnt[value] += 1
+    self.q.append(value)
+\end{python}
+
+Using Double Linked List:
+\begin{python}
+from collections import OrderedDict
+
+class FirstUnique:
+  def __init__(self, A):
+    self.cnt = defaultdict(int)
+    self.uniques = OrderedDict()   # Ordered List
+    for x in A:
+      self.add(x)
+
+  def showFirstUnique(self) -> int:
+    return next(iter(self.uniques)) if self.uniques else -1
+
+  def add(self, value):
+    self.cnt[value] += 1
+
+    if self.cnt[value] == 1:
+      # first time: becomes unique; append to end
+      self.uniques[value] = None
+    elif self.cnt[value] == 2:
+      self.uniques.pop(value, None)
+\end{python}
+
+Using Double Linked List without OrderedDict:
+\begin{enumerate}
+\item Maintain a map: val $\ra$ node if seen once; None if unseen; DUP if seen $\ge$ 2;
+\end{enumerate}
+\begin{python}
+@dataclass
+class Node:
+  val: int
+  prev: Node | None = None
+  next: Node | None = None
+
+class DoubleLinkedList:
+  def __init__(self):
+    self.head = Node(0) 
+    self.tail = Node(0)
+    self.head.next = self.tail
+    self.tail.prev = self.head
+
+  def append(self, node):
+    last = self.tail.prev
+
+    node.prev = last
+    node.next = self.tail
+
+    last.next = node
+    self.tail.prev = node
+    return node
+
+  def remove(self, node):
+    prev = node.prev
+    nxt =  node.next
+
+    prev.next = nxt
+    nxt.prev = prev
+
+  def first(self):
+    return self.head.next.val \
+      if self.head.next is not self.tail else None
+
+DUP = object()
+
+class FirstUnique:
+  def __init__(self, A):
+    self.dll = DoubleLinkedList()
+    # val -> node if seen once; None if unseen; DUP if seen >= 2;
+    self.nodes = {}
+    for x in A:
+      self.add(x)
+
+  def showFirstUnique(self) -> int:
+    v = self.dll.first()
+    return v if v is not None else -1
+
+  def add(self, value: int):
+    if value not in self.nodes:
+      node = self.dll.append(Node(value))
+      self.nodes[value] = node
+    elif self.nodes[value] is not DUP:
+      # seen once before
+      self.dll.remove(self.nodes[value])
+      self.nodes[value] = DUP
+    else:
+      # DUP 
+      pass 
 \end{python}

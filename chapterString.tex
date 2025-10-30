@@ -3,18 +3,20 @@
 
 \section{Palindrome}
 \subsection{Palindrome anagram}
-\runinhead{Test palindrome anagram.} Char counter, number of odd count should $\leq 0$.
-\runinhead{Count palindrome anagram.} See Section-\ref{N_objects_K_types}.
-\runinhead{Construct palindrome anagram.} Construct all palindrome anagrams given a string \pyinline{s}.
-\\
-Clues:
+\begin{itemize}
+\item \rih{Test palindrome anagram.} Char counter, number of odd count should $\leq 0$.
+\item \rih{Count palindrome anagram.} See Section-\ref{N_objects_K_types}.
+\item \rih{Construct palindrome anagram.} Construct all palindrome anagrams given a string \pyinline{s}.
+\end{itemize}
+
+\runinhead{Core Clues:}
 \begin{enumerate}
-\item dfs, grow the char counters of \pyinline{s}. 
-\item jump parent char
+\item Different choices of char $\Ra$ backtracking, choose the next from the char counters of \pyinline{s}. 
+\item To avoid loop $\Ra$ jump parent char
 \end{enumerate}
-Code:
+
 \begin{python}
-def grow(self, s, counters, pi, cur, ret):
+def backtrack(self, s, counters, pi, cur, ret):
   if len(cur) == len(s):
     ret.append(cur)
     return
@@ -24,58 +26,119 @@ def grow(self, s, counters, pi, cur, ret):
     if k != pi and counters[k] > 0:
       for n in range(1, counters[k]/2+1):
         counters[k] -= n*2
-        self.grow(s, counters, k, k*n+cur+k*n, ret)
+        self.backtrack(s, counters, k, k*n+cur+k*n, ret)
         counters[k] += n*2
 \end{python}
 
-Jump within the looping to avoid repetition. 
+Jump within the iterations of choice to avoid dead loop. 
 
-\section{KMP}
-Find string $W$ in string $S$ within complexity of $O(|W|+|S|)$. KMP - reflect upon yourself before judging others.
-\subsection{Prefix suffix table}
-Partial match table (also known as "failure function"). After a failure matching, you know that the matched suffix before the failure point is already matched; therefore when you shift the $W$, you only need to shift the prefix onto the position of the previous suffix. The prefix and suffix must be proper prefix and suffix.
+How to handle odd counter? Check outside the backtrack, and potentially raise error. 
 
-\begin{figure}[hbtp]
-\centering
-\subfloat{\includegraphics[width=0.6\linewidth]{kmp_table}}
-\caption{Prefix-suffix table}
-\label{fig:kmp_table}
-\end{figure}
-In table-building algorithm, similar to dp, let $T[i]$ store the length of matched prefix suffix for $needle[:i]$\\
-\\
-Clues:
+\subsection{Number}
+\runinhead{Next Permutation.} Given a string $n$ representing an int, return the closest int (not including itself), which is a palindrome. For example $n = `123'$, return $`121'$. 
+
 \begin{enumerate}
-\item dummy at $T[0]=-1$.
-\item three parts
-\begin{enumerate}
-\item matched
-\item fall back (consider $ABABC...ABABA$)
-\item restart 
+\item Palindrome $\Ra$ Mirror the left half of $n$.
+\item 19997 has two candidates 19991 and 20002 $\Ra$ for the half, $+/-1$ for carry/borrow
+\item 1000 has two candidates 999 and 1001 $\Ra$ More/less digits of $n$ $\Ra$ checking numbers $10..0, 9..9$
 \end{enumerate}
-\end{enumerate}
-Table-building code:
 \begin{python}
-# construct T
-T = [0 for _ in range(len(needle)+1)]
-T[0] = -1
-T[1] = 0
+def nearestPalindromic(self, s: str) -> str:
+  l = len(s)
+  odd_l = l & 1
+  if odd_l:
+    half = s[:l//2] + s[l//2]
+  else:
+    half = s[:l//2]
 
-cnd = 0  # candidate 
-i = 2  # table index
-while i < len(needle)+1:
-    if needle[i-1] == needle[cnd]:  # matched
-        T[i] = cnd+1
-        cnd += 1
-        i += 1
-    elif T[cnd] != -1:  # fall back 
-        cnd = T[cnd]
-    else:  # restart 
-        T[i] = 0
-        cnd = 0
-        i += 1
+  def mir(half: str) -> str:
+    if not odd_l:
+      return half + half[::-1]
+    else:
+      return half + half[::-1][1:]
+
+  # candidates
+  cands = {
+    mir(str(int(half) - 1)), 
+    mir(half), 
+    mir(str(int(half) + 1)),
+  }
+  cands |= {
+    str(10 ** l + 1), 
+    str(10 ** (l - 1) - 1)
+  }
+  cands.discard(s)
+  return min(
+    cands, 
+    key=lambda e: (abs(int(s) - int(e)), int(e))
+  )
+\end{python}
+\section{Anagram}
+\runinhead{Group of strings by anagram.}
+
+Using a frequency vector 
+\begin{python}
+class Solution:
+  def groupAnagrams(self, strs):
+    # key: 26-tuple counts; value: list of words
+    d = defaultdict(list)
+    for s in strs:
+      cnt = [0] * 26
+      for ch in s:
+        cnt[ord(ch) - ord('a')] += 1
+      d[tuple(cnt)].append(s)
+    return list(d.values())
 \end{python}
 
-\pythoninline{T[cnd]} is the length, thus just the next index to be processed in the next loop. 
+\section{KMP}
+Find the pattern $p$ in string $s$ within complexity of $O(|P|+|S|)$.
+
+\subsection{Prefix matching suffix table}
+Intuition: when a mismatch happens at $p_i$ vs $s_i$, don't restart from $p_0$; instead jump to the next best candidate $i$ right after the matched prefix \& suffix, keeping the already verified prefix.
+
+Let $L_i$ be the length of the longest proper prefix that matches a suffix ending at $p_i$. 
+\begin{enumerate}
+\item A proper prefix is a prefix that is not equal to the whole string itself. Proper ensures that $L_i < i+1$.
+\item Need to maintain the longest proper prefix of a substring that is also a suffix of it.
+\end{enumerate}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{c|ccccccc}
+  \toprule
+  \textbf{i}   & 0 & 1 & 2 & 3 & 4 & 5 & 6 \\
+  \midrule
+  \textbf{$p_i$} & A & B & C & D & A & B & D \\
+  \textbf{$L_i$} & 0 & 0 & 0 & 0 & 1 & 2 & 0 \\
+  \bottomrule
+\end{tabular}
+\end{table}
+\begin{python}
+def kmp_lps(p):
+    L = [0] * len(p)
+    i = 1
+    pre = 0
+    while i < len(p):
+        if p[i] == p[pre]:
+            L[i] = pre + 1
+            pre += 1
+            i += 1
+        elif pre:  # fallback
+            pre = L[pre - 1]
+        else:  # no fallback
+            L[i] = 0
+            i += 1
+
+    return L
+\end{python}
+Time complexity:
+\begin{itemize}
+\item From code itself it appears to be $O(|P|^2)$.
+\item Define $\Delta = i - pre$.
+\item $i$ never goes backward - $i$ either forwards of stays.
+\item Any time $i$ doesn’t move forward, $\Delta$ must rise
+\item $j$ is bounded by $O(|P|)$ and $\Delta$ is bounded by $O(|P|)$
+\end{itemize}
 \subsection{Searching algorithm}
 \begin{figure}[]
 \centering
@@ -84,41 +147,65 @@ while i < len(needle)+1:
 \label{fig:kmp_presuffix}
 \end{figure}
 
-Notice:
-\begin{enumerate}
-\item index $i$ and $j$.
-\item $T[i-1+1]$ for corresponding previous index in $T$ for current scanning index $i$. 
-\item When falling back, the next scanning index is \pyinline{len(prefix)}
-\item three parts:
-\begin{enumerate}
-\item matched
-\item aggressive move and fall back
-\item restart 
-\end{enumerate}
-\end{enumerate}
-Search code: 
-\begin{python}
-# search
-i = 0  # index for needle 
-j = 0  # index for haystack
-while j+i < len(haystack):
-    if needle[i] == haystack[j+i]:  # matched 
-        i += 1
-        if i == len(needle):
-            return haystack[j:]
-    else:
-        if T[i] != -1:  # move and fall back j
-            j = j+i-T[i]
-            i = T[i]
-        else:  # restart
-            j += 1
-            i = 0
 
-return None
+\begin{python}
+def kmp_search(p, s):
+    L = kmp_lps(p)
+    ret = []
+    i = 0
+    j = 0
+    while j < len(s):
+        if p[i] == s[j]:
+            i += 1
+            j += 1
+            if i == len(p):
+                ret.append(j - i)
+                i = L[i - 1]
+        elif i:
+            i = L[i - 1]
+        else:
+            j += 1
+
+    return ret
 \end{python}
+Time compelxity:
+\begin{itemize}
+\item Define $\Delta = j - i$.
+\item $j$ never goes backward
+\item Any time $j$ doesn’t move forward, $\Delta$ must rise
+\item $j$ is bounded by $O(|S|)$ and $\Delta$ is bounded by $O(|P|+|S|)$
+\end{itemize}
 \subsection{Applications}
 \begin{enumerate}
 \item Find needle in haystack. 
 \item Shortest palindrome 
 \end{enumerate}
+\subsection{Subsequence}
+Given a string $s$ and an array of strings $words$, return the number of $words_i$ that is a subsequence of $s$. For example, input: \pyinline{s = "abcde"}, \pyinline{words = ["a","bb","acd","ace"]}
+
+\rih{Core clues:}
+\begin{enumerate}
+\item Test whether one string is another's subsequence is straightforwad, how to test multiple strings is one's subsequence? $\Ra$ consume the multiple strings in one iteartion. 
+\item Each character can be a candidate $\Ra$ char map. 
+\item Each $words_i$ is only match once $\Ra$ iterator 
+\end{enumerate}
+\begin{python}
+def numMatchingSubseq(self, S, words) -> int:
+  """
+  Linear O(|S| + sum(|word|)) 
+  no need to if-check with HashMap + Iterator 
+  """ 
+  itr_lsts = defaultdict(list) 
+  for w in words: 
+    itr_lsts[w[0]].append(iter(w[1:])) 
+
+  for c in S: 
+    itrs = itr_lsts.pop(c, []) 
+    for itr in itrs: 
+      ch = next(itr, None) 
+      itr_lsts[ch].append(itr) 
+  
+  return len(itr_lsts[None])
+\end{python}
+Note \pyinline{itr_lsts} can be short formed as \pyinline{itrss}
 

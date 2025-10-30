@@ -20,6 +20,17 @@ Two general technique it is impossible to have $\mat{O}\neq \mat{G}$:
 \end{enumerate}
 
 \section{Extreme First}
+\runinhead{Schedule jobs with duration and deadlines.} Given a list of jobs $A$ and each $A_i$ has a (duration, deadline). Determine whether we can finish all the jobs. 
+
+Greedily choose the earliest deadline. Why earliest-deadline-first is the only schedule we need to test? 
+\begin{enumerate}
+\item Deadline inversions are harmless to fix. Call an \textbf{inversion} two consecutive jobs $A_i, A_j$ where the first one’s $A_i$ deadline is later than the second one’s $A_j$ . \textbf{Swap} such a pair.
+\item $A_j$ with the earlier deadline now finishes \textbf{sooner}, so it meets its deadline. 
+\item $A_i$ \textbf{inherits} $A_j$'s old completion time ($A_i.t + A_j.t = A_j.t + A_i.t$) and $A_i$ has a later deadline; thus $A_i$ can finish. 
+\item $\Ra$ Result: a swap never turns a feasible schedule into an infeasible one.
+\end{enumerate}
+
+
 \runinhead{Rearranging String $k$ distance apart.} Given a non-empty string $s$ and an integer $k$, rearrange the string such that the same characters are at least distance
 $k$ from each other.
 
@@ -66,4 +77,44 @@ def rearrangeString(self, s, k):
   return "".join(ret)
 
 \end{python}
+\subsection{Coverage}
+\runinhead{Minimum to cover.} Given $n$ representing the garden starts at the point 0 and ends at the point $n$. An array $ranges$ of length $n + 1$ where $ranges_i$  means the i-th tap can water the area $[i - ranges_i, i + ranges_i]$
+
+Find the minimum number of taps that should be open to water the whole garden. 
+
+\rih{Core clues:}
+\begin{enumerate}
+\item Each ranges cover $[start, end]$ $\Ra$ need a map either by start or end. 
+\item Minimum taps to cover is maximum covering range $\Ra$ greedy 
+\end{enumerate}
+\begin{python}
+def minTaps(self, n, ranges):
+  # reaches: max end by start
+  reaches = [0 for _ in range(n + 1)]
+  for i, r in enumerate(ranges):
+    s = max(0, i - r)
+    e = min(n+1, i + r + 1)  # [i-r, i+r+1)
+    reaches[s] = max(reaches[s], e)
+
+  ret = 0
+  lo, hi = 0, 1 # [lo, hi)
+  maxa = hi
+  # Greedily extend coverage until we reach n
+  while maxa <= n:
+    # search for one tap that reaches farthest
+    for i in range(lo, hi):
+      maxa = max(maxa, reaches[i])
+
+    # cannot extend coverage
+    if maxa <= hi:
+      return -1
+    ret += 1
+
+    lo = hi
+    hi = maxa
+
+  return ret
+\end{python}
+
+Note that the dictionary name can be short form by keys as \pyinline{starts} or values as \pyinline{reaches} and the latter is preferred. 
 

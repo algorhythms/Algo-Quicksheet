@@ -33,10 +33,12 @@ The 2nd equation is deduping. Considering a set of objects $A = \{a, b, c, d, e\
 ret &&= \frac{5!}{3! \cdot 2!}
 \end{eqnarray*}
 
-The 3rd equation is DP. Let $F_{n, k}$ be the number of combinations of choosing $k$ elements from $n$ elements. We can either pick the $n$-th item or not. 
+The 3rd equation is DP. Let $F_{n, k}$ be the number of combinations of choosing $k$ elements from $n$ elements. We can either pick the $n$-th item or not (note: always choose $k$, not decide whether to choose the $k$-th). 
 $$
 F_{n,k} = F_{n-1, k} + F_{n-1, k-1}
 $$
+
+The 1st term is not to choose $n$-th as the $k$-th, and the 2nd term is to choose $n$-th as the $k$-th
 
 How to construct $nCr$ in code:
 \begin{python}
@@ -92,7 +94,7 @@ F_{i, j} = F_{i-1, j} + F_{i, j-1}
 $$
 
 \subsection{N objects, K types} \label{N_objects_K_types}
-What is the number of permutation of $N$ objects with $K$ different types:
+What is the number of permutation of $N$ objects with $K$ different types? To handle duplicates, we need to dedupe:
 \begin{align*}
 ret &= \frac{A_N^N}{\prod_{k=1}^K{A_{sz(k)}^{sz(k)}}} \\
 &= \frac{N!}{\prod_{k} sz[k]!}
@@ -222,7 +224,75 @@ def getPermutation(self, n, k):
 
     return "".join(map(str, ret))
 \end{python}
+\runinhead{Next Permutation.} A permutation of an array of integers is an arrangement of its members into a sequence or linear order. For example, for arr = [1,2,3], the following are all the permutations of arr: [1,2,3], [1,3,2], [2, 1, 3], [2, 3, 1], [3,1,2], [3,2,1].
 
+Return the next permutation of a given array.
+
+\rih{Core Clues:}
+\begin{enumerate}
+\item Obervations:
+\begin{python}
+[1, 2, 3, 4]  [1, 2, 4, 3]
+[1, 3, 4, 2] : [1, 4, 2, 3]
+[1, 4, 2, 3, 3, 2] : [1, 4, 3, 2, 2, 3]
+[1, 4, 2, 3, 2, 3] : [1, 4, 2, 3, 3, 2]
+\end{python}
+\item find the suffix shape of $\backslash$, and the pivot point.
+\begin{python}
+[1, 2, 3, 4] : [1, 2, 4, 3]
+       ^
+[1, 3, 4, 2] : [1, 4, 2, 3]
+    ^
+[1, 3, 5, 4, 2] : [1, 4, 2, 3, 5]
+    ^
+\end{python}
+\item scanning from right to left, find the first larger item than pivot
+\begin{python}
+[1, 2, 3, 4] : [1, 2, 4, 3]
+       ^  |
+[1, 3, 4, 2] : [1, 4, 2, 3]
+    ^  |
+[1, 3, 5, 4, 2] : [1, 4, 2, 3, 5]
+    ^     |
+\end{python}
+\item Swap the rightmost first larger item and make the suffix shape of /
+\begin{python}
+[1, 2, 3, 4] -> [1, 2, 4, 3] : [1, 4, 2, 3]
+       ^
+[1, 3, 4, 2] -> [1, 4, 3, 2] : [1, 4, 2, 3]
+    ^  |
+[1, 3, 5, 4, 2] -> [1, 4, 5, 3, 2] : [1, 4, 2, 3, 5]
+    ^     |
+\end{python}
+\end{enumerate}
+\begin{python}
+def nextPermutation(self, A):
+  N = len(A)
+  # 1) find pivot, find the suffix shape of \
+  i = N-2
+  while i >= 0 and not A[i] < A[i + 1]:
+    i -= 1
+
+  if i < 0:
+    # already the highest permutation
+    A.reverse()
+    return
+
+  # 2) find rightmost element greater than pivot
+  j = N-1
+  while not A[j] > A[i]:
+    j -= 1
+
+  # 3) swap
+  A[i], A[j] = A[j], A[i]
+
+  # 4) make the suffix shape of /, reverse
+  l, r = i+1, N-1
+  while l < r:
+    A[l], A[r] = A[r], A[l]
+    l += 1
+    r -= 1
+\end{python}
 \subsection{Numbers counting}
 \runinhead{Count numbers with unique digit.} Given a non-negative integer n, count all numbers with unique digits, $x$, where $0 \leq x < 10^n$.
 

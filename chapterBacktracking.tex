@@ -15,9 +15,22 @@ dfs can be memoized.
 \begin{python}
 import functools
 
+# default is maxsize=128
 @functools.lru_cache(maxsize=None)
 def dfs(self, *args):
-  pass
+    pass
+
+
+@functools.lru_cache(maxsize=None)
+def F(self, i, j, A):
+    return min(
+        (
+            self.F(i, k, A) + self.F(k, j, A)
+            + max(A[i:k]) * max(A[k:j])
+            for k in range(i+1, j)
+        ),  # generator must be parenthesized 
+        default=0,  # default for empty seq
+    )
 \end{python}
 \section{Permutations}
 \runinhead{Permutation.} Generate all permutaitons of a list $A$.
@@ -457,13 +470,13 @@ def dfs(self, s, cur, left, pi, i, rmcnt, ret):
   """
   Remove parenthesis
   backtracking, post-check
-  :param s: original string
-  :param cur: current string builder
-  :param left: number of remaining left parentheses in s[0..i]
-  :param pi: last removed char
-  :param i: current index
-  :param rmcnt: number of remaining removals needed
-  :param ret: results
+  :s: original string
+  :cur: current string builder
+  :left: number of remaining left parentheses in s[0..i]
+  :pi: last removed char
+  :i: current index
+  :rmcnt: number of remaining removals needed
+  :ret: results
   """
   if left < 0 or rmcnt < 0 or i > len(s):
     return
@@ -515,7 +528,47 @@ def generate(self, start, end) -> List[TreeNode]:
         roots.append(root)
 
   return roots 
+\end{python}
+\subsection{Graph}
+\runinhead{Word Search.} Given an $m \times n$ grid of characters board and a string word, return true if word exists in the grid.
+\rih{Core Clues:}
+\begin{enumerate}
+\item dfs
+\end{enumerate}
+\begin{python}
+dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+def exist(self, A, word) -> bool:
+  M, N = len(A), len(A[0])
+  L = len(word)
+  visited = [
+    [False for _ in range(N)]
+    for _ in range(M)
+  ]
 
+  def dfs(r, c, i) -> bool:
+    if i == L:
+      return True
+        
+    if not (0 < r <= M and 0 < c <= N):
+      return False
+
+    if A[r][c] != word[i]:
+      return False
+
+    visited[r][c] = True
+    for dr, dc in dirs:
+      if dfs(r + dr, c + dc, i + 1):
+        return True
+      
+    visited[r][c] = False
+    return False
+
+  for r in range(M):
+    for c in range(N):
+      if dfs(r, c, 0):
+        return True
+      
+  return False
 \end{python}
 
 

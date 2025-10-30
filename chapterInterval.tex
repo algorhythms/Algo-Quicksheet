@@ -2,18 +2,7 @@
 \chapter{Interval}
 
 
-\section{Introduction}
-\rih{Two-way range.} The current scanning node as the pivot, need to scan its left neighbors and right neighbors. 
-$$
-|\leftarrow p \rightarrow |
-$$
-
-If the relationship between the pivot and its neighbors is symmetric, since scanning range is $[i-k, i+k]$ and iterating from left to right, only consider $[i-k, i]$ to avoid duplication.
-$$
-|\leftarrow p
-$$
-
-\section{Operations}
+\section{Interval Merger}
 \runinhead{Merge intervals.} Given a collection of intervals, merge all overlapping intervals.
 
 \textbf{Core clues}:
@@ -36,7 +25,7 @@ def merge(self, itvls):
     return ret
 \end{python}
 
-\runinhead{Insert intervals.} Given a set of non-overlapping intervals, insert a new interval into the intervals (merge if necessary). Assume that the intervals were initially sorted according to their start times.
+\runinhead{Insert \& merge intervals.} Given a set of non-overlapping intervals, insert a new interval into the intervals (merge if necessary). Assume that the intervals were initially sorted according to their start times.
 
 \textbf{Core clues}
 \begin{enumerate}
@@ -47,15 +36,93 @@ def merge(self, itvls):
 \begin{python}
 def insert(self, itvls, newItvl):
     s, e = newItvl.start, newItvl.end
-    left = filter(lambda x: x.end < s, itvls)
-    right = filter(lambda x: x.start > e, itvls)
+    left = list(filter(lambda x: x.end < s, itvls))
+    right = list(filter(lambda x: x.start > e, itvls))
     if len(left) + len(right) != len(itvls):
         s = min(s, itvls[len(left)].start)
-        e = max(e, itvls[~len(right)].end)
-        # itvls[-len(right)-1]
+        e = max(e, itvls[-len(right)-1].end)
 
     return left + [Interval(s, e)] + right
 \end{python}
+\section{Meeting Rooms}
+Each meeting has a start and an end $[start, end)$. 
+
+\runinhead{Meeting room requried.} Given an array of meeting time $itvls$.
+
+\rih{Core Clues:}
+\begin{enumerate}
+\item Sort by $start$
+\item Put $end$ into heap
+\item Record the max heap size
+\end{enumerate}
+\begin{python}
+def minMeetingRooms(self, itvls) -> int:
+  itvls.sort(key=lambda x: x.start)
+
+  ret = 0
+  end_h = []
+
+  for s, e in itvls:
+    if end_h and end_h[0] <= s:
+      heapq.heappop(end_h)
+
+    heapq.heappush(end_h, e)
+    ret = max(ret, len(end_h))
+
+  return ret
+\end{python}
+
+\runinhead{Delayed meetings.} Given $n$ as number of rooms, and a list of meetings $itvls$. Return the number of the room that held the most meetings. 
+\begin{enumerate}
+\item Each meeting will take place in the unused room with the lowest number. 
+\item If there are no available rooms, the meeting will be delayed until a room becomes free. The meeting duration unchange. 
+\item When a room becomes unused, meetings that have an earlier original start time should be given the room. 
+\end{enumerate}
+\runinhead{Core Clues:}
+\begin{enumerate}
+\item Intervals $\Ra$ sort intervals by $start$ and use a heap of busy rooms (processing) to hold their ending time $end$.
+\item $n$ rooms $\Ra$ need to keep tracks of currently available rooms, and number of ever hosted meetings per room. 
+\item We don't limit busy heap size by $n$. 
+\item How to handle overflow $\Ra$ Overflow are scheduled ahead into the busy heap with delayed time. 
+\item Get the smallest room index to schedule a meeting $\Ra$ use another heap to maintain the indices. 
+\end{enumerate}
+\begin{python}
+def mostBooked(self, n, itvls) -> int:
+    itvls.sort()  # by start time
+    avail_h = [i for i in range(n)]
+    heapq.heapify(avail_h)   # rooms sort by index
+    busy_h = []  # [(end, room)]
+    counters = [0 for _ in range(n)] # meeting count per room
+
+    for s, e in itvls:
+        # process start
+        while busy_h and busy_h[0][0] <= s:
+            end, room = heapq.heappop(busy_h)
+            heapq.heappush(avail_h, room)
+         
+        # process end
+        if avail_h:
+            room = heapq.heappop(avail_h)
+            heapq.heappush(busy_h, (e, room))
+            counters[room] += 1
+        else:
+            end_earliest, room = heapq.heappop(busy_h)
+            delayed_e = end_earliest + (e-s)  # delay meeting
+            heapq.heappush(busy_h, (delayed_e, room))
+            counters[room] += 1
+
+    return counters.index(max(counters))  # argmax
+    
+\end{python}
+Alternatively:
+\begin{enumerate}
+\item Intervals $\Ra$ sort by $start$ and use a heap to hold $end$.
+\item $n$ rooms $\Ra$ limit the heap size to $n$, then need to handle overflow. 
+\item Need to know the room that hold the max $\Ra$ we need to maintain room indices. 
+\item Overflow $\Ra$ a pending heap to hold meetings waiting for rooms, sort by start time
+\item How to get new start time $\Ra$ earliest end time of a room, and the new end time is naturally known by the duration. 
+\item This is complicated since it requires heaps, time pointers and meeting indices. 
+\end{enumerate}
 
 \section{Event-driven algorithms}
 \subsection{Introduction}
@@ -67,14 +134,14 @@ The core philosophy of event-driven algorithm:
 \end{enumerate} 
 
 \subsection{Line Sweeping}
-\runinhead{Maximal Overlaps}. Given a list of number intervals, find max number of overlapping
-intervals.
+\runinhead{Maximal Overlaps.} Given a list of intervals, find the max number of overlapping intervals. This is the same as number of meeting rooms required. 
 
 \rih{Core clues:}
 \begin{enumerate}
-\item \textbf{Events}: Every new start of an interval is an event. Scan the sorted intervals (sort the interval by \textit{start}).
-\item \textbf{Accumulator}: the maximum number of overlap. As approximate by a heap, which stores the \textit{end} of the interval. 
-\item \textbf{Transition}: Put the ending time into heap, and pop the ending time earlier than the new start time from heap. And we need min-heap to pop the early ones.
+\item \textbf{Events}: Every new start of an interval is an event. Sort intervals by \textit{start}.
+\item Need to maintain a list of \textit{ends} that are covered by the current \textit{start}, i.e. $end_i < start, \forall i$.
+\item \textbf{Accumulator}: When iterating the current element, maintain the maximum number of overlaps. The smallest \textit{end} should be covered by the current \textit{start}; $\Ra$ sort the \textit{ends} .
+\item \textbf{Transition}:  Sorted by a heap, stores the \textit{ends} of the intervals. Put the \textit{end} into heap, and pop the ending time earlier than the new start time from heap. And we need min-heap to pop the early ones.
 \end{enumerate}
 
 \begin{python}
@@ -100,26 +167,28 @@ Find the minimum y-coordinate value of a horizontal line such that the total are
 \rih{Core clues:}
 \begin{enumerate}
 \item \textbf{Events}: Every $y_i$ repreents a new square, with a begining and an end. 
-\item \textbf{Accumulator}: $F(y) = AreaBelow(y)$, by the horizontal line $y$. 
-\item \textbf{Transition}: The rate of change of $F(y)$ is $slope$. The $slope$ is the accumulated width at $y$, of all the squares under $y$. Each event contains a $\Delta slope$ that impacts the accumulated slope. More formally,
+\item \textbf{Accumulator}: Define a quantity $q(y) = areaBelow(y)$, by the horizontal line $y$. 
+\item \textbf{Transition}: The rate of change of $q(y)$ is $rate$. The $rate$ is the accumulated squares intersecting at $y$. Each event contains a $\Delta rate$ that impacts the accumulated rate. More formally,
 \begin{align*}
-  \frac{\dd}{\dd y}F(y) &= slope(y) \\
-  slope(y) &= \sum_{\substack{\text{all squares }i \\ y_i \le y < y_i + l_i}} l_i \\ 
-  \frac{\dd}{\dd y}slope(y) &= \Delta slope_y \text{ from } events
+  \frac{\dd}{\dd y}q(y) &= rate(y) \\
+  rate(y) &= \sum_{\substack{\text{all squares }i \\ y_i \le y < y_i + l_i}} l_i \\ 
+  rate(y) &\geq 0 \\
+  \frac{\dd}{\dd y}rate(y) &= \Delta {rate}_y \text{ from } events
 \end{align*}
 \end{enumerate}
 \begin{python}
 def separateSquares(self, squares):
     """
     Event driven. Line Sweep.
-    F(y) = AreaBelow(y)
-    dF/dy = slope, the rate of change of F(y)
-    F(y) is monotonically increasing 
+    q(y) = areaBelow(y)
+    dq/dy = slope, the rate of change of q(y)
+    q(y) is monotonically increasing 
     """
     events = []
     total_area = 0
     for x, y, l in squares:
-        # (y-coordiate, delta_slope)
+        # (y-coordiate, delta_rate)
+        # x not relevant
         events.append((y, l))
         events.append((y+l, -l))
         total_area += l*l
@@ -127,16 +196,29 @@ def separateSquares(self, squares):
     events.sort()
     target = total_area / 2
 
-    F = 0 
-    slope = 0
-    prev_y = events[0][0]
-    for y, d_slope in events:
-        F += (y - prev_y) * slope
-        if F >= target:
-            return y - (F - target) / slope
+    q = 0 
+    rate = 0
+    prev_y, _ = events[0]
+    for y, d_rate in events:
+        q += (y - prev_y) * rate
+        if q >= target:
+            return y - (q - target) / rate
+            # eager, won't fall below prev_y
 
-        slope += d_slope
+        rate += d_rate
         prev_y = y
     
     return prev_y
 \end{python}
+
+\section{Range by Pivot}
+\rih{Two-way range.} The current scanning node as the pivot, need to scan its left neighbors and right neighbors. 
+$$
+|\leftarrow p \rightarrow |
+$$
+
+\rih{Dedup.} If the relationship between the pivot and its neighbors is symmetric, since scanning range is $[i-k, i+k]$ and iterating from left to right, only consider $[i-k, i]$ to avoid duplication.
+$$
+|\leftarrow p
+$$
+

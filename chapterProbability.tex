@@ -7,12 +7,7 @@ Equal probability shuffle algorithm.
 
 \subsection{Incorrect naive solution}
 Swap current card $A_i$ with a random card from the entire deck $A$. 
-\begin{java}
-for (int i = 0; i < N; i++) {
-   int j = (int) Math.random()*N;
-   swap(a[i], a[j]);
-}
-\end{java}
+
 \begin{python}
 def shuffle(A):
   n = len(A)
@@ -20,14 +15,18 @@ def shuffle(A):
     j = random.randrange(n)
     A[i], A[j] = A[j], A[i]
 \end{python}
+
 Consider 3 cards, the easiest proof that this algorithm does not produce a uniformly random permutation is that it generates $3^3=27$ possible plans (consider steps in plans, duplicated result included), but there are only 3! = 6 permutations. Since $27\%6 \neq 0$, there must be some permutation is that is picked too much, and some that is picked too little. 
 
 In general, it generates $n^n$ possible plans, and
 $$
 n^n \% n! \neq 0
 $$ 
-\subsection{Knuth Shuffle}
-Knuth (aka Fisher-Yates) shuffling algorithm guarantees to rearrange the elements in uniformly random order. 
+\subsection{Uniform Shuffle - Knuth Shuffle}
+$$
+|..closed..|i..........|
+$$
+Knuth shuffling algorithm guarantees to rearrange the elements in uniformly random order. 
 
 \rih{Intuition}. Similar to drawing lots, the order of drawing lots does not affect the probability of a given outcome.
 
@@ -36,16 +35,6 @@ Core clues:
 \item choose index uniformly $\in [i, N)$.
 \item just like shuffling the poker card.
 \end{enumerate}
-\begin{java}
-public void shuffle(Object[] a) {
-    int N = a.length;
-    for (int i = 0; i < N; i++) {
-        // choose index uniformly in [i, N)
-        int j = i + (int) (Math.random() * (N - i));
-        swap(a[i], a[j]);
-    }
-}
-\end{java}
 
 \begin{python}
 def shuffle(A):
@@ -62,8 +51,10 @@ $n!$ permutations.
 \subsection{Random Maximum}
 Find the index of maximum number in an array with a probability of $\frac{1}{\#maxima}$, instead of the first seen index.
 
-
-\runinhead{Code:}
+\rih{Intuition}. Consider the maximums array of length $L=k$, the \pyinline{current} $max$ has the probability $\frac{1}{k}$ of being selected. When moving to $L=k+1$, the \pyinline{current} $max$ has the probability $\frac{1}{k+1}$ of being selected, the \pyinline{previous} $max$ has the probility of $\frac{k}{k+1}$ to stay. Then the \pyinline{previous} $max$ has the new updated probability of being selected as:
+$$
+P(max_k) = \frac{1}{k} \cdot \frac{k}{k+1} = \frac{1}{k+1}
+$$
 \begin{python}
 def random_max(A):
     # k is the counter
@@ -80,10 +71,7 @@ def random_max(A):
 
 \end{python}
 
-\rih{Intuition}. Consider the maximums array of length $L=k$, the \pyinline{current} $max$ has the probability $\frac{1}{k}$ of being selected. When moving to $L=k+1$, the \pyinline{current} $max$ has the probability $\frac{1}{k+1}$ of being selected, the \pyinline{previous} $max$ has the probility of $\frac{k}{k+1}$ to stay. Then the \pyinline{previous} $max$ has the new updated probability of being selected as:
-$$
-P(max_k) = \frac{1}{k} \cdot \frac{k}{k+1} = \frac{1}{k+1}
-$$
+
 \runinhead{Proof.} Prove via mathematical induction. 
 
 That is, assuming it works for any array of size $N$, prove it works for any array of size $N+1$.

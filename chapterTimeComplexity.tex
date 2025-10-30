@@ -37,45 +37,57 @@ Notice that $b>1$ rather than $b\geq1$.
 If:
 $$f(n) = o(n^{\log_b a})$$
 
-, where in the condition it is $o$ rather than $O$. \\\\
+where in the condition it is $o$ rather than $O$. \\\\
 Then:
 $$T(n) = \Theta(n^{\log_b a})$$
 \subsubsection*{Case 2, non-dominance}
 If:
 $$f(n) = \Theta(n^{\log_b a} \log^{k} n)$$
 
-, for some constant $k \geq 0$\\\\
+for some constant $k \geq 0$\\\\
 Then:
 $$
 T(n) = \Theta(n^{\log_b a} \log^{k+1} n)
 $$
 
-, typically $k=0$ in most cases. 
+typically $k=0$ in most cases. 
+
+If $a=b$, then it reduces to
+$$
+T(n) = \Theta(n \log n)
+$$
 \subsubsection*{Case 3, dominated by the 2nd term}
 If:
 $$f(n) = \omega(n^{\log_b a})$$
 
-, where in the condition it is $\omega$ rather than $\Omega$. \\\\
+where in the condition it is $\omega$ rather than $\Omega$. \\\\
 And with regularity condition:
-$$f(\frac{n}{b}) \le k f(n)$$
+$$f\left(\frac{n}{b}\right) \le k f(n)$$
 
-, for some constant $k < 1$ and sufficiently large $n$\\\\
+for some constant $k < 1$ and sufficiently large $n$\\\\
 Then:
 $$T\left(n \right) = \Theta\left(f(n) \right)$$
 \section{Useful Math Equations}
+\runinhead{Logarithm.} 
+\begin{align*}
+\log_b mn &= \log_b m + \log_b n \\
+\log_b m^n &= n \log_b m \\
+\log_b a &= \frac{\ln a}{\ln b}
+\end{align*}
+
 \runinhead{Euler.}
 $$
 \frac{1}{2}+\frac{1}{3}+\frac{1}{4} + ... + \frac{1}{n} = \ln{n}
 $$
 \runinhead{Logarithm power.}
 $$
-a^{\log_b^n} = n^{\log_b^a}
+a^{\log_b n} = n^{\log_b a}
 $$
 
 Proof:
 \begin{align*}
-a^{\log_b^n} &= n^{\log_b^a} \\
-\Leftarrow \ln{a^{\log_b^n}} &= \ln{n^{\log_b^a}}\\
+a^{\log_b n} &= n^{\log_b a} \\
+\Leftarrow \ln{a^{\log_b n}} &= \ln{n^{\log_b a}}\\
 \Leftarrow  \frac{\ln n}{\ln b}\ln a &=\frac{\ln a}{\ln b}\ln n
 \end{align*}
 

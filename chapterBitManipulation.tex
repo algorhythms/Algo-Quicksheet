@@ -9,9 +9,10 @@
 \item 32-bit signed range: $[-2^{31}, 2^{31}-1]$. $0$ is like positive number without complement. 
 \end{enumerate}
 \begin{python}
-MAX = 0x7FFFFFFF
-MIN = 0x80000000
-MSK = 0xFFFFFFFF
+MAX = 0x7FFFFFFF  # 0111,1...
+MIN = 0x80000000  # 1000,0...
+MSK = 0xFFFFFFFF  # 1111,1...
+# hex is 4 bit
 \end{python}
 \subsection{Operations}
 \runinhead{Basics} 
@@ -22,58 +23,86 @@ MSK = 0xFFFFFFFF
 \item Toggling bit values: to toggle a single bit position, $bit\XOR 1$
 \end{enumerate}
 This can be extended to do masking operations on multiple bits. 
-
+\runinhead{Shift.}
+Shift operator $<<$ and $>>$ has lower precedence than arithmetic operators.
 \runinhead{2's complement}
 $$
--i = \NOT i+1
+-x = \NOT x+1
 $$
 
 Negative numbers: \pyinline{0b10000000} to \pyinline{0b11111111} (-128 to -1 in decimal). This process essentially "wraps around" the positive binary sequence to start from the most negative number. 
 
 \begin{python}
-{
-  # 4 overflow
-  3: 0b011,
-  2: 0b010,
-  1: 0b001,
-  0: 0b000,
-  #########
- -1: 0b111, 
- -2: 0b110,
- -3: 0b101,
- -4: 0b100,
-}
+ # 4 overflow
+ 3: 0b011
+ 2: 0b010
+ 1: 0b001
+ 0: 0b000
+#########
+-1: 0b111 
+-2: 0b110
+-3: 0b101
+-4: 0b100
 \end{python}
-Since 0 takes a position in the binary representation:
+Since 0 takes a position in the binary sequence $\Ra$
 \begin{itemize}
 \item $\NOT0$ is $-1$
 \item $\NOT1$ is $-2$
 \item $\NOT3$ is $-4$.
 \end{itemize}
 
+\runinhead{Negation and index} We can use tilde notation for the index accessing a string or an array
+\begin{lstlisting}
+i  ~i
+#####
+0  -1
+1  -2
+2  -3
+3  -4 
+4  -5 
+5  -6
+\end{lstlisting}
+$$
+\NOT x = -x-1
+$$
+To determine whether a string is palindrome:
+\begin{python}
+def is_palindrome(s):
+  return all(s[i] == s[~i] for i in range(len(s)/2)) 
+\end{python}
 
 \runinhead{Check 2's power}
 2's power is in the form of \pyinline{0b01000}.
-$$x\AND(x-1)$$
+$$x\AND(x-1) == 0$$
+
+\runinhead{Divide by 2.} To divide a number by 2, it should be \pyinline{x >> 1} rather than \pyinline{x >> 2}. 
 
 \runinhead{Rightmost bit set. LSB} To get the rightmost bit, with the help of 2's complement as followed:
 \begin{align*}
-x &= 0bijk1000 \\
-\NOT x &= 0bIJK0111 \\
--x &= 0bIJK1000
+x &= \pyinline{0bhijk1000} \\
+\NOT x &= \pyinline{0bHIJK0111} \\
+-x &= \pyinline{0bHIJK1000}
 \end{align*}
-where $IJK$ represent bits that are the negation of $ijk$.
+where \pyinline{HIJK} represent bits that are the negation of \pyinline{hijk}. Thus,
 
 $$LSB = x \AND -x$$
 
-This above is left extended with 0's. To left extended with 1's. 
+The LSB above is left extended with 0's. To left extended with 1's. 
 
+\begin{align*}
+lsb &= \pyinline{0b0001,0000} \\
+lsb' &= \pyinline{0b1111,0000} \\
+lsb - 1 &= \pyinline{0b0000,1111}
+\end{align*}
+
+Thus,
 $$
 LSB_{1extended} = \NOT (lsb - 1)
-$$
+$$ 
 
-\runinhead{Rightmost bit set. MSB.} Find the most significant bit. 
+\runinhead{Leftmost bit set. MSB.} Find the most significant bit. 
 \begin{python}
+# msb_idx
 msb = 0
 while num >> msb:
   msb += 1
@@ -88,28 +117,6 @@ while msb <= x:
   msb <<= 1
 return msb >> 1
 \end{python}
-
-\runinhead{Negation and index} We can use tilde notation for the index accessing a string or an array
-\begin{lstlisting}
-i  ~i
-#####
-0  -1
-1  -2
-2  -3
-3  -4 
-4  -5 
-5  -6
-\end{lstlisting}
-$$
-\NOT i = -i-1
-$$
-To determine whether a string is palindrome:
-\begin{python}
-def is_palindrome(s):
-  return all(s[i] == s[~i] for i in range(len(s)/2)) 
-\end{python}
-
-\runinhead{Divide by 2.} To divide a number by 2, it should be \pyinline{x >> 1} rather than \pyinline{x >> 2}. 
 
 \subsection{Python}
 Python int is larger than 32 bit. 

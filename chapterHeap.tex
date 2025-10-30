@@ -8,11 +8,112 @@ $A_{2i} \leq A_{i} \geq A_{2i+1}$.
 
 \begin{figure}[hbtp]
 \centering
-\subfloat{\includegraphics[width=\linewidth]{heap}}
+\subfloat{\includegraphics[width=0.7\linewidth]{heap}}
 \caption{Heap}
 \label{fig:heap}
 \end{figure}
-\section{Operations}
+
+\section{Applications}
+\subsection{Python Heapq}
+Python only has built in min-heap. To use max-heap, you can: 
+\begin{enumerate}
+\item Invert the number: 1 becomes -1.
+(usually the best solution)\item Wrap the data into another class and override \textbf{comparators}: \_\_cmp\_\_ or \_\_lt\_\_
+\end{enumerate}
+
+The following code presents the wrapping method:
+\begin{python}
+from dataclasses import dataclass
+
+@dataclass
+class HeapValue:
+    val: int
+    deleted: bool = False  # lazy delete
+
+    def __lt__(self, other):  # reverse for max-heap
+        return not self.val < other.val
+\end{python}
+
+Normally the deletion by value in Python is $O(n)$, to achieve $O(\lg n)$ we can use \textbf{lazy deletion}. Before take the top of the heap, we do the following:
+\begin{python}
+while heap and heap[0].deleted:
+    heapq.heappop(heap)
+\end{python}
+\subsection{Java Priority Queue}
+\begin{java}
+// min-heap
+PriorityQueue<Integer> pq = new PriorityQueue<>(
+    (o1, o2) -> o1-o2
+);
+
+// max-heap
+PriorityQueue<Integer> pq = new PriorityQueue<>(
+    (o1, o2) -> o2-o1
+);
+\end{java}
+\subsection{Stale-Checking Heap for Update}
+If introduceing \textbf{update} to the values in the heap, we can do stale checking as lazy validation.
+
+Consider the following: $freq_i$ represents the frequency of $A_i$ at step $i$. We want to keep track of the most frequent number at each step $i$. $A$ contains duplicagtes. $freq_i$ can be negative. 
+\begin{python}
+def most_frequent_num(self, A, freq):
+    counter = defaultdict(int)
+    h = []
+    ret = []
+    for n, cnt in zip(A, freq):
+        counter[n] += cnt
+        heapq.heappush(h, (-counter[n], n))
+        while True:
+            c, maxa = h[0]
+            if c != -counter[maxa]:  # stale check
+                heapq.heappop(h)
+            else:
+                ret.append(maxa)
+                break
+    
+    return ret
+\end{python}
+
+\subsection{Maintain min max in Sliding Window}
+Count number of continuous subarrays in $A$ s.t. within the subarray $|A_i - A_j| \leq 2, \forall i, j$.
+\rih{Core clues}
+\begin{enumerate}
+\item Need to maintain max and min in the sliding window $\Ra$ heap
+\item In sliding window $i, j$, count of all valid subarrays ending AT j $\Ra j - i + 1$ 
+\end{enumerate}
+\begin{python}
+def continuousSubarrays(self, A):
+    ret = 0
+    i = 0  # starting index of the window
+    j = 0  # ending index of the window
+    h_min = []  # (a, idx)
+    h_max = []  # (-a, idx)
+    while j < len(A):
+        heapq.heappush(h_min, (A[j], j))
+        heapq.heappush(h_max, (-A[j], j))
+        while -h_max[0][0] - h_min[0][0] > 2:
+            # shrink
+            i += 1
+            while h_min[0][1] < i:
+                heapq.heappop(h_min)
+            while h_max[0][1] < i:
+                heapq.heappop(h_max)
+        
+        ret += j-i+1
+        j += 1
+    
+    return ret
+\end{python}
+Note: 3-layred nested \pyinline{while} loop.
+
+\subsection{Find $k$ smallest/largest}
+Partial Quicksort \ref{find-k-th}
+
+\section{Derivatives}
+\subsection{Heap of Linked Lists}
+Maintain a heap of linked lists, pop the min head, and push the head's next back to the heap. 
+
+\section{Inside the Library}
 Assume the root \textbf{starts} at $a[1]$ rather than $a[0]$.
 \\
 Basic operations:
@@ -21,6 +122,24 @@ Basic operations:
 \item swim()/ sift\_up() - recursive
 \item build()/ heapify() - bottom-up sink()
 \end{enumerate}
+\subsection{General}
+The self-implemented binary heap's index usually starts at 1 rather than 0. 
+
+The array representation of heap is in \textbf{level-order}.
+
+The main reason that we can use an array to represent the heap-ordered tree in a binary heap is because the tree is \textbf{complete}.
+
+Suppose that we represent a BST containing N keys using an array, with $a[0]$ empty, the root at $a[1]$. The two children of $a[k]$ will be at $a[2k]$ and $a[2k+1]$. Then, the length of the array might need to be as large as $2^N$.
+
+It is possible to have 3-heap. A 3-heap is an array representation (using 1-based indexing) of a complete 3-way tree.
+The children of $a[k]$ are $a[3k-1]$, $a[3k]$, and $a[3k+1]$.
+\begin{figure}[hbtp]
+\centering
+\subfloat{\includegraphics[width=0.9\linewidth]{heapRepr}}
+\caption{Heap representation}
+\label{fig:heap} 
+\end{figure}
+
 \subsection{Sink (sift\_down)}
 Core clue: compare parent to the \textit{larger} child (because we want to maintain the heap invariant). 
 \begin{python}
@@ -65,87 +184,3 @@ Proof:
 O(h)} &= O\Bigg(n\sum_{h=0}^{\lfloor\lg n\rfloor}{\frac{h}{2^h}}\Bigg) \\
 &= O(n)
 \end{align*}
-
-\section{Implementation}
-\subsection{General}
-The self-implemented binary heap's index usually starts at 1 rather than 0. 
-
-The array representation of heap is in \textbf{level-order}.
-
-The main reason that we can use an array to represent the heap-ordered tree in a binary heap is because the tree is \textbf{complete}.
-
-Suppose that we represent a BST containing N keys using an array, with $a[0]$ empty, the root at $a[1]$. The two children of $a[k]$ will be at $a[2k]$ and $a[2k+1]$. Then, the length of the array might need to be as large as $2^N$.
-
-It is possible to have 3-heap. A 3-heap is an array representation (using 1-based indexing) of a complete 3-way tree.
-The children of $a[k]$ are $a[3k-1]$, $a[3k]$, and $a[3k+1]$.
-\begin{figure}[hbtp]
-\centering
-\subfloat{\includegraphics[width=0.9\linewidth]{heapRepr}}
-\caption{Heap representation}
-\label{fig:heap} 
-\end{figure}
-
-\subsection{Python Heapq}
-Python only has built in min-heap. To use max-heap, you can: 
-\begin{enumerate}
-\item Invert the number: 1 becomes -1.
-(usually the best solution)\item Wrap the data into another class and override \textbf{comparators}: \_\_cmp\_\_ or \_\_lt\_\_
-\end{enumerate}
-
-The following code presents the wrapping method:
-\begin{python}
-class HeapValue:
-    def __init__(self, val):
-        self.val = val
-        self.deleted = False  # lazy delete 
-
-    def __cmp__(self, other):
-        # Reverse order by height to get max-heap
-        assert isinstance(other, Value)
-        return other.val - self.val
-\end{python}
-
-Normally the deletion by value in Python is $O(n)$, to achieve $O(\lg n)$ we can use \textbf{lazy deletion}. Before take the top of the heap, we do the following:
-\begin{python}
-while heap and heap[0].deleted:
-    heapq.heappop(heap)
-\end{python}
-\subsection{Java Priority Queue}
-\begin{java}
-// min-heap
-PriorityQueue<Integer> pq = new PriorityQueue<>(
-    (o1, o2) -> o1-o2
-);
-
-// max-heap
-PriorityQueue<Integer> pq = new PriorityQueue<>(
-    (o1, o2) -> o2-o1
-);
-\end{java}
-\subsection{Stale-Checking Heap for Update}
-If introduceing \textbf{update} to the values in the heap, we can do stale checking as lazy validation.
-
-Consider the following: $freq_i$ represents the frequency of $A_i$ at step $i$. We want to keep track of the most frequent number at each step $i$. $A$ contains duplicagtes. $freq_i$ can be negative. 
-\begin{python}
-def most_frequent_num(self, A, freq):
-    counter = defaultdict(int)
-    h = []
-    ret = []
-    for n, cnt in zip(A, freq):
-        counter[n] += cnt
-        heapq.heappush(h, (-counter[n], n))
-        while True:
-            c, maxa = h[0]
-            if c != -counter[maxa]:  # stale check
-                heapq.heappop(h)
-            else:
-                ret.append(maxa)
-                break
-    
-    return ret
-\end{python}
-
-\section{Derivatives}
-\subsection{Heap of Linked Lists}
-Maintain a heap of linked lists, pop the min head, and push the head's next back to the heap. 
-
